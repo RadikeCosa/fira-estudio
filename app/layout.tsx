@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Estudio Muma",
+  title: "Muma Estudio",
   description: "Espacio Virtual de Exhibicion y Venta de Nuestro Productos",
 };
 
