@@ -15,8 +15,20 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Muma Estudio",
-  description: "Espacio Virtual de Exhibicion y Venta de Nuestro Productos",
+  title: {
+    default: "Muma Estudio - Textiles Artesanales",
+    template: "%s | Muma Estudio",
+  },
+  description:
+    "Textiles artesanales para tu hogar. Manteles, servilletas y caminos de mesa únicos, hechos a mano en Argentina.",
+  keywords: [
+    "textiles",
+    "manteles",
+    "servilletas",
+    "caminos de mesa",
+    "artesanal",
+    "Argentina",
+  ],
 };
 
 export default function RootLayout({
@@ -27,10 +39,10 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <Header />
-        {children}
+        <main className="grow">{children}</main>
         <Footer />
       </body>
     </html>
