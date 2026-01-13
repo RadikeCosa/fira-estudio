@@ -31,7 +31,7 @@ export function MobileNav({ links }: MobileNavProps): React.ReactElement {
         className="
           flex flex-col gap-1.5
           p-1
-          hover:bg-gray-100
+          hover:bg-muted
           rounded-lg
           transition-colors
           duration-200
@@ -41,21 +41,21 @@ export function MobileNav({ links }: MobileNavProps): React.ReactElement {
       >
         <span
           className={`
-            block h-0.5 w-6 bg-gray-900
+            block h-0.5 w-6 bg-foreground
             transition-transform duration-300
             ${isOpen ? "rotate-45 translate-y-2" : ""}
           `}
         />
         <span
           className={`
-            block h-0.5 w-6 bg-gray-900
+            block h-0.5 w-6 bg-foreground
             transition-opacity duration-300
             ${isOpen ? "opacity-0" : ""}
           `}
         />
         <span
           className={`
-            block h-0.5 w-6 bg-gray-900
+            block h-0.5 w-6 bg-foreground
             transition-transform duration-300
             ${isOpen ? "-rotate-45 -translate-y-2" : ""}
           `}
@@ -67,8 +67,8 @@ export function MobileNav({ links }: MobileNavProps): React.ReactElement {
         <div
           className="
             absolute top-full left-0 right-0
-            bg-white
-            border-b border-gray-200
+            bg-background
+            border-b border-border
             animate-in fade-in slide-in-from-top-2
             duration-200
           "
@@ -89,10 +89,10 @@ export function MobileNav({ links }: MobileNavProps): React.ReactElement {
                   className="
                     block
                     px-4 py-3
-                    text-gray-700
-                    hover:bg-gray-50
-                    hover:text-gray-900
-                    border-b border-gray-100
+                    text-foreground
+                    hover:bg-muted
+                    hover:text-foreground
+                    border-b border-border
                     last:border-b-0
                     transition-colors
                     duration-200

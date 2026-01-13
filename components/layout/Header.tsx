@@ -18,8 +18,8 @@ export function Header(): React.ReactElement {
     <header
       className="
         sticky top-0 z-40
-        bg-white
-        border-b border-gray-200
+        bg-background
+        border-b border-border
         w-full
       "
     >
@@ -39,8 +39,8 @@ export function Header(): React.ReactElement {
           className="
             text-lg font-medium
             md:text-xl
-            text-gray-900
-            hover:text-gray-700
+            text-foreground
+            hover:text-accent
             transition-colors
             duration-200
           "
@@ -66,15 +66,15 @@ export function Header(): React.ReactElement {
                 href={link.href}
                 className="
                   text-sm
-                  text-gray-700
+                  text-foreground
                   font-normal
-                  hover:text-gray-900
+                  hover:text-accent
                   transition-colors
                   duration-200
                   pb-1
                   border-b-2
                   border-transparent
-                  hover:border-gray-900
+                  hover:border-accent
                 "
               >
                 {link.label}
