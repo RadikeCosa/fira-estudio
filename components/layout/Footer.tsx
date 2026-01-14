@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { Instagram, Mail } from "lucide-react";
+import { NAV_LINKS, SOCIAL_LINKS } from "@/lib/constants/navigation";
 
-const links = [
-  { label: "Productos", href: "/productos" },
-  { label: "Sobre Nosotros", href: "/sobre-nosotros" },
-  { label: "Contacto", href: "/contacto" },
-];
+// Filter out "Home" link for footer navigation
+const footerLinks = NAV_LINKS.filter((link) => link.href !== "/");
 
 export function Footer(): React.ReactElement {
   const year = new Date().getFullYear();
@@ -23,7 +21,7 @@ export function Footer(): React.ReactElement {
 
         {/* Enlaces principales */}
         <nav className="flex gap-4">
-          {links.map((link) => (
+          {footerLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
@@ -37,8 +35,8 @@ export function Footer(): React.ReactElement {
         {/* Redes sociales + copyright */}
         <div className="flex items-center gap-3">
           <Link
-            href="https://instagram.com/mumaestudio"
-            aria-label="Instagram"
+            href={SOCIAL_LINKS.instagram.href}
+            aria-label={SOCIAL_LINKS.instagram.ariaLabel}
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-accent transition-colors"
@@ -46,8 +44,8 @@ export function Footer(): React.ReactElement {
             <Instagram className="h-4 w-4" />
           </Link>
           <Link
-            href="mailto:contacto@mumaestudio.com"
-            aria-label="Email"
+            href={SOCIAL_LINKS.email.href}
+            aria-label={SOCIAL_LINKS.email.ariaLabel}
             className="hover:text-accent transition-colors"
           >
             <Mail className="h-4 w-4" />

@@ -1,17 +1,6 @@
 import Link from "next/link";
 import { MobileNav } from "./MobileNav";
-
-interface NavLink {
-  label: string;
-  href: string;
-}
-
-const navLinks: NavLink[] = [
-  { label: "Home", href: "/" },
-  { label: "Productos", href: "/productos" },
-  { label: "Sobre Nosotros", href: "/sobre-nosotros" },
-  { label: "Contacto", href: "/contacto" },
-];
+import { NAV_LINKS } from "@/lib/constants/navigation";
 
 export function Header(): React.ReactElement {
   return (
@@ -60,7 +49,7 @@ export function Header(): React.ReactElement {
             p-0
           "
         >
-          {navLinks.map((link) => (
+          {NAV_LINKS.map((link) => (
             <li key={link.href}>
               <Link
                 href={link.href}
@@ -85,7 +74,7 @@ export function Header(): React.ReactElement {
 
         {/* Mobile Navigation */}
         <div className="md:hidden">
-          <MobileNav links={navLinks} />
+          <MobileNav links={NAV_LINKS} />
         </div>
       </nav>
     </header>

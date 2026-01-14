@@ -1,12 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-
-interface NavLink {
-  label: string;
-  href: string;
-}
+import type { NavLink } from "@/lib/constants/navigation";
 
 interface MobileNavProps {
   links: NavLink[];
@@ -22,6 +18,30 @@ export function MobileNav({ links }: MobileNavProps): React.ReactElement {
   const closeMenu = (): void => {
     setIsOpen(false);
   };
+
+  // Handle ESC key press and body scroll lock
+  useEffect(() => {
+    if (isOpen) {
+      // Prevent body scroll when menu is open
+      const originalStyle = window.getComputedStyle(document.body).overflow;
+      document.body.style.overflow = "hidden";
+
+      // Handle ESC key press
+      const handleEscape = (event: KeyboardEvent): void => {
+        if (event.key === "Escape") {
+          closeMenu();
+        }
+      };
+
+      document.addEventListener("keydown", handleEscape);
+
+      // Cleanup function
+      return () => {
+        document.body.style.overflow = originalStyle;
+        document.removeEventListener("keydown", handleEscape);
+      };
+    }
+  }, [isOpen]);
 
   return (
     <div>
@@ -62,6 +82,21 @@ export function MobileNav({ links }: MobileNavProps): React.ReactElement {
         />
       </button>
 
+      {/* Overlay/Backdrop */}
+      {isOpen && (
+        <div
+          className="
+            fixed inset-0 top-[57px]
+            bg-black/50
+            z-40
+            animate-in fade-in
+            duration-200
+          "
+          onClick={closeMenu}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Mobile Menu */}
       {isOpen && (
         <div
@@ -69,6 +104,7 @@ export function MobileNav({ links }: MobileNavProps): React.ReactElement {
             absolute top-full left-0 right-0
             bg-background
             border-b border-border
+            z-50
             animate-in fade-in slide-in-from-top-2
             duration-200
           "
