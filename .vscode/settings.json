@@ -18,5 +18,20 @@
     "titleBar.inactiveBackground": "#ff3d0099",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#ff3d00"
+  "peacock.color": "#ff3d00",
+  "files.encoding": "utf8",
+  "files.autoGuessEncoding": false,
+  "files.eol": "\n",
+  "[typescript]": {
+    "files.encoding": "utf8"
+  },
+  "[typescriptreact]": {
+    "files.encoding": "utf8"
+  },
+  "[javascript]": {
+    "files.encoding": "utf8"
+  },
+  "[json]": {
+    "files.encoding": "utf8"
+  }
 }

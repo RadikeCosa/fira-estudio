@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Instagram, Mail } from "lucide-react";
 import { NAV_LINKS, SOCIAL_LINKS } from "@/lib/constants/navigation";
+import { SITE_CONFIG } from "@/lib/constants"; // ← Importar
 
-// Filter out "Home" link for footer navigation
 const footerLinks = NAV_LINKS.filter((link) => link.href !== "/");
 
 export function Footer(): React.ReactElement {
@@ -13,9 +13,10 @@ export function Footer(): React.ReactElement {
       <div className="max-w-7xl mx-auto px-4 flex flex-col gap-4 items-center sm:flex-row sm:justify-between sm:gap-0">
         {/* Marca y tagline */}
         <div className="flex flex-col items-center sm:items-start">
-          <span className="font-medium">Muma Estudio</span>
+          <span className="font-medium">{SITE_CONFIG.name}</span>{" "}
+          {/* ← Usar constante */}
           <span className="text-xs text-accent mt-1">
-            Creaciones Textiles y Digitales
+            {SITE_CONFIG.tagline} {/* ← Usar constante */}
           </span>
         </div>
 
@@ -51,7 +52,7 @@ export function Footer(): React.ReactElement {
             <Mail className="h-4 w-4" />
           </Link>
           <span className="ml-2 text-xs text-accent/70">
-            © {year} Muma Estudio
+            © {year} {SITE_CONFIG.name} {/* ← Usar constante */}
           </span>
         </div>
       </div>

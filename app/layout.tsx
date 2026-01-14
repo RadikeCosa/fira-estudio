@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SITE_CONFIG } from "@/lib/constants"; // ← Importar
 import "./globals.css";
 
 const geistSans = Geist({
@@ -16,19 +17,18 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Muma Estudio - Textiles Artesanales",
-    template: "%s | Muma Estudio",
+    default: `${SITE_CONFIG.name} - Textiles Artesanales`, // ← Usar constante
+    template: `%s | ${SITE_CONFIG.name}`, // ← Usar constante
   },
-  description:
-    "Textiles artesanales para tu hogar. Manteles, servilletas y caminos de mesa únicos, hechos a mano en Argentina.",
-  keywords: [
-    "textiles",
-    "manteles",
-    "servilletas",
-    "caminos de mesa",
-    "artesanal",
-    "Argentina",
-  ],
+  description: SITE_CONFIG.description, // ← Usar constante
+  keywords: SITE_CONFIG.keywords, // ← Usar constante
+  openGraph: {
+    type: "website",
+    locale: SITE_CONFIG.locale, // ← Usar constante
+    siteName: SITE_CONFIG.name, // ← Usar constante
+    title: `${SITE_CONFIG.name} - Textiles Artesanales`,
+    description: SITE_CONFIG.description,
+  },
 };
 
 export default function RootLayout({
@@ -42,7 +42,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         <Header />
-        <main className="grow">{children}</main>
+        <main className="flex-grow">{children}</main>
         <Footer />
       </body>
     </html>
