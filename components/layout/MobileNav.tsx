@@ -2,11 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-
-interface NavLink {
-  label: string;
-  href: string;
-}
+import type { NavLink } from "@/lib/constants/navigation";
 
 interface MobileNavProps {
   links: NavLink[];
