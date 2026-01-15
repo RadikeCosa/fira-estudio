@@ -18,6 +18,35 @@ Productos con múltiples variaciones (tamaño/color).
 
 ---
 
+## Arquitectura y Estructura
+
+### Directorios principales
+
+```
+/app                 → Pages y layouts (App Router)
+/components          → Componentes React organizados por dominio
+  /layout           → Header, Footer, MobileNav
+  /productos        → ProductCard, ProductGallery, VariationSelector
+  /ui               → Componentes reutilizables
+/lib                 → Lógica de negocio y utilidades
+  /constants        → Constantes centralizadas (SITE_CONFIG, WHATSAPP, etc.)
+  /supabase         → Clientes y queries de Supabase
+  /types.ts         → Tipos TypeScript compartidos
+```
+
+### Supabase: Esquema de Base de Datos
+
+```sql
+-- Tablas principales
+categorias           → Categorías de productos (id, nombre, slug, descripcion)
+productos            → Productos base (id, nombre, slug, descripcion, categoria_id)
+variaciones          → SKUs con precio/tamaño/color (id, producto_id, tamaño, color, precio, stock)
+imagenes_producto    → Galería de imágenes (id, producto_id, url, orden, es_principal)
+consultas            → Formularios de contacto (id, nombre, email, mensaje, created_at)
+```
+
+---
+
 ## Reglas Fundamentales de Código
 
 ### TypeScript Estricto
@@ -142,20 +171,121 @@ import clsx from 'clsx';
 ### Convenciones de Nombres
 
 ```typescript
-// Archivos
-ProductCard.tsx; // Componentes: PascalCase
-productUtils.ts; // Utilidades: camelCase
-API_ROUTES.ts; // Constantes: UPPER_SNAKE_CASE
+// Componentes → PascalCase
+ProductCard.tsx
+VariationSelector.tsx
 
-// Variables y funciones
-const productList = []; // camelCase
-const isLoading = false; // Booleans: isX, hasX, shouldX
-function fetchProducts() {} // camelCase
-const WHATSAPP_NUMBER = "..."; // Constantes: UPPER_SNAKE
+// Funciones y variables → camelCase
+fetchProductos()
+isLoading
+currentUser
 
-// Componentes
-export function ProductCard() {} // PascalCase
-const ProductGrid = () => {}; // PascalCase
+// Constantes → UPPER_SNAKE_CASE
+SITE_CONFIG
+API_ROUTES
+WHATSAPP
+
+// Booleans → prefijos is, has, should, can
+isLoading
+hasVariations
+shouldDisplay
+canPurchase
+
+// Types e Interfaces → PascalCase
+interface Producto { }
+type ProductoCompleto = Producto & { variaciones: Variacion[] }
+
+// Archivos → kebab-case para non-component files
+product-utils.ts
+format-price.ts
+```
+
+---
+
+### Queries de Supabase
+
+```typescript
+// ✅ Siempre incluir relaciones necesarias con select()
+const { data } = await supabase
+  .from('productos')
+  .select(`
+    *,
+    categoria:categorias(*),
+    variaciones(*),
+    imagenes:imagenes_producto(*)
+  `)
+  .order('created_at', { ascending: false });
+
+// ✅ Filtros con .eq(), .in(), .gt(), etc.
+const { data } = await supabase
+  .from('productos')
+  .select('*')
+  .eq('categoria_id', categoriaId)
+  .eq('disponible', true);
+
+// ✅ Manejo de errores
+const { data, error } = await supabase.from('productos').select('*');
+
+if (error) {
+  console.error('Error fetching productos:', error);
+  throw new Error(ERROR_MESSAGES.loadingError);
+}
+
+return data ?? [];
+```
+
+---
+
+### Flujo de WhatsApp (V1)
+
+```typescript
+// ✅ Formato de mensaje estándar
+import { WHATSAPP } from '@/lib/constants';
+
+function generarMensajeProducto(
+  producto: Producto,
+  variacion?: Variacion
+): string {
+  let mensaje = `Hola! Me interesa el producto:\n`;
+  mensaje += `📦 ${producto.nombre}\n`;
+  
+  if (variacion) {
+    mensaje += `📏 Tamaño: ${variacion.tamaño}\n`;
+    mensaje += `🎨 Color: ${variacion.color}\n`;
+    mensaje += `💰 Precio: $${variacion.precio}\n`;
+  }
+  
+  mensaje += `\n¿Está disponible?`;
+  return mensaje;
+}
+
+// Uso en componente
+const whatsappUrl = WHATSAPP.getUrl(generarMensajeProducto(producto, variacion));
+```
+
+---
+
+### Commits (Conventional Commits)
+
+```bash
+# Formato
+<type>(<scope>): <description>
+
+# Tipos principales
+feat:      Nueva funcionalidad
+fix:       Corrección de bugs
+style:     Cambios de formato (no afectan lógica)
+refactor:  Refactorización de código
+docs:      Cambios en documentación
+test:      Añadir o modificar tests
+chore:     Tareas de mantenimiento
+
+# Ejemplos
+feat(productos): agregar filtro por categoría
+fix(gallery): corregir navegación de imágenes
+style(header): ajustar espaciado en mobile
+refactor(types): consolidar interfaces de producto
+docs(readme): actualizar instrucciones de instalación
 ```
 
 ---
@@ -164,27 +294,27 @@ const ProductGrid = () => {}; // PascalCase
 
 **IMPORTANTE:** Usar siempre constantes en lugar de valores hardcoded
 
+**Siempre usar constantes de `/lib/constants/` en lugar de valores hardcodeados.**
+
 ```typescript
-// ✅ SIEMPRE importar de lib/constants/
-import { SITE_CONFIG, WHATSAPP, STORAGE, ERROR_MESSAGES } from '@/lib/constants'
-import { NAV_LINKS, SOCIAL_LINKS } from '@/lib/constants/navigation'
+// ✅ Usar constantes
+import { SITE_CONFIG, WHATSAPP, ERROR_MESSAGES } from '@/lib/constants';
 
-// ✅ Uso correcto
-<h1>{SITE_CONFIG.name}</h1>
-<span>{SITE_CONFIG.tagline}</span>
+export const metadata = {
+  title: SITE_CONFIG.name,
+  description: SITE_CONFIG.description,
+};
 
-const whatsappUrl = WHATSAPP.getUrl(`Hola! Me interesa ${producto.nombre}`)
+// Para WhatsApp
+const mensaje = `Hola! Me interesa el producto ${producto.nombre}`;
+const url = WHATSAPP.getUrl(mensaje);
 
-const imagePath = `${STORAGE.productsPath}/manteles/foto.jpg`
+// Para errores
+throw new Error(ERROR_MESSAGES.productNotFound);
 
-if (!productos.length) {
-  return <p>{ERROR_MESSAGES.noProducts}</p>
-}
-
-// ❌ EVITAR hardcoded strings
-<h1>Muma Estudio</h1>                    // ❌ Usar SITE_CONFIG.name
-const url = 'https://wa.me/549...'       // ❌ Usar WHATSAPP.getUrl()
-const img = '/images/productos/...'      // ❌ Usar STORAGE.productsPath
+// ❌ Evitar hardcodear valores
+const siteName = "Muma Estudio";  // ❌ Usar SITE_CONFIG.name
+const phone = "5492999123456";     // ❌ Usar WHATSAPP.number
 ```
 
 **Constantes disponibles:**
@@ -399,6 +529,93 @@ export default function Loading() {
 
 ---
 
+## 🚀 Patrones Comunes del Proyecto
+
+### Cargar un producto completo
+
+```typescript
+import { createClient } from '@/lib/supabase/server';
+import { ProductoCompleto } from '@/lib/types';
+
+export async function getProductoBySlug(
+  slug: string
+): Promise<ProductoCompleto | null> {
+  const supabase = await createClient();
+  
+  const { data, error } = await supabase
+    .from('productos')
+    .select(`
+      *,
+      categoria:categorias(*),
+      variaciones(*),
+      imagenes:imagenes_producto(*)
+    `)
+    .eq('slug', slug)
+    .single();
+  
+  if (error || !data) return null;
+  return data as ProductoCompleto;
+}
+```
+
+### Selector de variaciones (Client Component)
+
+```typescript
+'use client';
+
+import { useState } from 'react';
+import { Variacion } from '@/lib/types';
+
+export function VariationSelector({ 
+  variaciones,
+  onSelect 
+}: { 
+  variaciones: Variacion[];
+  onSelect: (v: Variacion) => void;
+}) {
+  const [selected, setSelected] = useState<Variacion | null>(null);
+  
+  const handleSelect = (variacion: Variacion) => {
+    setSelected(variacion);
+    onSelect(variacion);
+  };
+  
+  return (
+    <div className="space-y-4">
+      {variaciones.map((v) => (
+        <button
+          key={v.id}
+          onClick={() => handleSelect(v)}
+          className={clsx(
+            'px-4 py-2 rounded border',
+            selected?.id === v.id && 'border-primary bg-primary/10'
+          )}
+        >
+          {v.tamaño} - {v.color}
+        </button>
+      ))}
+    </div>
+  );
+}
+```
+
+---
+
+## 📝 Checklist de Revisión de Código
+
+Antes de hacer commit, verificar:
+
+- [ ] ¿Todos los tipos están explícitos (sin `any`)?
+- [ ] ¿Estás usando el cliente de Supabase correcto (server vs client)?
+- [ ] ¿Los Server Components no tienen `'use client'` innecesario?
+- [ ] ¿Usaste constantes de `/lib/constants/` en lugar de hardcodear?
+- [ ] ¿Las clases de Tailwind están formateadas en múltiples líneas?
+- [ ] ¿El commit sigue Conventional Commits?
+- [ ] ¿Manejaste los errores de Supabase correctamente?
+- [ ] ¿Los nombres de props están en español (datos) e inglés (lógica)?
+
+---
+
 ## Checklist Pre-Commit
 
 ```bash
@@ -561,3 +778,29 @@ export function ProductCard({ producto, imagenPrincipal }: ProductCardProps) {
 ```
 
 ---
+
+## 🔮 Preparación para V2 (Mercado Pago)
+
+Cuando implementemos el carrito y pagos, considerar:
+
+```typescript
+// Estructura futura
+interface CarritoItem {
+  producto_id: string;
+  variacion_id: string;
+  cantidad: number;
+  precio_unitario: number;
+}
+
+interface Pedido {
+  id: string;
+  usuario_id: string;
+  items: CarritoItem[];
+  total: number;
+  estado: 'pendiente' | 'pagado' | 'enviado' | 'cancelado';
+  mercadopago_payment_id?: string;
+  created_at: string;
+}
+```
+
+Mantener el código actual flexible para esta migración.
