@@ -22,11 +22,15 @@ export function ProductCard({ producto, imagenPrincipal }: ProductCardProps) {
         relative
         block
         overflow-hidden
-        rounded-lg
-        border border-border
-        bg-background
-        transition-shadow
-        hover:shadow-lg
+        rounded-2xl
+        border border-border/50
+        bg-white
+        shadow-sm
+        transition-all
+        duration-300
+        hover:shadow-xl
+        hover:border-foreground/10
+        hover:-translate-y-1
       "
     >
       {/* Badge Destacado */}
@@ -34,17 +38,18 @@ export function ProductCard({ producto, imagenPrincipal }: ProductCardProps) {
         <div
           className="
             absolute
-            top-3
-            right-3
+            top-4
+            right-4
             z-10
             rounded-full
-            bg-accent
-            px-3
-            py-1
+            bg-foreground
+            px-4
+            py-1.5
             text-xs
-            font-medium
-            text-white
-            shadow-md
+            font-semibold
+            text-background
+            shadow-lg
+            backdrop-blur-sm
           "
         >
           Destacado
@@ -52,7 +57,7 @@ export function ProductCard({ producto, imagenPrincipal }: ProductCardProps) {
       )}
 
       {/* Imagen del Producto */}
-      <div className="relative aspect-square overflow-hidden bg-muted">
+      <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/30 to-muted">
         <Image
           src={imageSrc}
           alt={`${producto.nombre} - Textil artesanal de Muma Estudio`}
@@ -60,31 +65,43 @@ export function ProductCard({ producto, imagenPrincipal }: ProductCardProps) {
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="
             object-cover
-            transition-transform
-            duration-300
-            group-hover:scale-105
+            transition-all
+            duration-500
+            group-hover:scale-110
           "
           loading="lazy"
+        />
+        {/* Gradient overlay on hover */}
+        <div
+          className="
+            absolute inset-0
+            bg-gradient-to-t from-black/10 via-transparent to-transparent
+            opacity-0
+            transition-opacity
+            duration-300
+            group-hover:opacity-100
+          "
         />
       </div>
 
       {/* Información del Producto */}
-      <div className="p-4">
+      <div className="p-5">
         <h3
           className="
-            mb-1
+            mb-2
             text-lg
-            font-medium
+            font-bold
             text-foreground
             transition-colors
-            group-hover:text-accent
+            duration-300
+            group-hover:text-foreground/90
           "
         >
           {producto.nombre}
         </h3>
 
         {precioFormateado && (
-          <p className="text-sm text-muted-foreground">{precioFormateado}</p>
+          <p className="text-sm font-semibold text-muted-foreground">{precioFormateado}</p>
         )}
       </div>
     </Link>

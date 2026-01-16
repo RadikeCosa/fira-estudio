@@ -17,27 +17,59 @@ export default async function Home() {
       <section
         className="
           relative
-          bg-gradient-to-b from-muted/30 to-background
+          bg-gradient-to-b from-muted/50 via-background to-background
           px-4 py-20
           sm:px-6 sm:py-28
-          lg:px-8 lg:py-32
+          lg:px-8 lg:py-36
+          overflow-hidden
         "
       >
-        <div className="mx-auto max-w-4xl text-center">
+        {/* Decorative gradient blobs */}
+        <div className="absolute inset-0 -z-10 overflow-hidden">
+          <div
+            className="
+              absolute -top-40 -right-40
+              h-96 w-96
+              rounded-full
+              bg-gradient-to-br from-muted to-transparent
+              opacity-40
+              blur-3xl
+            "
+          />
+          <div
+            className="
+              absolute -bottom-40 -left-40
+              h-96 w-96
+              rounded-full
+              bg-gradient-to-tr from-muted to-transparent
+              opacity-40
+              blur-3xl
+            "
+          />
+        </div>
+
+        <div className="mx-auto max-w-4xl text-center relative z-10">
           {/* Badge */}
           <div
             className="
-              mb-6
+              mb-8
               inline-flex items-center gap-2
               rounded-full
-              border border-border
-              bg-background
-              px-4 py-2
+              border border-border/50
+              bg-white/80
+              backdrop-blur-sm
+              px-5 py-2.5
               text-sm
+              font-medium
               text-accent
+              shadow-sm
+              transition-all
+              duration-300
+              hover:shadow-md
+              hover:border-border
             "
           >
-            <Sparkles className="h-4 w-4" />
+            <Sparkles className="h-4 w-4 text-foreground" />
             <span>Textiles Artesanales Únicos</span>
           </div>
 
@@ -51,6 +83,8 @@ export default async function Home() {
               text-foreground
               sm:text-6xl
               lg:text-7xl
+              animate-in fade-in
+              duration-700
             "
           >
             {SITE_CONFIG.name}
@@ -59,10 +93,14 @@ export default async function Home() {
           {/* Subtítulo */}
           <p
             className="
-              mb-4
+              mb-5
               text-xl
-              text-accent
+              font-medium
+              text-foreground/80
               sm:text-2xl
+              animate-in fade-in
+              duration-700
+              delay-150
             "
           >
             {SITE_CONFIG.tagline}
@@ -72,12 +110,15 @@ export default async function Home() {
           <p
             className="
               mx-auto
-              mb-10
+              mb-12
               max-w-2xl
               text-base
               leading-relaxed
-              text-accent
+              text-muted-foreground
               sm:text-lg
+              animate-in fade-in
+              duration-700
+              delay-300
             "
           >
             Creamos manteles, servilletas y caminos de mesa con dedicación
@@ -90,44 +131,61 @@ export default async function Home() {
             className="
               flex flex-col gap-4
               sm:flex-row sm:justify-center
+              animate-in fade-in
+              duration-700
+              delay-500
             "
           >
             <Link
               href="/productos"
               className="
+                group
                 inline-flex items-center justify-center gap-2
-                rounded-lg
+                rounded-xl
                 bg-foreground
-                px-6 py-3
-                text-base font-medium
+                px-8 py-4
+                text-base font-semibold
                 text-background
+                shadow-lg
                 transition-all
-                duration-200
-                hover:opacity-90
-                hover:shadow-lg
-                sm:px-8 sm:py-4
+                duration-300
+                hover:shadow-xl
+                hover:scale-[1.02]
+                focus:outline-none
+                focus:ring-2
+                focus:ring-foreground
+                focus:ring-offset-2
+                sm:px-10 sm:py-4
                 sm:text-lg
               "
             >
               Ver Productos
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
 
             <Link
               href="/sobre-nosotros"
               className="
+                group
                 inline-flex items-center justify-center gap-2
-                rounded-lg
-                border border-border
-                bg-background
-                px-6 py-3
-                text-base font-medium
+                rounded-xl
+                border-2 border-border
+                bg-white/50
+                backdrop-blur-sm
+                px-8 py-4
+                text-base font-semibold
                 text-foreground
+                shadow-sm
                 transition-all
-                duration-200
-                hover:bg-muted
-                hover:shadow-lg
-                sm:px-8 sm:py-4
+                duration-300
+                hover:bg-white
+                hover:border-foreground/20
+                hover:shadow-md
+                focus:outline-none
+                focus:ring-2
+                focus:ring-foreground
+                focus:ring-offset-2
+                sm:px-10 sm:py-4
                 sm:text-lg
               "
             >
@@ -142,16 +200,25 @@ export default async function Home() {
         <section
           className="
             mx-auto max-w-7xl
-            px-4 py-16
-            sm:px-6 sm:py-20
-            lg:px-8 lg:py-24
+            px-4 py-20
+            sm:px-6 sm:py-24
+            lg:px-8 lg:py-28
           "
         >
           {/* Encabezado de sección */}
-          <div className="mb-12 text-center">
+          <div className="mb-16 text-center">
+            <div className="mb-4 inline-block">
+              <div
+                className="
+                  inline-flex h-1 w-16
+                  rounded-full
+                  bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
+                "
+              />
+            </div>
             <h2
               className="
-                mb-4
+                mb-5
                 text-3xl
                 font-bold
                 text-foreground
@@ -165,7 +232,8 @@ export default async function Home() {
               className="
                 mx-auto max-w-2xl
                 text-base
-                text-accent
+                leading-relaxed
+                text-muted-foreground
                 sm:text-lg
               "
             >
@@ -200,20 +268,22 @@ export default async function Home() {
           </div>
 
           {/* Link a todos los productos */}
-          <div className="mt-12 text-center">
+          <div className="mt-16 text-center">
             <Link
               href="/productos"
               className="
+                group
                 inline-flex items-center gap-2
-                text-base font-medium
+                text-base font-semibold
                 text-foreground
-                transition-colors
-                hover:text-accent
+                transition-all
+                duration-300
+                hover:gap-3
                 sm:text-lg
               "
             >
               Ver todos los productos
-              <ArrowRight className="h-5 w-5" />
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </Link>
           </div>
         </section>
@@ -222,18 +292,27 @@ export default async function Home() {
       {/* Categorías */}
       <section
         className="
-          bg-muted/30
-          px-4 py-16
-          sm:px-6 sm:py-20
-          lg:px-8 lg:py-24
+          bg-gradient-to-b from-muted/30 via-muted/50 to-muted/30
+          px-4 py-20
+          sm:px-6 sm:py-24
+          lg:px-8 lg:py-28
         "
       >
         <div className="mx-auto max-w-7xl">
           {/* Encabezado de sección */}
-          <div className="mb-12 text-center">
+          <div className="mb-16 text-center">
+            <div className="mb-4 inline-block">
+              <div
+                className="
+                  inline-flex h-1 w-16
+                  rounded-full
+                  bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
+                "
+              />
+            </div>
             <h2
               className="
-                mb-4
+                mb-5
                 text-3xl
                 font-bold
                 text-foreground
@@ -247,7 +326,8 @@ export default async function Home() {
               className="
                 mx-auto max-w-2xl
                 text-base
-                text-accent
+                leading-relaxed
+                text-muted-foreground
                 sm:text-lg
               "
             >
@@ -270,20 +350,23 @@ export default async function Home() {
               className="
                 group
                 overflow-hidden
-                rounded-xl
-                border border-border
-                bg-background
+                rounded-2xl
+                border border-border/50
+                bg-white
+                shadow-sm
                 transition-all
                 duration-300
                 hover:shadow-xl
-                hover:border-accent/20
+                hover:border-foreground/10
+                hover:-translate-y-1
               "
             >
               <div
                 className="
                   aspect-[4/3]
                   overflow-hidden
-                  bg-muted
+                  bg-gradient-to-br from-muted/50 to-muted
+                  relative
                 "
               >
                 {/* Placeholder para imagen de categoría */}
@@ -291,37 +374,51 @@ export default async function Home() {
                   className="
                     flex h-full w-full
                     items-center justify-center
-                    bg-gradient-to-br from-muted to-muted/50
                     transition-transform
-                    duration-300
-                    group-hover:scale-105
+                    duration-500
+                    group-hover:scale-110
                   "
                 >
                   <span
                     className="
-                      text-4xl
+                      text-5xl
                       font-bold
-                      text-accent/30
+                      text-foreground/10
+                      transition-all
+                      duration-300
+                      group-hover:text-foreground/20
                     "
                   >
                     Manteles
                   </span>
                 </div>
+                {/* Gradient overlay on hover */}
+                <div
+                  className="
+                    absolute inset-0
+                    bg-gradient-to-t from-black/5 to-transparent
+                    opacity-0
+                    transition-opacity
+                    duration-300
+                    group-hover:opacity-100
+                  "
+                />
               </div>
               <div className="p-6">
                 <h3
                   className="
                     mb-2
                     text-xl
-                    font-semibold
+                    font-bold
                     text-foreground
                     transition-colors
-                    group-hover:text-accent
+                    duration-300
+                    group-hover:text-foreground/90
                   "
                 >
                   Manteles
                 </h3>
-                <p className="text-sm text-accent">
+                <p className="text-sm leading-relaxed text-muted-foreground">
                   Para darle un toque especial a tu mesa
                 </p>
               </div>
@@ -333,57 +430,73 @@ export default async function Home() {
               className="
                 group
                 overflow-hidden
-                rounded-xl
-                border border-border
-                bg-background
+                rounded-2xl
+                border border-border/50
+                bg-white
+                shadow-sm
                 transition-all
                 duration-300
                 hover:shadow-xl
-                hover:border-accent/20
+                hover:border-foreground/10
+                hover:-translate-y-1
               "
             >
               <div
                 className="
                   aspect-[4/3]
                   overflow-hidden
-                  bg-muted
+                  bg-gradient-to-br from-muted/50 to-muted
+                  relative
                 "
               >
                 <div
                   className="
                     flex h-full w-full
                     items-center justify-center
-                    bg-gradient-to-br from-muted to-muted/50
                     transition-transform
-                    duration-300
-                    group-hover:scale-105
+                    duration-500
+                    group-hover:scale-110
                   "
                 >
                   <span
                     className="
-                      text-4xl
+                      text-5xl
                       font-bold
-                      text-accent/30
+                      text-foreground/10
+                      transition-all
+                      duration-300
+                      group-hover:text-foreground/20
                     "
                   >
                     Servilletas
                   </span>
                 </div>
+                <div
+                  className="
+                    absolute inset-0
+                    bg-gradient-to-t from-black/5 to-transparent
+                    opacity-0
+                    transition-opacity
+                    duration-300
+                    group-hover:opacity-100
+                  "
+                />
               </div>
               <div className="p-6">
                 <h3
                   className="
                     mb-2
                     text-xl
-                    font-semibold
+                    font-bold
                     text-foreground
                     transition-colors
-                    group-hover:text-accent
+                    duration-300
+                    group-hover:text-foreground/90
                   "
                 >
                   Servilletas
                 </h3>
-                <p className="text-sm text-accent">
+                <p className="text-sm leading-relaxed text-muted-foreground">
                   Detalles que marcan la diferencia
                 </p>
               </div>
@@ -395,57 +508,73 @@ export default async function Home() {
               className="
                 group
                 overflow-hidden
-                rounded-xl
-                border border-border
-                bg-background
+                rounded-2xl
+                border border-border/50
+                bg-white
+                shadow-sm
                 transition-all
                 duration-300
                 hover:shadow-xl
-                hover:border-accent/20
+                hover:border-foreground/10
+                hover:-translate-y-1
               "
             >
               <div
                 className="
                   aspect-[4/3]
                   overflow-hidden
-                  bg-muted
+                  bg-gradient-to-br from-muted/50 to-muted
+                  relative
                 "
               >
                 <div
                   className="
                     flex h-full w-full
                     items-center justify-center
-                    bg-gradient-to-br from-muted to-muted/50
                     transition-transform
-                    duration-300
-                    group-hover:scale-105
+                    duration-500
+                    group-hover:scale-110
                   "
                 >
                   <span
                     className="
-                      text-4xl
+                      text-5xl
                       font-bold
-                      text-accent/30
+                      text-foreground/10
+                      transition-all
+                      duration-300
+                      group-hover:text-foreground/20
                     "
                   >
                     Caminos
                   </span>
                 </div>
+                <div
+                  className="
+                    absolute inset-0
+                    bg-gradient-to-t from-black/5 to-transparent
+                    opacity-0
+                    transition-opacity
+                    duration-300
+                    group-hover:opacity-100
+                  "
+                />
               </div>
               <div className="p-6">
                 <h3
                   className="
                     mb-2
                     text-xl
-                    font-semibold
+                    font-bold
                     text-foreground
                     transition-colors
-                    group-hover:text-accent
+                    duration-300
+                    group-hover:text-foreground/90
                   "
                 >
                   Caminos de Mesa
                 </h3>
-                <p className="text-sm text-accent">Elegancia en cada detalle</p>
+                <p className="text-sm leading-relaxed text-muted-foreground">Elegancia en cada detalle</p>
               </div>
             </Link>
           </div>
@@ -456,12 +585,21 @@ export default async function Home() {
       <section
         className="
           mx-auto max-w-4xl
-          px-4 py-16
+          px-4 py-20
           text-center
-          sm:px-6 sm:py-20
-          lg:px-8 lg:py-24
+          sm:px-6 sm:py-24
+          lg:px-8 lg:py-28
         "
       >
+        <div className="mb-4 inline-block">
+          <div
+            className="
+              inline-flex h-1 w-16
+              rounded-full
+              bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
+            "
+          />
+        </div>
         <h2
           className="
             mb-6
@@ -475,9 +613,10 @@ export default async function Home() {
         </h2>
         <p
           className="
-            mb-8
+            mb-10
             text-base
-            text-accent
+            leading-relaxed
+            text-muted-foreground
             sm:text-lg
           "
         >
@@ -486,22 +625,28 @@ export default async function Home() {
         <Link
           href="/contacto"
           className="
+            group
             inline-flex items-center justify-center gap-2
-            rounded-lg
+            rounded-xl
             bg-foreground
-            px-6 py-3
-            text-base font-medium
+            px-8 py-4
+            text-base font-semibold
             text-background
+            shadow-lg
             transition-all
-            duration-200
-            hover:opacity-90
-            hover:shadow-lg
-            sm:px-8 sm:py-4
+            duration-300
+            hover:shadow-xl
+            hover:scale-[1.02]
+            focus:outline-none
+            focus:ring-2
+            focus:ring-foreground
+            focus:ring-offset-2
+            sm:px-10 sm:py-4
             sm:text-lg
           "
         >
           Contactanos
-          <ArrowRight className="h-5 w-5" />
+          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
         </Link>
       </section>
     </div>
