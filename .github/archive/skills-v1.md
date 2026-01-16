@@ -1,9 +1,11 @@
 ---
-title: "Skills de GitHub Copilot para Muma Estudio"
+title: "Skills de GitHub Copilot para Muma Estudio [DEPRECATED]"
 description: "Conocimientos técnicos específicos para el desarrollo del e-commerce de textiles"
 version: "2.0"
 lastUpdated: "2026-01-16"
 category: "Technical Knowledge Base"
+deprecated: true
+replacedBy: ".github/skills/"
 tags:
   - copilot
   - skills
@@ -11,6 +13,24 @@ tags:
   - supabase
   - typescript
   - e-commerce
+---
+
+# ⚠️ DEPRECATED: Skills de GitHub Copilot - Muma Estudio
+
+> **This file has been deprecated as of 2026-01-16 (v3.0)**
+> 
+> The content has been reorganized into modular skill files for better maintainability and activation accuracy.
+> 
+> **New structure:**
+> - Core instructions: `.github/instructions/copilot-instructions.instructions.md`
+> - Supabase queries: `.github/skills/supabase-queries/SKILL.md`
+> - WhatsApp integration: `.github/skills/whatsapp-integration/SKILL.md`
+> - Product variations: `.github/skills/product-variations/SKILL.md`
+> - Database schema: `.github/reference/database-schema.md`
+> - Business logic: `.github/reference/business-logic.md`
+> 
+> This file is kept for historical reference only.
+
 ---
 
 # Skills de GitHub Copilot - Muma Estudio

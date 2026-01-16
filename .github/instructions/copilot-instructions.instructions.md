@@ -1,7 +1,7 @@
 ---
-title: "Instrucciones de GitHub Copilot para Muma Estudio"
-description: "Guía de desarrollo para el e-commerce de textiles artesanales con Next.js 15 + Supabase"
-version: "2.0"
+title: "GitHub Copilot Instructions - Muma Estudio"
+description: "Development guidelines for textile e-commerce with Next.js 15 + Supabase"
+version: "3.0"
 lastUpdated: "2026-01-16"
 stack:
   - Next.js 15 (App Router)
@@ -11,189 +11,187 @@ stack:
   - Vercel
 ---
 
-# Instrucciones de GitHub Copilot - Muma Estudio
+# GitHub Copilot Instructions - Muma Estudio
 
-## 🎯 Contexto del Proyecto
+## 🎯 Project Context
 
-**Muma Estudio** es un e-commerce de textiles artesanales (manteles, servilletas, caminos de mesa) con productos que tienen múltiples variaciones de tamaño y color.
+**Muma Estudio** is an artisan textile e-commerce (tablecloths, napkins, table runners) with products that have multiple size and color variations.
 
-- **V1 (Actual):** Catálogo visual + consultas por WhatsApp
-- **V2 (Futuro):** Carrito + pagos con Mercado Pago
+- **V1 (Current):** Visual catalog + WhatsApp inquiries
+- **V2 (Future):** Shopping cart + Mercado Pago payments
+
+### Business Model
+
+```
+Base Product:  "Mantel Floral"
+├── Variation 1: 150x200cm - Red - $15,000 (stock: 5)
+├── Variation 2: 150x200cm - Blue - $15,000 (stock: 3)
+└── Variation 3: 180x250cm - Red - $18,500 (stock: 2)
+```
+
+**Key Concepts:**
+- Prices live in **variations**, not base products
+- Each product can have multiple size/color combinations
+- `stock = 0` means "available on request" (not out of stock)
+- Images can be shared or variation-specific
+- V1 uses WhatsApp for all customer inquiries (no checkout)
 
 ---
 
-## 🏗️ Arquitectura
+## 🏗️ Architecture Overview
 
-### Stack Tecnológico
+### Stack
 
-- **Framework:** Next.js 15 con App Router
-- **Lenguaje:** TypeScript en modo estricto
-- **Base de datos:** Supabase (PostgreSQL)
-- **Estilos:** Tailwind CSS (utility-first, light mode)
-- **Deploy:** Vercel con integración Supabase
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript (strict mode)
+- **Database:** Supabase (PostgreSQL)
+- **Styling:** Tailwind CSS (utility-first)
+- **Deployment:** Vercel
 
-### Estructura de Directorios
-
-```
-app/                    # Pages y layouts (App Router)
-components/             # Componentes React por dominio
-  ├── layout/          # Header, Footer, MobileNav
-  ├── productos/       # ProductCard, ProductGallery, VariationSelector
-  └── ui/              # Componentes reutilizables (futuro)
-lib/                   # Lógica de negocio
-  ├── constants/       # Configuración global (SITE_CONFIG, WHATSAPP)
-  ├── supabase/        # Clientes (client. ts, server.ts) y queries
-  ├── utils/           # Utilidades (formatPrice, etc.)
-  └── types.ts         # Tipos TypeScript compartidos
-```
-
-### Esquema de Base de Datos (Supabase)
+### Directory Structure
 
 ```
-categorias          → id, nombre, slug, orden
-productos           → id, nombre, slug, descripcion, categoria_id, activo, destacado
-variaciones         → id, producto_id, tamanio, color, precio, stock, activo
-imagenes_producto   → id, producto_id, url, alt_text, orden, es_principal
-consultas           → id, nombre, email, mensaje, created_at
+app/                 # Pages and layouts (App Router)
+components/          # React components by domain
+  ├── layout/       # Header, Footer, MobileNav
+  ├── productos/    # ProductCard, ProductGallery, VariationSelector
+  └── ui/           # Reusable primitives (future)
+lib/                # Business logic
+  ├── constants/    # Global config (SITE_CONFIG, WHATSAPP)
+  ├── supabase/     # Clients (server.ts, client.ts) and queries
+  ├── utils/        # Utilities (formatPrice, etc.)
+  └── types.ts      # Shared TypeScript types
 ```
+
+### Database Schema
+
+**Tables:** `categorias`, `productos`, `variaciones`, `imagenes_producto`, `consultas`
+
+**Key Relations:**
+- `productos` → `categorias` (many-to-one)
+- `productos` → `variaciones` (one-to-many)
+- `productos` → `imagenes_producto` (one-to-many)
+
+📋 **Complete schema:** `.github/reference/database-schema.md`
 
 ---
 
-## 📜 Reglas Fundamentales
+## 📜 Core Rules
 
-### 1. TypeScript Estricto
+### 1. TypeScript Strict Mode
+
+**Always:**
+- Explicit types on all function parameters and return values
+- Use `interface` for objects, `type` for unions
+- Business property names in **Spanish**, code/comments in **English**
+- **NEVER** use `any`
 
 ```typescript
-// ✅ SIEMPRE: Tipos explícitos en funciones y parámetros
+// ✅ CORRECT
 export async function getProductos(): Promise<ProductoCompleto[]> {
   const supabase = await createClient();
   // ...
 }
 
-// ❌ NUNCA: Usar 'any' o tipos implícitos
-let data: any; // ❌
-function get() {} // ❌
+// ❌ WRONG
+let data: any; // Never use 'any'
+function get() {} // Missing return type
 ```
-
-**Reglas:**
-
-- Tipos explícitos en todas las funciones
-- `interface` para objetos, `type` para unions
-- Nombres de propiedades de negocio en **español**, código en **inglés**
-- **NUNCA** usar `any`
 
 ---
 
 ### 2. Server vs Client Components
 
-```typescript
-// ✅ Por defecto: Server Component (sin 'use client')
-// Usar Server Components para:
-// - Queries de base de datos
-// - Generación de metadata
-// - Contenido estático
+**Default: Server Component** (no `'use client'`)
 
+Use Server Components for:
+- Database queries
+- Metadata generation
+- Static content
+
+**Client Components only when:**
+- Need React hooks (`useState`, `useEffect`)
+- Event handlers (`onClick`, `onChange`)
+- Browser APIs (`window`, `localStorage`)
+
+```typescript
+// ✅ Server Component (default)
 export default async function ProductosPage() {
-  const productos = await getProductos(); // Query directa
+  const productos = await getProductos(); // Direct query
   return <ProductGrid productos={productos} />;
 }
 
-// ✅ Client Component (solo cuando es necesario)
-// Usar 'use client' para:
-// - useState, useEffect, hooks de React
-// - Eventos (onClick, onChange)
-// - Browser APIs (window, localStorage)
-
-("use client");
+// ✅ Client Component (only when necessary)
+'use client';
 export function VariationSelector() {
   const [selected, setSelected] = useState(null);
-  // ...
+  return <select onChange={(e) => setSelected(e.target.value)} />;
 }
 ```
 
 ---
 
-### 3. Queries de Supabase
+### 3. Supabase Client Selection
 
-#### Patrón estándar con relaciones:
+Import the correct client based on component type:
 
+```typescript
+// ✅ Server Components
+import { createClient } from "@/lib/supabase/server";
+
+// ✅ Client Components
+import { createClient } from "@/lib/supabase/client";
+```
+
+**Key patterns:**
+- Always check for `error` before using `data`
+- Use `.eq("activo", true)` for active records (not `disponible`)
+- ⚠️ **Cannot order nested relations** - sort in JavaScript after fetch
+- Use `.single()` for queries expecting one result
+
+📋 **Complete query patterns:** `.github/skills/supabase-queries/SKILL.md`
+
+---
+
+### 4. Error Handling Pattern
+
+**Server Components:**
 ```typescript
 const { data, error } = await supabase
   .from("productos")
-  .select(
-    `
-    *,
-    categoria: categorias(*),
-    variaciones(*),
-    imagenes:imagenes_producto(*)
-  `
-  )
-  .eq("activo", true);
+  .select("*")
+  .eq("slug", slug)
+  .single();
 
-if (error) throw error;
-
-// ⚠️ IMPORTANTE: Ordenar relaciones en JavaScript
-// Supabase NO permite . order() en joins
-data.forEach((producto) => {
-  producto.variaciones.sort((a, b) => a.precio - b.precio);
-  producto.imagenes.sort((a, b) => a.orden - b.orden);
-});
+// Handle not found
+if (error) {
+  if (error.code === "PGRST116") {
+    return notFound(); // Triggers not-found.tsx
+  }
+  console.error("Database error:", error);
+  throw error; // Triggers error.tsx
+}
 ```
 
-**Reglas clave:**
-
-- ✅ Usar `activo` como columna de estado (no `disponible`)
-- ❌ NO usar `.order('variaciones(precio)')` - ordenar en JS
-- ✅ Siempre validar `error` antes de usar `data`
-- ✅ Usar `.single()` para queries de un solo resultado
-
----
-
-### 4. Importaciones y Constantes
-
+**Client Components:**
 ```typescript
-// ✅ Usar constantes centralizadas
-import { SITE_CONFIG, WHATSAPP, ERROR_MESSAGES } from "@/lib/constants";
-
-// ✅ Tipos desde lib/types. ts
-import type { Producto, ProductoCompleto, Variacion } from "@/lib/types";
-
-// ✅ Queries desde lib/supabase/queries. ts
-import { getProductos, getProductoBySlug } from "@/lib/supabase/queries";
-
-// ✅ Cliente de Supabase según contexto
-import { createClient } from "@/lib/supabase/server"; // Server Components
-import { createClient } from "@/lib/supabase/client"; // Client Components
+try {
+  const response = await fetch('/api/productos');
+  if (!response.ok) throw new Error('Failed to fetch');
+  const data = await response.json();
+} catch (error) {
+  console.error('Error:', error);
+  setError(error.message);
+}
 ```
 
 ---
 
-### 5. Estilos con Tailwind CSS
+### 5. Component Patterns
 
-```tsx
-// ✅ Clases en múltiples líneas para legibilidad
-<div className="
-  flex items-center gap-4
-  p-4 rounded-lg
-  bg-white hover:shadow-lg
-  md: flex-row md:gap-6
-">
-
-// ✅ Mobile-first (sin prefijo → sm → md → lg → xl)
-<div className="
-  grid grid-cols-1
-  sm:grid-cols-2
-  lg:grid-cols-3
-  gap-4
-">
-```
-
----
-
-### 6. Manejo de Errores y Loading States
-
-```tsx
-// ✅ Suspense boundaries en Server Components
+**Loading States:**
+```typescript
+// Option 1: Suspense boundaries
 import { Suspense } from "react";
 
 export default function Page() {
@@ -204,119 +202,225 @@ export default function Page() {
   );
 }
 
-// ✅ O usar loading. tsx en App Router
+// Option 2: loading.tsx file (App Router)
 // app/productos/loading.tsx
 export default function Loading() {
   return <ProductosSkeleton />;
 }
+```
 
-// ✅ Manejo de errores con try/catch
-try {
-  const data = await getProductoBySlug(slug);
-  if (!data) return notFound();
-  return <ProductDetail producto={data} />;
-} catch (error) {
-  console.error("Error al cargar producto:", error);
-  throw error; // Next.js lo captura con error.tsx
+**Naming Conventions:**
+- Components: `PascalCase` (ProductCard, VariationSelector)
+- Functions/variables: `camelCase` (getProductos, isLoading)
+- Constants: `UPPER_SNAKE_CASE` (SITE_CONFIG, ERROR_MESSAGES)
+- Booleans: `is/has/should` prefix (isLoading, hasError, shouldDisplay)
+
+---
+
+### 6. Styling with Tailwind
+
+**Mobile-first approach:**
+```tsx
+<div className="
+  grid grid-cols-1
+  sm:grid-cols-2
+  lg:grid-cols-3
+  gap-4 sm:gap-6 lg:gap-8
+">
+```
+
+**Breakpoints:**
+- `sm`: 640px
+- `md`: 768px
+- `lg`: 1024px
+- `xl`: 1280px
+- `2xl`: 1536px
+
+**Best practices:**
+- Multi-line class declarations for readability
+- Group related utilities (layout, spacing, colors)
+- Use design tokens from Tailwind config
+
+---
+
+### 7. Constants & Configuration
+
+Centralize all configuration:
+
+```typescript
+// ✅ Use centralized constants
+import { SITE_CONFIG, WHATSAPP, ERROR_MESSAGES } from "@/lib/constants";
+
+// ✅ Import types
+import type { Producto, ProductoCompleto, Variacion } from "@/lib/types";
+
+// ✅ Import queries
+import { getProductos, getProductoBySlug } from "@/lib/supabase/queries";
+```
+
+---
+
+## 🎯 When to Load Additional Skills
+
+GitHub Copilot will automatically activate these skills when relevant:
+
+**Database Operations:**
+- 📋 `.github/skills/supabase-queries/SKILL.md`
+- Use when: Building queries, handling relations, filtering/sorting data
+- Triggers: "query", "relaciones", "obtener productos", "filtrar"
+
+**WhatsApp Integration:**
+- 📋 `.github/skills/whatsapp-integration/SKILL.md`
+- Use when: Creating contact links, formatting messages, WhatsApp buttons
+- Triggers: "WhatsApp", "mensaje", "consulta", "contacto"
+
+**Product Variations:**
+- 📋 `.github/skills/product-variations/SKILL.md`
+- Use when: Building selectors, price calculations, stock management
+- Triggers: "variaciones", "tamaño", "color", "selector", "stock"
+
+**Reference Documentation:**
+- 📋 `.github/reference/database-schema.md` - Complete SQL schema
+- 📋 `.github/reference/business-logic.md` - Business rules and workflows
+
+---
+
+## ❌ What NOT to Do
+
+### Anti-Patterns to Avoid
+
+**TypeScript:**
+```typescript
+// ❌ Never use 'any'
+const data: any = await fetch();
+
+// ❌ Don't skip return types
+function getUser() { return user; }
+
+// ❌ Don't use implicit types
+let value = getData();
+```
+
+**Supabase:**
+```typescript
+// ❌ Cannot order nested relations
+.order('variaciones(precio)') // Doesn't work!
+
+// ✅ Sort in JavaScript instead
+data.forEach(p => {
+  p.variaciones.sort((a, b) => a.precio - b.precio);
+});
+
+// ❌ Wrong column name
+.eq('disponible', true) // Column doesn't exist
+
+// ✅ Use correct column
+.eq('activo', true)
+```
+
+**Components:**
+```typescript
+// ❌ Don't use Client Component unnecessarily
+'use client';
+export default async function Page() {
+  const data = await fetch(); // Can be Server Component!
+}
+
+// ❌ Don't forget to handle loading states
+export default async function Page() {
+  const data = await getProductos();
+  return <List data={data} />; // Missing Suspense!
 }
 ```
 
----
-
-## 🎨 Convenciones de Código
-
-### Naming
-
+**Styling:**
 ```typescript
-// Componentes → PascalCase
-ProductCard.tsx
-VariationSelector.tsx
+// ❌ Don't use inline styles
+<div style={{ color: 'red' }}>
 
-// Funciones/variables → camelCase
-getProductos()
-isLoading
+// ✅ Use Tailwind classes
+<div className="text-red-500">
 
-// Constantes → UPPER_SNAKE_CASE
-const SITE_CONFIG = { ... }
-const ERROR_MESSAGES = { ... }
+// ❌ Don't hardcode breakpoints
+@media (min-width: 768px) { }
 
-// Booleans → prefijos is/has/should
-isLoading, hasError, shouldDisplay
+// ✅ Use Tailwind breakpoints
+className="md:flex-row"
 ```
 
-### Commits (Conventional Commits)
+---
+
+## 📚 Progressive Disclosure
+
+This file contains **core rules only**. For detailed patterns and implementations, reference:
+
+**Skills (Activated Automatically):**
+- Supabase query patterns → `.github/skills/supabase-queries/SKILL.md`
+- WhatsApp integration → `.github/skills/whatsapp-integration/SKILL.md`
+- Product variations → `.github/skills/product-variations/SKILL.md`
+
+**Reference Documentation (Manual Lookup):**
+- Complete database schema → `.github/reference/database-schema.md`
+- Business rules & workflows → `.github/reference/business-logic.md`
+
+**Code Implementation:**
+- TypeScript types → `lib/types.ts`
+- Constants → `lib/constants/index.ts`
+- Queries → `lib/supabase/queries.ts`
+- Supabase clients → `lib/supabase/server.ts`, `lib/supabase/client.ts`
+
+---
+
+## ✅ Quality Checklist
+
+Before suggesting code, verify:
+
+- [ ] Types are explicit (no `any`)
+- [ ] Server Component by default (or `'use client'` justified)
+- [ ] Supabase queries use `activo` column (not `disponible`)
+- [ ] Relations sorted in JavaScript (not in query)
+- [ ] Imports use absolute paths (`@/`)
+- [ ] Constants imported from `lib/constants`
+- [ ] Styling follows mobile-first approach
+- [ ] Naming conventions followed
+- [ ] Error handling implemented
+- [ ] Loading states handled
+
+---
+
+## 🚀 V2 Features (Future)
+
+**Do NOT implement these unless explicitly requested:**
+
+- Shopping cart (Context API + localStorage)
+- Mercado Pago integration
+- Server Actions for checkout
+- Order management system
+- User accounts (Supabase Auth)
+- Admin panel
+
+---
+
+## 📖 Commit Conventions
+
+Use Conventional Commits format:
 
 ```bash
-feat: Agregar selector de variaciones
-fix: Corregir ordenamiento de precios
-style: Mejorar espaciado en ProductCard
-refactor: Extraer lógica de WhatsApp a utils
-docs: Actualizar README con nuevas instrucciones
+feat: Add variation selector component
+fix: Correct price sorting in product cards
+style: Improve mobile layout spacing
+refactor: Extract WhatsApp logic to utility
+docs: Update README with setup instructions
 ```
 
 ---
 
-## 🔐 Modelo de Negocio (V1 Actual)
+## 🎓 Remember
 
-### Estructura de Productos
-
-```
-Producto Base:  "Mantel Floral"
-├── Variación 1: 150x200cm - Rojo - $15,000
-├── Variación 2: 150x200cm - Azul - $15,000
-└── Variación 3: 180x250cm - Rojo - $18,500
-```
-
-**IMPORTANTE:**
-
-- Los precios están en las **variaciones**, no en el producto base
-- Cada producto puede tener múltiples variaciones de tamaño y color
-- Las imágenes pueden ser compartidas o específicas por variación
-
-### Flujo de Compra (V1)
-
-1. Usuario navega el catálogo
-2. Selecciona un producto → página de detalle
-3. Elige variación (tamaño + color)
-4. Click en "Consultar por WhatsApp"
-5. Se abre WhatsApp con mensaje pre-formateado
-6. Venta se cierra fuera de la plataforma
-
-**NO hay carrito ni pagos online en V1**
-
----
-
-## 🚀 Features Futuras (V2 - NO Implementar Aún)
-
-Cuando llegue V2, se agregará:
-
-- Carrito de compras con Context API
-- Integración con Mercado Pago
-- Server Actions para checkout
-- Gestión de pedidos
-
-**🚨 NO generar código de V2 a menos que se solicite explícitamente.**
-
----
-
-## ✅ Checklist de Calidad
-
-Antes de sugerir código, verificar:
-
-- [ ] ¿Los tipos están explícitos y sin `any`?
-- [ ] ¿Es Server Component por defecto o realmente necesita `'use client'`?
-- [ ] ¿Las queries de Supabase usan `activo` (no `disponible`)?
-- [ ] ¿Las relaciones se ordenan en JavaScript después del fetch?
-- [ ] ¿Los imports usan rutas absolutas con `@/`?
-- [ ] ¿Las constantes vienen de `lib/constants`?
-- [ ] ¿Los estilos siguen mobile-first?
-- [ ] ¿El código sigue las convenciones de naming?
-
----
-
-## 📚 Recursos
-
-- Documentación del proyecto: `README.md`
-- Skills detalladas: `.github/skills.md`
-- Tipos compartidos: `lib/types.ts`
-- Constantes globales: `lib/constants/index.ts`
+1. **Server Components by default** - only use Client Components when necessary
+2. **TypeScript strict mode** - explicit types, never `any`
+3. **Sort relations in JavaScript** - Supabase limitation
+4. **Use `activo` column** - not `disponible`
+5. **Mobile-first responsive** - Tailwind breakpoints
+6. **Centralized constants** - import from `lib/constants`
+7. **Reference skills** - detailed patterns in `.github/skills/`
