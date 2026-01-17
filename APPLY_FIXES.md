@@ -39,20 +39,23 @@ The `deb/analytics` branch had critical syntax errors from a corrupted merge. Al
 
 ## How to Apply the Fixes
 
-### Option 1: Cherry-pick the fix commit
+### Option 1: Cherry-pick the fix commit (if you have access to the local branch)
 ```bash
 # Switch to deb/analytics branch
 git checkout deb/analytics
 
 # Cherry-pick the fix commit from local branch
+# (commit 4d6c3fa exists in the sandbox where fixes were made)
 git cherry-pick 4d6c3fa
 
 # Push to remote
 git push origin deb/analytics
 ```
 
+**Note:** If you don't have access to this commit locally, use Option 2 below.
+
 ### Option 2: Apply the fixes manually
-If you're unable to access the local commit, here are the key changes:
+Use this method if you cannot access the local fix commit:
 
 #### 1. Fix app/productos/[slug]/page.tsx
 The file should start with clean imports:
