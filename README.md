@@ -62,9 +62,29 @@ NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/mumaestudio
 
 # Contact Email
 NEXT_PUBLIC_CONTACT_EMAIL=contacto@mumaestudio.com
+
+# Google Analytics Measurement ID
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+# WhatsApp Number (with country code, no spaces or +)
+NEXT_PUBLIC_WHATSAPP_NUMBER=5492999123456
+
+# Site URL (for SEO and sitemap generation)
+NEXT_PUBLIC_SITE_URL=https://mumaestudio.com
 ```
 
 > **Nota:** Todas las variables que comienzan con `NEXT_PUBLIC_` son accesibles desde el lado del cliente.
+
+### Variables Requeridas vs Opcionales
+
+**Requeridas:**
+- `NEXT_PUBLIC_SITE_URL` - URL base del sitio para sitemap y SEO
+
+**Opcionales:**
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID` - Si no se configura, Google Analytics no se cargará
+- `NEXT_PUBLIC_WHATSAPP_NUMBER` - Número de contacto para consultas
+- `NEXT_PUBLIC_INSTAGRAM_URL` - Link a Instagram
+- `NEXT_PUBLIC_CONTACT_EMAIL` - Email de contacto
 
 ## 📜 Scripts Disponibles
 
@@ -80,6 +100,8 @@ muma-estudio/
 ├── app/                      # App Router de Next.js
 │   ├── page.tsx             # Página principal
 │   ├── layout.tsx           # Layout principal
+│   ├── robots.ts            # Configuración de robots.txt
+│   ├── sitemap.ts           # Sitemap dinámico
 │   └── globals.css          # Estilos globales
 ├── components/              # Componentes React
 │   ├── layout/             # Componentes de layout
@@ -87,12 +109,25 @@ muma-estudio/
 │   │   ├── Footer.tsx      # Pie de página
 │   │   └── MobileNav.tsx   # Navegación móvil
 │   ├── productos/          # Componentes de productos
+│   │   ├── ProductCard.tsx
+│   │   ├── ProductGrid.tsx
+│   │   ├── CategoryFilter.tsx    # Filtro de categorías
+│   │   ├── RelatedProducts.tsx   # Productos relacionados
+│   │   └── WhatsAppButton.tsx    # Con tracking analytics
 │   └── ui/                 # Componentes UI reutilizables
+│       └── Breadcrumbs.tsx # Navegación breadcrumb con SEO
 ├── lib/                    # Utilidades y configuraciones
+│   ├── analytics/          # Google Analytics
+│   │   └── gtag.ts        # Event tracking utilities
 │   ├── constants/          # Constantes centralizadas
-│   │   └── navigation.ts   # Links de navegación
-│   ├── supabase/           # Cliente y queries de Supabase
-│   └── types.ts            # Tipos TypeScript compartidos
+│   │   ├── index.ts       # Config general
+│   │   └── navigation.ts  # Links de navegación
+│   ├── seo/               # SEO utilities
+│   │   └── structured-data.ts  # Schema.org JSON-LD
+│   ├── supabase/          # Cliente y queries de Supabase
+│   ├── utils/             # Utilidades generales
+│   │   └── index.ts       # formatPrice, truncateText, etc.
+│   └── types.ts           # Tipos TypeScript compartidos
 ├── public/                 # Archivos estáticos
 ├── .env.local.example      # Template de variables de entorno
 └── README.md              # Este archivo
@@ -174,6 +209,48 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 - `test:` Añadir o modificar tests
 - `chore:` Tareas de mantenimiento
 
+## 📊 Analytics y SEO
+
+### Google Analytics 4
+
+El proyecto incluye integración con Google Analytics 4 para tracking de eventos personalizados:
+
+**Eventos Implementados:**
+- `whatsapp_click` - Clicks en botón de WhatsApp
+- `view_item` - Visualización de productos
+- `filter_products` - Uso de filtros de categoría
+- `select_item` - Selección de variaciones
+
+**Configuración:**
+1. Crear una propiedad GA4 en [Google Analytics](https://analytics.google.com)
+2. Copiar el Measurement ID (formato: `G-XXXXXXXXXX`)
+3. Agregar a `.env.local`:
+```env
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+```
+
+> **Nota:** El tracking solo funciona en producción (`NODE_ENV=production`)
+
+### SEO Features
+
+**Structured Data (Schema.org):**
+- Product schema con información completa
+- BreadcrumbList para navegación
+- Organization schema para homepage
+
+**Metadata Dinámica:**
+- OpenGraph tags para redes sociales
+- Twitter Cards
+- Meta descriptions optimizadas
+
+**Archivos Generados:**
+- `robots.txt` - Configuración de crawlers
+- `sitemap.xml` - Mapa del sitio dinámico con productos
+
+**Acceso:**
+- `/robots.txt` - Ver configuración de robots
+- `/sitemap.xml` - Ver sitemap generado
+
 ## 🗄️ Base de Datos (Supabase)
 
 ### Tablas Principales
@@ -183,6 +260,32 @@ Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
 - `variaciones` - Variaciones (tamaño/color) de productos
 - `imagenes_producto` - Imágenes de productos
 - `consultas` - Consultas de clientes
+
+Para más información sobre el esquema de base de datos, ver `.github/reference/database-schema.md`
+
+## 🎨 Nuevas Características (V1.1)
+
+### Filtro de Categorías
+Componente de filtrado horizontal con scroll para explorar productos por categoría:
+- Click tracking automático en Google Analytics
+- Estado activo persistente con query params
+- Diseño responsive con scroll horizontal en móvil
+
+### Productos Relacionados
+Muestra automáticamente hasta 4 productos de la misma categoría en la página de detalle.
+
+### Breadcrumbs
+Navegación breadcrumb con:
+- Datos estructurados (Schema.org BreadcrumbList)
+- Enlaces funcionales para mejorar UX
+- Iconos de Lucide React
+
+### Utilities
+Nuevas funciones utilitarias en `lib/utils/`:
+- `formatPrice()` - Formato consistente de precios ARS
+- `truncateText()` - Truncar texto con elipsis
+- `slugify()` - Generar slugs URL-safe
+- `isDefined()` - Type guard para valores no-null
 
 ## 📱 Contacto y Contribución
 
