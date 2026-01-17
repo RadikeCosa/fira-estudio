@@ -1,6 +1,9 @@
+"use client";
+
 import { MessageCircle } from "lucide-react";
 import { Producto, Variacion } from "@/lib/types";
 import { WHATSAPP, SITE_CONFIG } from "@/lib/constants";
+import { trackWhatsAppClick } from "@/lib/analytics/gtag";
 
 interface WhatsAppButtonProps {
   producto: Producto;
@@ -40,11 +43,17 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
 
   const whatsappUrl = WHATSAPP.getUrl(construirMensaje());
 
+  const handleClick = () => {
+    // Track WhatsApp button click
+    trackWhatsAppClick(producto, variacion);
+  };
+
   return (
     <a
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={handleClick}
       className="
         group
         inline-flex items-center justify-center gap-3
