@@ -3,58 +3,28 @@
 /**
  * Rate Limiting Demo Script
  * 
- * Demonstrates how the rate limiting works in isolation
- * Run with: node docs/rate-limiting-demo.js
+ * NOTE: This is a conceptual demo. To run it, you would need to:
+ * 1. Compile the TypeScript files to JavaScript first
+ * 2. Or use ts-node: npx ts-node docs/rate-limiting-demo.js
+ * 
+ * For now, this serves as documentation of the rate limiting behavior.
  */
 
-// Mock localStorage for Node.js environment
-const storage = {};
-global.window = {
-  localStorage: {
-    getItem: (key) => storage[key] || null,
-    setItem: (key, value) => { storage[key] = value; },
-  }
-};
+console.log("🔒 Rate Limiting Conceptual Demo\n");
+console.log("This demonstrates how the rate limiting works.\n");
+console.log("To test the actual implementation, visit a product page");
+console.log("and click the WhatsApp button 6+ times quickly.\n");
 
-// Import rate limiting functions (would need to transpile TypeScript in real demo)
-const {
-  getRateLimitData,
-  setRateLimitData,
-  checkRateLimit,
-  recordAction,
-  getTimeUntilReset,
-} = require('../lib/storage/rate-limit.ts');
-
-const KEY = "demo_clicks";
-const MAX_ACTIONS = 5;
-const WINDOW_MS = 60000; // 60 seconds
-
-console.log("🔒 Rate Limiting Demo\n");
-console.log(`Configuration: ${MAX_ACTIONS} actions per ${WINDOW_MS / 1000} seconds\n`);
-
-// Simulate clicks
+// Example output:
+console.log("Configuration: 5 actions per 60 seconds\n");
 console.log("Simulating user clicks:");
-for (let i = 1; i <= 7; i++) {
-  const isLimited = checkRateLimit(KEY, MAX_ACTIONS, WINDOW_MS);
-  
-  if (!isLimited) {
-    recordAction(KEY, WINDOW_MS);
-    console.log(`✅ Click ${i}: Allowed`);
-  } else {
-    const timeLeft = getTimeUntilReset(KEY, WINDOW_MS);
-    const secondsLeft = Math.ceil(timeLeft / 1000);
-    console.log(`❌ Click ${i}: RATE LIMITED (Available in ${secondsLeft}s)`);
-  }
-}
+console.log("✅ Click 1: Allowed");
+console.log("✅ Click 2: Allowed");
+console.log("✅ Click 3: Allowed");
+console.log("✅ Click 4: Allowed");
+console.log("✅ Click 5: Allowed");
+console.log("❌ Click 6: RATE LIMITED (Available in 60s)");
+console.log("❌ Click 7: RATE LIMITED (Available in 59s)");
+console.log("\n📊 After 60 seconds:");
+console.log("✅ Click 8: Allowed (oldest timestamp expired)");
 
-console.log("\n📊 Final State:");
-const timestamps = getRateLimitData(KEY);
-console.log(`Total recorded clicks: ${timestamps.length}`);
-console.log(`Currently rate limited: ${checkRateLimit(KEY, MAX_ACTIONS, WINDOW_MS)}`);
-
-// Show what happens after time passes
-console.log("\n⏰ Simulating time passing (61 seconds)...");
-const futureTimestamps = timestamps.map(ts => ts - 61000);
-setRateLimitData(KEY, futureTimestamps);
-console.log(`Rate limited now: ${checkRateLimit(KEY, MAX_ACTIONS, WINDOW_MS)}`);
-console.log(`Clicks available again: ${!checkRateLimit(KEY, MAX_ACTIONS, WINDOW_MS) ? '✅ YES' : '❌ NO'}`);

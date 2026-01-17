@@ -53,6 +53,8 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
     if (isRateLimited) {
       e.preventDefault();
       const seconds = Math.ceil(timeUntilReset / 1000);
+      // Note: Consider replacing with toast notification for better UX
+      // For now, using alert() for simplicity (no dependencies required)
       alert(
         `Por favor, esperá un momento antes de volver a consultar.\nDisponible en ${seconds} segundo${seconds !== 1 ? "s" : ""}.`
       );
@@ -60,9 +62,15 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
     }
 
     // Record the action
-    if (!recordAction()) {
+    const success = recordAction();
+    
+    // Double-check if we just hit the limit
+    if (!success || isRateLimited) {
       e.preventDefault();
-      alert("Por favor, esperá un momento antes de volver a consultar.");
+      const seconds = Math.ceil(timeUntilReset / 1000);
+      alert(
+        `Por favor, esperá un momento antes de volver a consultar.\nDisponible en ${seconds} segundo${seconds !== 1 ? "s" : ""}.`
+      );
       return;
     }
 

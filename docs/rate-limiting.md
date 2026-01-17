@@ -111,6 +111,15 @@ Works in all modern browsers:
 - Not too restrictive for real users
 - Easy to adjust if needed
 
+### Why Alert Instead of Toast?
+- No dependencies needed (zero new packages)
+- Works immediately out of the box
+- Clear, consistent user feedback
+- Can be upgraded later to toast library for better UX and accessibility
+- Current implementation prioritizes reliability and maintainability
+
+**Note:** Alert dialogs are intentionally used for simplicity. In a future enhancement, consider replacing with a toast notification library (e.g., react-hot-toast) for better UX, accessibility, and non-blocking notifications.
+
 ## Configuration
 
 To change rate limit settings, modify `WhatsAppButton.tsx`:
@@ -126,8 +135,10 @@ const { isRateLimited, recordAction, timeUntilReset } = useRateLimit({
 ## Future Enhancements
 
 Potential improvements:
-- Add toast notifications instead of alert()
-- Add visual progress indicator
+- Replace alert() with toast notifications (e.g., react-hot-toast) for better UX and accessibility
+- Add visual progress indicator showing clicks remaining
 - Add analytics tracking for rate limit hits
-- Make limits configurable per user
+- Make limits configurable per user or per product
 - Add server-side rate limiting for extra protection
+- Add inline message instead of modal dialog
+- Add ARIA live region announcements for screen readers
