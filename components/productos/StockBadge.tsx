@@ -25,6 +25,7 @@ export function StockBadge({ variacion, className = "" }: StockBadgeProps) {
         text: "No disponible",
         bgColor: "bg-red-100",
         textColor: "text-red-700",
+        borderColor: "border-red-700/20",
         dotColor: "bg-red-500",
       };
     }
@@ -34,6 +35,7 @@ export function StockBadge({ variacion, className = "" }: StockBadgeProps) {
         text: "A pedido",
         bgColor: "bg-yellow-100",
         textColor: "text-yellow-700",
+        borderColor: "border-yellow-700/20",
         dotColor: "bg-yellow-500",
       };
     }
@@ -43,6 +45,7 @@ export function StockBadge({ variacion, className = "" }: StockBadgeProps) {
         text: `¡Solo quedan ${variacion.stock}!`,
         bgColor: "bg-orange-100",
         textColor: "text-orange-700",
+        borderColor: "border-orange-700/20",
         dotColor: "bg-orange-500",
       };
     }
@@ -51,6 +54,7 @@ export function StockBadge({ variacion, className = "" }: StockBadgeProps) {
       text: `${variacion.stock} disponibles`,
       bgColor: "bg-green-100",
       textColor: "text-green-700",
+      borderColor: "border-green-700/20",
       dotColor: "bg-green-500",
     };
   };
@@ -64,7 +68,7 @@ export function StockBadge({ variacion, className = "" }: StockBadgeProps) {
         px-4 py-2
         rounded-full
         ${config.bgColor}
-        border border-${config.textColor}/20
+        border ${config.borderColor}
         ${className}
       `}
     >
