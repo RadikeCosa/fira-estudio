@@ -8,13 +8,13 @@
  * must be called OUTSIDE the cached function and passed as parameters.
  * 
  * @example
- * // ✅ CORRECT - cookies() called outside cache
+ * // ✅ CORRECT - createClient() called outside cache scope
  * async function getDataInternal(supabase: SupabaseClient) {
  *   return supabase.from('table').select('*');
  * }
  * 
  * export async function getData() {
- *   const supabase = await createClient(); // cookies() called here (outside cache)
+ *   const supabase = await createClient(); // Called outside cache scope
  *   const cachedFn = createCachedQuery<[SupabaseClient], Data[]>(
  *     getDataInternal,
  *     CACHE_CONFIG.data
@@ -22,9 +22,9 @@
  *   return cachedFn(supabase);
  * }
  * 
- * // ❌ WRONG - cookies() called inside cache
+ * // ❌ WRONG - createClient() called inside cache
  * async function getDataInternal() {
- *   const supabase = await createClient(); // ❌ cookies() called inside cache!
+ *   const supabase = await createClient(); // ❌ Called inside cache scope!
  *   return supabase.from('table').select('*');
  * }
  */
@@ -72,7 +72,7 @@ interface CacheOptions {
  * 
  * // Wrapper function calls createClient() outside cache and passes client
  * export async function getProductos(limit: number) {
- *   const supabase = await createClient(); // ✅ cookies() called outside cache
+ *   const supabase = await createClient(); // Called outside cache scope
  *   const cachedFn = createCachedQuery<[SupabaseClient, number], Producto[]>(
  *     getProductosInternal,
  *     CACHE_CONFIG.productos

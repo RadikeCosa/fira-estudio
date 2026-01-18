@@ -40,7 +40,7 @@ async function getCategoriasInternal(
  * @returns Lista de categorías ordenadas por campo 'orden'
  */
 export async function getCategorias(): Promise<Categoria[]> {
-  const supabase = await createClient(); // ✅ cookies() called OUTSIDE cache
+  const supabase = await createClient(); // createClient() called outside cache scope
 
   const cachedFn = createCachedQuery<[SupabaseClient], Categoria[]>(
     getCategoriasInternal,
@@ -107,7 +107,7 @@ async function getProductosInternal(
 export async function getProductos(
   params?: GetProductosParams,
 ): Promise<PaginatedResult<ProductoCompleto>> {
-  const supabase = await createClient(); // ✅ cookies() called OUTSIDE cache
+  const supabase = await createClient(); // createClient() called outside cache scope
 
   const cachedFn = createCachedQuery<
     [SupabaseClient, GetProductosParams?],
@@ -151,7 +151,7 @@ async function getProductoBySlugInternal(
 export async function getProductoBySlug(
   slug: string,
 ): Promise<ProductoCompleto | null> {
-  const supabase = await createClient(); // ✅ cookies() called OUTSIDE cache
+  const supabase = await createClient(); // createClient() called outside cache scope
 
   const cachedFn = createCachedQuery<
     [SupabaseClient, string],
