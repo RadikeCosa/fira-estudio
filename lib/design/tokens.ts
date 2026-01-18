@@ -18,7 +18,8 @@ export const ANIMATIONS = {
   fadeIn: "animate-in fade-in duration-700",
   fadeInDelayed: "animate-in fade-in duration-700 delay-150",
   shimmer: "shine-effect",
-  hoverCard: "hover:shadow-card-hover hover:border-foreground/10 hover:-translate-y-2",
+  hoverCard:
+    "hover:shadow-card-hover hover:border-foreground/10 hover:-translate-y-2",
   hoverIcon: "transition-all group-hover:translate-x-1 group-hover:scale-110",
 };
 
