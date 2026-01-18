@@ -48,9 +48,25 @@ export function useProductFilters(productos: ProductoCompleto[]) {
     return matchCategoria && matchPrecioMin && matchPrecioMax;
   });
 
+  // Helper function to clear all filters
+  const clearFilters = () => {
+    setFilters({
+      categorias: [],
+      precioMin: undefined,
+      precioMax: undefined,
+    });
+  };
+
+  // Helper function to update specific filter fields
+  const updateFilters = (updates: Partial<ProductFilters>) => {
+    setFilters((prev) => ({ ...prev, ...updates }));
+  };
+
   return {
     filters,
     setFilters,
     filteredProducts,
+    clearFilters,
+    updateFilters,
   };
 }
