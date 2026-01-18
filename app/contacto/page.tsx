@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { DecorativeBadge } from "@/components/ui/DecorativeBadge";
 import { SITE_CONFIG, WHATSAPP } from "@/lib/constants";
 import { SOCIAL_LINKS } from "@/lib/constants/navigation";
 
@@ -12,15 +13,7 @@ export default function ContactoPage() {
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       {/* Encabezado */}
       <div className="mb-12 text-center">
-        <div className="mb-4 inline-block">
-          <div
-            className="
-              inline-flex h-1 w-16
-              rounded-full
-              bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
-            "
-          />
-        </div>
+        <DecorativeBadge />
         <h1
           className="
             mb-5

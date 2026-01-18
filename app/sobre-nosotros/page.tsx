@@ -1,6 +1,8 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import { Heart, Sparkles, Leaf, Users } from "lucide-react";
+import { DecorativeBadge } from "@/components/ui/DecorativeBadge";
+import { SectionHeader } from "@/components/ui/SectionHeader";
 import { SITE_CONFIG } from "@/lib/constants";
 
 export const metadata: Metadata = {
@@ -13,15 +15,7 @@ export default function SobreNosotrosPage() {
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       {/* Encabezado */}
       <div className="mb-20 text-center">
-        <div className="mb-4 inline-block">
-          <div
-            className="
-              inline-flex h-1 w-16
-              rounded-full
-              bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
-            "
-          />
-        </div>
+        <DecorativeBadge />
         <h1
           className="
             mb-6
@@ -201,39 +195,10 @@ export default function SobreNosotrosPage() {
 
         {/* Sección 3: Nuestros Valores */}
         <section>
-          <div className="mb-16 text-center">
-            <div className="mb-4 inline-block">
-              <div
-                className="
-                  inline-flex h-1 w-16
-                  rounded-full
-                  bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
-                "
-              />
-            </div>
-            <h2
-              className="
-                mb-6
-                text-3xl
-                font-bold
-                text-foreground
-                sm:text-4xl
-              "
-            >
-              Nuestros Valores
-            </h2>
-            <p
-              className="
-                mx-auto max-w-2xl
-                text-base
-                leading-relaxed
-                text-muted-foreground
-                sm:text-lg
-              "
-            >
-              Los pilares que guían nuestro trabajo diario
-            </p>
-          </div>
+          <SectionHeader
+            title="Nuestros Valores"
+            description="Los pilares que guían nuestro trabajo diario"
+          />
 
           <div
             className="
