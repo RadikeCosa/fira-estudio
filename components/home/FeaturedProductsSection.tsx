@@ -5,10 +5,9 @@ import { ProductCard } from "@/components/productos/ProductCard";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { Producto } from "@/lib/types";
+import type { ProductoCompleto } from "@/lib/types";
 
-interface FeaturedProductsSectionProps {
-  productos: Producto[];
+  productos: ProductoCompleto[];
 }
 
 export function FeaturedProductsSection({
