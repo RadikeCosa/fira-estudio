@@ -5,6 +5,7 @@ import { Producto, Variacion } from "@/lib/types";
 import { WHATSAPP, SITE_CONFIG } from "@/lib/constants";
 import { formatPrice } from "@/lib/utils";
 import { trackWhatsAppClick } from "@/lib/analytics/gtag";
+import { useRateLimit } from "@/hooks/useRateLimit";
 
 interface WhatsAppButtonProps {
   producto: Producto;
@@ -17,10 +18,18 @@ interface WhatsAppButtonProps {
  * Genera un mensaje pre-formateado con la información del producto
  * y lo abre en una nueva pestaña de WhatsApp
  *
+ * Incluye rate limiting: máximo 5 clicks por minuto
+ *
  * @param producto - Producto sobre el que se consulta
  * @param variacion - Variación seleccionada (opcional)
  */
 export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
+  // Rate limiting: 5 clicks per minute
+  const { isRateLimited, recordAction, timeUntilReset } = useRateLimit({
+    maxActions: 5,
+    windowMs: 60000,
+    key: "whatsapp_clicks",
+  });
   // Construir mensaje pre-formateado
   const construirMensaje = (): string => {
     let mensaje = `Hola! Me interesa este producto de ${SITE_CONFIG.name}: `;
@@ -39,9 +48,43 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
 
   const whatsappUrl = WHATSAPP.getUrl(construirMensaje());
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    // Check rate limit
+    if (isRateLimited) {
+      e.preventDefault();
+      const seconds = Math.ceil(timeUntilReset / 1000);
+      // Note: Consider replacing with toast notification for better UX
+      // For now, using alert() for simplicity (no dependencies required)
+      alert(
+        `Por favor, esperá un momento antes de volver a consultar.\nDisponible en ${seconds} segundo${seconds !== 1 ? "s" : ""}.`
+      );
+      return;
+    }
+
+    // Record the action
+    const success = recordAction();
+    
+    // Double-check if we just hit the limit
+    if (!success || isRateLimited) {
+      e.preventDefault();
+      const seconds = Math.ceil(timeUntilReset / 1000);
+      alert(
+        `Por favor, esperá un momento antes de volver a consultar.\nDisponible en ${seconds} segundo${seconds !== 1 ? "s" : ""}.`
+      );
+      return;
+    }
+
     // Track WhatsApp button click
     trackWhatsAppClick(producto, variacion);
+  };
+
+  // Format countdown message
+  const getButtonText = (): string => {
+    if (isRateLimited && timeUntilReset > 0) {
+      const seconds = Math.ceil(timeUntilReset / 1000);
+      return `Disponible en ${seconds}s`;
+    }
+    return "Consultar por WhatsApp";
   };
 
   return (
@@ -50,26 +93,38 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}
-      className="
+      className={`
         group
         inline-flex items-center justify-center gap-3
         w-full
         px-8 py-4 rounded-xl
-        bg-gradient-to-r from-green-600 to-green-500
-        hover:from-green-700 hover:to-green-600
+        ${
+          isRateLimited
+            ? "bg-gradient-to-r from-gray-400 to-gray-300 cursor-not-allowed"
+            : "bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600"
+        }
         text-white font-semibold text-base
         shadow-lg
         transition-all duration-300
-        hover:shadow-xl
-        hover:scale-[1.02]
+        ${!isRateLimited && "hover:shadow-xl hover:scale-[1.02]"}
         focus:outline-none
         focus:ring-2
-        focus:ring-green-500
+        ${
+          isRateLimited
+            ? "focus:ring-gray-400"
+            : "focus:ring-green-500"
+        }
         focus:ring-offset-2
-      "
+      `}
+      aria-disabled={isRateLimited}
     >
-      <MessageCircle className="w-5 h-5 motion-safe:transition-transform motion-safe:group-hover:rotate-12" />
-      <span>Consultar por WhatsApp</span>
+      <MessageCircle
+        className={`w-5 h-5 ${
+          !isRateLimited &&
+          "motion-safe:transition-transform motion-safe:group-hover:rotate-12"
+        }`}
+      />
+      <span>{getButtonText()}</span>
     </a>
   );
 }
