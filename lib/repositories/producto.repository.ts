@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { ProductoCompleto } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import { RepositoryError } from "./errors";
+import { createCachedQuery, CACHE_CONFIG } from "@/lib/cache";
 
 interface ProductoFilter {
   categoria?: string;
@@ -85,6 +86,18 @@ export class ProductoRepository extends BaseRepository<ProductoCompleto> {
   }
 
   /**
+   * Cached version of findAll for public-facing pages
+   * Uses Next.js cache with 1 hour revalidation
+   */
+  findAllCached = createCachedQuery<
+    [ProductoFilter?],
+    { items: ProductoCompleto[]; total: number }
+  >(
+    (filter?: ProductoFilter) => this.findAll(filter),
+    CACHE_CONFIG.productos,
+  );
+
+  /**
    * Find a product by its ID
    */
   async findById(id: string): Promise<ProductoCompleto | null> {
@@ -145,6 +158,15 @@ export class ProductoRepository extends BaseRepository<ProductoCompleto> {
 
     return this.sortRelations(data as ProductoCompleto);
   }
+
+  /**
+   * Cached version of findBySlug for product detail pages
+   * Uses Next.js cache with 30 minute revalidation
+   */
+  findBySlugCached = createCachedQuery<[string], ProductoCompleto | null>(
+    (slug: string) => this.findBySlug(slug),
+    CACHE_CONFIG.producto_detail,
+  );
 
   // The following methods are not implemented for now in this repository
   async create(): Promise<ProductoCompleto> {

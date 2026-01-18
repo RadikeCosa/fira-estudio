@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Categoria, ProductoCompleto } from "@/lib/types";
 import type { PaginatedResult } from "@/lib/types/pagination";
 import { ProductoRepository } from "@/lib/repositories/producto.repository";
+import { createCachedQuery, CACHE_CONFIG } from "@/lib/cache";
 
 interface GetProductosParams {
   categoriaSlug?: string;
@@ -15,10 +16,11 @@ interface GetProductosParams {
 }
 
 /**
- * Obtiene todas las categorías ordenadas
+ * Obtiene todas las categorías ordenadas (sin cache)
+ * Usar para admin o cuando se necesita data fresca
  * @returns Lista de categorías ordenadas por campo 'orden'
  */
-export async function getCategorias(): Promise<Categoria[]> {
+async function getCategoriasInternal(): Promise<Categoria[]> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -32,11 +34,26 @@ export async function getCategorias(): Promise<Categoria[]> {
 }
 
 /**
- * Obtiene productos activos con sus relaciones
+ * Obtiene todas las categorías ordenadas (con cache)
+ * @returns Lista de categorías ordenadas por campo 'orden'
+ */
+export const getCategorias = createCachedQuery<[], Categoria[]>(
+  getCategoriasInternal,
+  CACHE_CONFIG.categorias,
+);
+
+/**
+ * Obtiene categorías sin cache (para admin)
+ * @returns Lista de categorías ordenadas por campo 'orden'
+ */
+export const getCategoriasFresh = getCategoriasInternal;
+
+/**
+ * Obtiene productos activos con sus relaciones (implementación interna sin cache)
  * @param categoriaSlug - Filtrar por slug de categoría (opcional)
  * @returns Lista de productos completos (destacados primero, luego por nombre)
  */
-export async function getProductos(
+async function getProductosInternal(
   params?: GetProductosParams,
 ): Promise<PaginatedResult<ProductoCompleto>> {
   const page = Math.max(1, params?.page ?? 1);
@@ -47,9 +64,8 @@ export async function getProductos(
 
   // Query base con relaciones
   const start = (page - 1) * pageSize;
-  const end = start + pageSize - 1;
 
-  const { items, total } = await productoRepository.findAll({
+  const { items, total } = await productoRepository.findAllCached({
     categoria: categoriaSlug,
     limit: pageSize,
     offset: start,
@@ -71,11 +87,50 @@ export async function getProductos(
 }
 
 /**
- * Obtiene un producto por su slug
+ * Obtiene productos activos con sus relaciones (con cache)
+ * @param categoriaSlug - Filtrar por slug de categoría (opcional)
+ * @returns Lista de productos completos (destacados primero, luego por nombre)
+ */
+export const getProductos = createCachedQuery<
+  [GetProductosParams?],
+  PaginatedResult<ProductoCompleto>
+>(getProductosInternal, CACHE_CONFIG.productos);
+
+/**
+ * Obtiene productos sin cache (para admin)
+ * @param categoriaSlug - Filtrar por slug de categoría (opcional)
+ * @returns Lista de productos completos (destacados primero, luego por nombre)
+ */
+export const getProductosFresh = getProductosInternal;
+
+/**
+ * Obtiene un producto por su slug (implementación interna sin cache)
  * @param slug - Slug único del producto
  * @returns Producto completo o null si no existe/inactivo
  */
-export async function getProductoBySlug(
+async function getProductoBySlugInternal(
+  slug: string,
+): Promise<ProductoCompleto | null> {
+  const productoRepository = new ProductoRepository();
+  return productoRepository.findBySlugCached(slug);
+}
+
+/**
+ * Obtiene un producto por su slug (con cache)
+ * @param slug - Slug único del producto
+ * @returns Producto completo o null si no existe/inactivo
+ */
+export const getProductoBySlug = createCachedQuery<
+  [string],
+  ProductoCompleto | null
+>(getProductoBySlugInternal, CACHE_CONFIG.producto_detail);
+
+/**
+ * Obtiene un producto por su slug sin cache (para admin)
+ * @param slug - Slug único del producto
+ * @returns Producto completo o null si no existe/inactivo
+ */
+export async function getProductoBySlugFresh(
   slug: string,
 ): Promise<ProductoCompleto | null> {
   const productoRepository = new ProductoRepository();
