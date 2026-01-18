@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { getProductos } from "@/lib/supabase/queries";
 import { ProductCard } from "@/components/productos/ProductCard";
