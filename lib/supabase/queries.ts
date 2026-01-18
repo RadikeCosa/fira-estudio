@@ -65,7 +65,7 @@ async function getProductosInternal(
   // Query base con relaciones
   const start = (page - 1) * pageSize;
 
-  const { items, total } = await productoRepository.findAllCached({
+  const { items, total } = await productoRepository.findAll({
     categoria: categoriaSlug,
     limit: pageSize,
     offset: start,
@@ -112,7 +112,7 @@ async function getProductoBySlugInternal(
   slug: string,
 ): Promise<ProductoCompleto | null> {
   const productoRepository = new ProductoRepository();
-  return productoRepository.findBySlugCached(slug);
+  return productoRepository.findBySlug(slug);
 }
 
 /**
