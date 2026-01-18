@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import type { NavLink } from "@/lib/constants/navigation";
-import { useScrollLock } from "@/hooks/useScrollLock";
-import { useEscapeKey } from "@/hooks/useEscapeKey";
+import { useScrollLock, useEscapeKey } from "@/hooks";
 
 interface MobileNavProps {
   links: NavLink[];
