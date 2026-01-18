@@ -94,7 +94,9 @@ export function createCachedQuery<TArgs extends unknown[], TResult>(
 
   // Second layer: unstable_cache for cross-request persistence
   return (...args: TArgs) => {
-    const cacheKey = JSON.stringify(args);
+    // Exclude first argument (Supabase client) from cache key - it contains circular refs
+    // Only query parameters (pagination, filters, slugs, etc.) should determine cache uniqueness
+    const cacheKey = JSON.stringify(args.slice(1));
     
     const nextCached = unstable_cache(
       async () => reactCached(...args),
