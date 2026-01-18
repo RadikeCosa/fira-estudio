@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import type { NavLink } from "@/lib/constants/navigation";
+import { useScrollLock, useEscapeKey } from "@/hooks";
 
 interface MobileNavProps {
   links: NavLink[];
@@ -11,37 +12,19 @@ interface MobileNavProps {
 export function MobileNav({ links }: MobileNavProps): React.ReactElement {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
-  const toggleMenu = (): void => {
-    setIsOpen(!isOpen);
-  };
-
   const closeMenu = (): void => {
     setIsOpen(false);
   };
 
-  // Handle ESC key press and body scroll lock
-  useEffect(() => {
-    if (isOpen) {
-      // Prevent body scroll when menu is open
-      const originalStyle = window.getComputedStyle(document.body).overflow;
-      document.body.style.overflow = "hidden";
+  const toggleMenu = (): void => {
+    setIsOpen(!isOpen);
+  };
 
-      // Handle ESC key press
-      const handleEscape = (event: KeyboardEvent): void => {
-        if (event.key === "Escape") {
-          closeMenu();
-        }
-      };
+  // Lock body scroll when menu is open
+  useScrollLock(isOpen);
 
-      document.addEventListener("keydown", handleEscape);
-
-      // Cleanup function
-      return () => {
-        document.body.style.overflow = originalStyle;
-        document.removeEventListener("keydown", handleEscape);
-      };
-    }
-  }, [isOpen]);
+  // Close menu on ESC key press
+  useEscapeKey(closeMenu, isOpen);
 
   return (
     <div>
