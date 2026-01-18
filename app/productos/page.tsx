@@ -3,13 +3,14 @@ import { getProductos, getCategorias } from "@/lib/supabase/queries";
 import { ProductGrid } from "@/components/productos/ProductGrid";
 import { CategoryFilter } from "@/components/productos/CategoryFilter";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import { DecorativeBadge } from "@/components/ui/DecorativeBadge";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Pagination } from "@/components/productos/Pagination";
 import {
   generateBreadcrumbSchema,
   renderJsonLd,
 } from "@/lib/seo/structured-data";
 import { SITE_CONFIG } from "@/lib/constants";
+import { PRODUCTOS_CONTENT } from "@/lib/content/productos";
 
 interface ProductosPageProps {
   searchParams: {
@@ -67,6 +68,9 @@ export default async function ProductosPage({
   // Generate breadcrumb schema
   const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems);
 
+  // Get content
+  const { page: pageContent } = PRODUCTOS_CONTENT;
+
   return (
     <>
       {/* JSON-LD structured data */}
@@ -76,28 +80,15 @@ export default async function ProductosPage({
         {/* Breadcrumbs */}
         <Breadcrumbs items={breadcrumbItems} />
 
-        {/* Encabezado de la página */}
-        <div className="mb-12 text-center">
-          <DecorativeBadge />
-          <h1
-            className="
-              mb-5
-              text-4xl
-              font-bold
-              tracking-tight
-              text-foreground
-              sm:text-5xl
-            "
-          >
-            {activeCategoria ? activeCategoria.nombre : "Nuestros Productos"}
-          </h1>
-          <p className="mx-auto max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {activeCategoria
-              ? activeCategoria.descripcion ||
-                "Explora nuestra colección de productos."
-              : "Textiles artesanales hechos a mano con dedicación y cuidado. Cada pieza es única y especial."}
-          </p>
-        </div>
+        {/* Page Header */}
+        <PageHeader
+          title={activeCategoria ? activeCategoria.nombre : pageContent.defaultTitle}
+          description={
+            activeCategoria
+              ? activeCategoria.descripcion || pageContent.defaultDescription
+              : pageContent.defaultDescription
+          }
+        />
 
         {/* Category filter */}
         <CategoryFilter categorias={categorias} />
