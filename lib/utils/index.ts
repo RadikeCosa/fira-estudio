@@ -2,12 +2,24 @@
  * Utility functions for the application
  */
 
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
 export {
   formatPrice,
   formatPriceRange,
   formatStock,
   formatters,
 } from "./formatters";
+
+/**
+ * Merge Tailwind CSS classes with proper precedence
+ * @param inputs - Class values to merge
+ * @returns Merged class string
+ */
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
 
 /**
  * Truncate text to a maximum length with ellipsis

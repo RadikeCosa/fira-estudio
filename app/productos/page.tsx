@@ -3,6 +3,7 @@ import { getProductos, getCategorias } from "@/lib/supabase/queries";
 import { ProductGrid } from "@/components/productos/ProductGrid";
 import { CategoryFilter } from "@/components/productos/CategoryFilter";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
+import { DecorativeBadge } from "@/components/ui/DecorativeBadge";
 import { Pagination } from "@/components/productos/Pagination";
 import {
   generateBreadcrumbSchema,
@@ -77,15 +78,7 @@ export default async function ProductosPage({
 
         {/* Encabezado de la página */}
         <div className="mb-12 text-center">
-          <div className="mb-4 inline-block">
-            <div
-              className="
-                inline-flex h-1 w-16
-                rounded-full
-                bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
-              "
-            />
-          </div>
+          <DecorativeBadge />
           <h1
             className="
               mb-5

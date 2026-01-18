@@ -3,6 +3,9 @@ import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { getProductos } from "@/lib/supabase/queries";
 import { ProductCard } from "@/components/productos/ProductCard";
+import { Button } from "@/components/ui/Button";
+import { SectionHeader } from "@/components/ui/SectionHeader";
+import { DecorativeBadge } from "@/components/ui/DecorativeBadge";
 import { SITE_CONFIG } from "@/lib/constants";
 import {
   generateOrganizationSchema,
@@ -110,6 +113,7 @@ export default async function Home() {
               duration-300
               hover:shadow-md
               hover:border-border
+              animate-pulse
             "
             >
               <Sparkles className="h-4 w-4 text-foreground" />
@@ -123,7 +127,8 @@ export default async function Home() {
               text-5xl
               font-bold
               tracking-tight
-              text-foreground
+              bg-clip-text text-transparent
+              bg-gradient-to-r from-foreground via-foreground to-foreground/70
               sm:text-6xl
               lg:text-7xl
               animate-in fade-in
@@ -179,61 +184,14 @@ export default async function Home() {
               delay-500
             "
             >
-              <Link
-                href="/productos"
-                className="
-                group
-                inline-flex items-center justify-center gap-2
-                rounded-xl
-                bg-foreground
-                px-8 py-4
-                text-base font-semibold
-                text-background
-                shadow-lg
-                transition-all
-                duration-300
-                hover:shadow-xl
-                hover:scale-[1.02]
-                focus:outline-none
-                focus:ring-2
-                focus:ring-foreground
-                focus:ring-offset-2
-                sm:px-10 sm:py-4
-                sm:text-lg
-              "
-              >
+              <Button href="/productos" variant="primary" size="md" className="group">
                 Ver Productos
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
+                <ArrowRight className="h-5 w-5 transition-all group-hover:translate-x-1 group-hover:scale-110" />
+              </Button>
 
-              <Link
-                href="/sobre-nosotros"
-                className="
-                group
-                inline-flex items-center justify-center gap-2
-                rounded-xl
-                border-2 border-border
-                bg-white/50
-                backdrop-blur-sm
-                px-8 py-4
-                text-base font-semibold
-                text-foreground
-                shadow-sm
-                transition-all
-                duration-300
-                hover:bg-white
-                hover:border-foreground/20
-                hover:shadow-md
-                focus:outline-none
-                focus:ring-2
-                focus:ring-foreground
-                focus:ring-offset-2
-                sm:px-10 sm:py-4
-                sm:text-lg
-              "
-              >
+              <Button href="/sobre-nosotros" variant="secondary" size="md">
                 Sobre Nosotros
-              </Link>
+              </Button>
             </div>
           </div>
         </section>
@@ -249,41 +207,10 @@ export default async function Home() {
           "
           >
             {/* Encabezado de sección */}
-            <div className="mb-16 text-center">
-              <div className="mb-4 inline-block">
-                <div
-                  className="
-                  inline-flex h-1 w-16
-                  rounded-full
-                  bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
-                "
-                />
-              </div>
-              <h2
-                className="
-                mb-5
-                text-3xl
-                font-bold
-                text-foreground
-                sm:text-4xl
-                lg:text-5xl
-              "
-              >
-                Productos Destacados
-              </h2>
-              <p
-                className="
-                mx-auto max-w-2xl
-                text-base
-                leading-relaxed
-                text-muted-foreground
-                sm:text-lg
-              "
-              >
-                Nuestras piezas más especiales, creadas con dedicación y amor
-                por el detalle
-              </p>
-            </div>
+            <SectionHeader
+              title="Productos Destacados"
+              description="Nuestras piezas más especiales, creadas con dedicación y amor por el detalle"
+            />
 
             {/* Grid de productos */}
             <div
@@ -301,33 +228,22 @@ export default async function Home() {
                   producto.imagenes?.[0]?.url;
 
                 return (
-                  <ProductCard
-                    key={producto.id}
-                    producto={producto}
-                    imagenPrincipal={imagenPrincipal}
-                  />
+                  <div key={producto.id} className="shine-effect rounded-2xl">
+                    <ProductCard
+                      producto={producto}
+                      imagenPrincipal={imagenPrincipal}
+                    />
+                  </div>
                 );
               })}
             </div>
 
             {/* Link a todos los productos */}
             <div className="mt-16 text-center">
-              <Link
-                href="/productos"
-                className="
-                group
-                inline-flex items-center gap-2
-                text-base font-semibold
-                text-foreground
-                transition-all
-                duration-300
-                hover:gap-3
-                sm:text-lg
-              "
-              >
+              <Button href="/productos" variant="ghost" className="group">
                 Ver todos los productos
-                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              </Link>
+                <ArrowRight className="h-5 w-5 transition-all group-hover:translate-x-1 group-hover:scale-110" />
+              </Button>
             </div>
           </section>
         )}
@@ -343,40 +259,10 @@ export default async function Home() {
         >
           <div className="mx-auto max-w-7xl">
             {/* Encabezado de sección */}
-            <div className="mb-16 text-center">
-              <div className="mb-4 inline-block">
-                <div
-                  className="
-                  inline-flex h-1 w-16
-                  rounded-full
-                  bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
-                "
-                />
-              </div>
-              <h2
-                className="
-                mb-5
-                text-3xl
-                font-bold
-                text-foreground
-                sm:text-4xl
-                lg:text-5xl
-              "
-              >
-                Nuestras Categorías
-              </h2>
-              <p
-                className="
-                mx-auto max-w-2xl
-                text-base
-                leading-relaxed
-                text-muted-foreground
-                sm:text-lg
-              "
-              >
-                Explora nuestra colección de textiles artesanales
-              </p>
-            </div>
+            <SectionHeader
+              title="Nuestras Categorías"
+              description="Explora nuestra colección de textiles artesanales"
+            />
 
             {/* Grid de categorías */}
             <div
@@ -391,17 +277,17 @@ export default async function Home() {
               <Link
                 href="/productos"
                 className="
-                group
+                group shine-effect
                 overflow-hidden
                 rounded-2xl
                 border border-border/50
                 bg-white
-                shadow-sm
+                shadow-card
                 transition-all
                 duration-300
-                hover:shadow-xl
+                hover:shadow-card-hover
                 hover:border-foreground/10
-                hover:-translate-y-1
+                hover:-translate-y-2
               "
               >
                 <div
@@ -471,17 +357,17 @@ export default async function Home() {
               <Link
                 href="/productos"
                 className="
-                group
+                group shine-effect
                 overflow-hidden
                 rounded-2xl
                 border border-border/50
                 bg-white
-                shadow-sm
+                shadow-card
                 transition-all
                 duration-300
-                hover:shadow-xl
+                hover:shadow-card-hover
                 hover:border-foreground/10
-                hover:-translate-y-1
+                hover:-translate-y-2
               "
               >
                 <div
@@ -549,17 +435,17 @@ export default async function Home() {
               <Link
                 href="/productos"
                 className="
-                group
+                group shine-effect
                 overflow-hidden
                 rounded-2xl
                 border border-border/50
                 bg-white
-                shadow-sm
+                shadow-card
                 transition-all
                 duration-300
-                hover:shadow-xl
+                hover:shadow-card-hover
                 hover:border-foreground/10
-                hover:-translate-y-1
+                hover:-translate-y-2
               "
               >
                 <div
@@ -636,15 +522,7 @@ export default async function Home() {
           lg:px-8 lg:py-28
         "
         >
-          <div className="mb-4 inline-block">
-            <div
-              className="
-              inline-flex h-1 w-16
-              rounded-full
-              bg-gradient-to-r from-foreground/20 via-foreground to-foreground/20
-            "
-            />
-          </div>
+          <DecorativeBadge />
           <h2
             className="
             mb-6
@@ -667,32 +545,10 @@ export default async function Home() {
           >
             Estamos para ayudarte a encontrar el producto perfecto para tu hogar
           </p>
-          <Link
-            href="/contacto"
-            className="
-            group
-            inline-flex items-center justify-center gap-2
-            rounded-xl
-            bg-foreground
-            px-8 py-4
-            text-base font-semibold
-            text-background
-            shadow-lg
-            transition-all
-            duration-300
-            hover:shadow-xl
-            hover:scale-[1.02]
-            focus:outline-none
-            focus:ring-2
-            focus:ring-foreground
-            focus:ring-offset-2
-            sm:px-10 sm:py-4
-            sm:text-lg
-          "
-          >
+          <Button href="/contacto" variant="primary" size="md" className="group">
             Contactanos
-            <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-          </Link>
+            <ArrowRight className="h-5 w-5 transition-all group-hover:translate-x-1 group-hover:scale-110" />
+          </Button>
         </section>
       </div>
     </>
