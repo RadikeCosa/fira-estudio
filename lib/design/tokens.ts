@@ -59,7 +59,7 @@ export const COMPONENTS = {
     hover: "transition-all duration-300 hover:shadow-2xl hover:border-foreground/10 hover:-translate-y-2",
   },
   iconContainer: {
-    base: "flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-muted/50 to-muted text-foreground shadow-md",
+    base: "flex items-center justify-center rounded-2xl bg-gradient-to-br from-muted/50 to-muted text-foreground shadow-md",
     hover: "transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg",
   },
 } as const;

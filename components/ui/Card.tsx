@@ -1,40 +1,33 @@
 import { cn } from "@/lib/utils";
-import { COMPONENTS as DT } from "@/lib/design/tokens";
-import type { ReactNode } from "react";
+import { COMPONENTS } from "@/lib/design/tokens";
 
-// Props del componente Card genérico
 interface CardProps {
-  children: ReactNode;
-  hover?: boolean; // Si aplica efecto hover
-  padding?: "none" | "sm" | "md" | "lg"; // Nivel de padding interno
-  className?: string; // Para customización adicional
+  children: React.ReactNode;
+  hover?: boolean;
+  padding?: "none" | "sm" | "md" | "lg";
+  className?: string;
 }
 
-// Clases de padding según nivel
 const paddingClasses = {
   none: "",
-  sm: "p-6",
-  md: "p-8 sm:p-10",
-  lg: "p-10 sm:p-12",
+  sm: COMPONENTS.card.paddingSm,
+  md: COMPONENTS.card.paddingMd,
+  lg: COMPONENTS.card.paddingLg,
 };
 
-/**
- * Componente Card reutilizable para unificar estilos de tarjetas
- * Español argentino para comentarios y nomenclatura
- */
-export function Card({
-  children,
-  hover = false,
-  padding = "md",
-  className,
+export function Card({ 
+  children, 
+  hover = false, 
+  padding = "md", 
+  className 
 }: CardProps) {
   return (
     <div
       className={cn(
-        DT.card.base,
+        COMPONENTS.card.base,
         paddingClasses[padding],
-        hover && DT.card.hover,
-        className,
+        hover && COMPONENTS.card.hover,
+        className
       )}
     >
       {children}
