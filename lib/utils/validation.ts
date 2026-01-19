@@ -14,7 +14,7 @@ export const VALIDATION_LIMITS = {
 } as const;
 
 /** Regular expressions for validation */
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
 const TELEFONO_REGEX = /^\+?[0-9\s\-()]{10,20}$/;
 const TEXTO_REGEX = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
 
@@ -162,10 +162,11 @@ export function validateMensaje(mensaje: string): ValidationResult {
  * @returns Sanitized text safe for use
  */
 export function sanitizeText(text: string): string {
-  // Remove HTML tags first
+  // Remove HTML tags (multiple passes to handle nested/malformed tags)
   let sanitized = text.replace(/<[^>]*>/g, "");
+  sanitized = sanitized.replace(/<[^>]*>/g, ""); // Second pass for nested tags
   
-  // Remove dangerous characters
+  // Remove any remaining angle brackets and dangerous characters
   sanitized = sanitized.replace(/[<>"']/g, "");
   
   // Trim whitespace

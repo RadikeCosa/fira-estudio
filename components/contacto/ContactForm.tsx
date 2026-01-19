@@ -28,15 +28,19 @@ export function ContactForm() {
   // Form state
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [rateLimitMessage, setRateLimitMessage] = useState<string>("");
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // Check rate limit
     if (isRateLimited) {
-      alert("Has alcanzado el límite de mensajes. Por favor, esperá unos minutos.");
+      setRateLimitMessage("Has alcanzado el límite de mensajes. Por favor, esperá unos minutos.");
       return;
     }
+    
+    // Clear rate limit message if it was set
+    setRateLimitMessage("");
     
     const formData = new FormData(e.currentTarget);
     const formElement = e.currentTarget;
@@ -44,8 +48,7 @@ export function ContactForm() {
     // Honeypot detection (bot trap)
     const honeypot = formData.get("website");
     if (honeypot) {
-      // Silent rejection - bots filled the honeypot field
-      console.log("Bot detected via honeypot");
+      // Silent rejection - don't give feedback to bots
       return;
     }
     
@@ -196,7 +199,13 @@ ${data.mensaje}
           {getButtonText()}
         </Button>
         
-        {isRateLimited && (
+        {rateLimitMessage && (
+          <p className="text-center text-sm text-orange-600 font-medium">
+            {rateLimitMessage}
+          </p>
+        )}
+        
+        {isRateLimited && !rateLimitMessage && (
           <p className="text-center text-sm text-orange-600 font-medium">
             Límite de mensajes alcanzado. Esperá unos minutos.
           </p>
