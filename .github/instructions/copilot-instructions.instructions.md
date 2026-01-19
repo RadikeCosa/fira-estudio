@@ -65,6 +65,44 @@ lib/                # Business logic
   └── types.ts      # Shared TypeScript types
 ```
 
+### Centralized Content & Styles
+
+**Content Files** (all text is centralized):
+- `lib/content/home.ts` - Home page text
+- `lib/content/contacto.ts` - Contact page text
+- `lib/content/sobre-nosotros.ts` - About page text
+- `lib/content/productos.ts` - Products page text
+
+**Design Tokens** (all styles are centralized):
+- `lib/design/tokens.ts` - COLORS, TYPOGRAPHY, SPACING, COMPONENTS, LAYOUT, ANIMATIONS
+
+**Convention**: Never hardcode text or repeated style classes in components. Always import from centralized files.
+
+**Example (CORRECT)**:
+```typescript
+import { HOME_CONTENT } from "@/lib/content/home";
+import { TYPOGRAPHY, SPACING } from "@/lib/design/tokens";
+
+export function HeroSection() {
+  return (
+    <section className={SPACING.sectionPadding.md}>
+      <h1 className={TYPOGRAPHY.heading.page}>
+        {HOME_CONTENT.hero.title}
+      </h1>
+    </section>
+  );
+}
+```
+
+**Example (INCORRECT)**:
+```typescript
+// ❌ Don't hardcode text
+<h1>Muma Estudio</h1>
+
+// ❌ Don't duplicate style strings
+<section className="px-4 py-20 sm:px-6 sm:py-28 lg:px-8 lg:py-36">
+```
+
 ### Database Schema
 
 **Tables:** `categorias`, `productos`, `variaciones`, `imagenes_producto`, `consultas`
@@ -225,12 +263,51 @@ export default function Loading() {
 }
 ```
 
-**Naming Conventions:**
+**Component Structure:**
+- Use centralized content: `import { HOME_CONTENT } from "@/lib/content/home"`
+- Use design tokens: `import { TYPOGRAPHY, SPACING } from "@/lib/design/tokens"`
+- Prefer composition over large monolithic components
+- Extract reusable UI components to `components/ui/`
 
+**Naming Conventions:**
 - Components: `PascalCase` (ProductCard, VariationSelector)
 - Functions/variables: `camelCase` (getProductos, isLoading)
 - Constants: `UPPER_SNAKE_CASE` (SITE_CONFIG, ERROR_MESSAGES)
+- Content exports: `UPPER_SNAKE_CASE` with `_CONTENT` suffix (HOME_CONTENT, CONTACTO_CONTENT)
+- Design tokens: `UPPER_SNAKE_CASE` (TYPOGRAPHY, SPACING, COLORS)
 - Booleans: `is/has/should` prefix (isLoading, hasError, shouldDisplay)
+
+**Example**:
+```typescript
+// ✅ CORRECT: Centralized + tokens
+import { HOME_CONTENT } from "@/lib/content/home";
+import { TYPOGRAPHY, SPACING, ANIMATIONS } from "@/lib/design/tokens";
+import { Button } from "@/components/ui/Button";
+import { cn } from "@/lib/utils";
+
+export function HeroSection() {
+  const { title, subtitle, cta } = HOME_CONTENT.hero;
+  
+  return (
+    <section className={SPACING.sectionPadding.md}>
+      <h1 className={cn(TYPOGRAPHY.heading.page, ANIMATIONS.fadeIn)}>
+        {title}
+      </h1>
+      <Button href="/productos">{cta.primary}</Button>
+    </section>
+  );
+}
+
+// ❌ INCORRECT: Hardcoded text and styles
+export function HeroSection() {
+  return (
+    <section className="px-4 py-20">
+      <h1 className="text-4xl font-bold">Muma Estudio</h1>
+      <button>Ver Productos</button>
+    </section>
+  );
+}
+```
 
 ---
 
@@ -394,6 +471,7 @@ This file contains **core rules only**. For detailed patterns and implementation
 
 - Complete database schema → `.github/reference/database-schema.md`
 - Business rules & workflows → `.github/reference/business-logic.md`
+- Content & style management → `docs/CONTENT_AND_STYLE_MANAGEMENT.md`
 
 **Code Implementation:**
 
@@ -456,4 +534,5 @@ docs: Update README with setup instructions
 4. **Use `activo` column** - not `disponible`
 5. **Mobile-first responsive** - Tailwind breakpoints
 6. **Centralized constants** - import from `lib/constants`
-7. **Reference skills** - detailed patterns in `.github/skills/`
+7. **Centralized content & styles** - import from `lib/content/` and `lib/design/tokens`
+8. **Reference skills** - detailed patterns in `.github/skills/`
