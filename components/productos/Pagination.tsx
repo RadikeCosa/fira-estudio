@@ -2,6 +2,8 @@
  * Pagination component for product listing
  */
 import Link from "next/link";
+import { COMPONENTS } from "@/lib/design/tokens";
+import { cn } from "@/lib/utils";
 
 interface PaginationProps {
   page: number;
@@ -41,39 +43,33 @@ export function Pagination({
   const nextHref = buildHref(page + 1);
 
   return (
-    <nav aria-label="Paginación" className="flex items-center gap-4">
+    <nav aria-label="Paginación" className={COMPONENTS.pagination.nav}>
       <Link
         href={previousHref}
         aria-disabled={!hasPreviousPage}
-        className={`
-          inline-flex items-center rounded-md border px-4 py-2 text-sm font-medium
-          transition-colors duration-150
-          ${
-            hasPreviousPage
-              ? "bg-background text-foreground hover:bg-muted"
-              : "pointer-events-none border-dashed text-muted-foreground/70"
-          }
-        `}
+        className={cn(
+          COMPONENTS.pagination.button,
+          hasPreviousPage 
+            ? COMPONENTS.pagination.buttonActive 
+            : COMPONENTS.pagination.buttonDisabled
+        )}
       >
         Anterior
       </Link>
 
-      <span className="text-sm text-muted-foreground">
+      <span className={COMPONENTS.pagination.pageInfo}>
         Página {page} de {displayTotalPages}
       </span>
 
       <Link
         href={nextHref}
         aria-disabled={!hasNextPage}
-        className={`
-          inline-flex items-center rounded-md border px-4 py-2 text-sm font-medium
-          transition-colors duration-150
-          ${
-            hasNextPage
-              ? "bg-background text-foreground hover:bg-muted"
-              : "pointer-events-none border-dashed text-muted-foreground/70"
-          }
-        `}
+        className={cn(
+          COMPONENTS.pagination.button,
+          hasNextPage 
+            ? COMPONENTS.pagination.buttonActive 
+            : COMPONENTS.pagination.buttonDisabled
+        )}
       >
         Siguiente
       </Link>

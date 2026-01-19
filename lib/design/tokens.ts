@@ -62,6 +62,94 @@ export const COMPONENTS = {
     base: "flex items-center justify-center rounded-2xl bg-gradient-to-br from-muted/50 to-muted text-foreground shadow-md",
     hover: "transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg",
   },
+  
+  // Header/Navigation
+  header: {
+    base: "fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b transition-colors",
+    container: "px-6 py-4 flex justify-between items-center max-w-lg mx-auto",
+    logo: "font-display text-xl tracking-widest uppercase font-bold",
+    menuButton: "p-2 hover:bg-muted rounded transition-colors",
+  },
+  
+  // Footer
+  footer: {
+    base: "text-center border-t",
+    container: "py-12 px-6 max-w-lg mx-auto",
+    logo: "font-display text-2xl tracking-widest uppercase mb-2",
+    subtitle: "text-muted-foreground text-xs tracking-[0.2em] uppercase",
+    nav: "flex justify-center gap-8 mb-12",
+    navLink: "text-sm font-medium text-foreground hover:text-foreground transition-colors",
+    socialLinks: "flex justify-center gap-6 mb-12",
+    socialIcon: "text-muted-foreground hover:text-foreground transition-colors",
+    copyright: "text-[10px] text-muted-foreground uppercase tracking-widest",
+  },
+  
+  // Mobile Navigation
+  mobileNav: {
+    hamburger: "flex flex-col gap-1.5 p-1 hover:bg-muted rounded-lg transition-colors duration-200",
+    hamburgerLine: "block h-0.5 w-6 bg-foreground transition-transform duration-300",
+    overlay: "fixed inset-0 bg-black/50 z-40 backdrop-blur-sm animate-in fade-in duration-200",
+    menu: "fixed top-0 right-0 h-full w-64 bg-background z-50 shadow-2xl transform transition-transform duration-300 ease-in-out",
+    menuLink: "block px-4 py-3 text-foreground hover:bg-muted border-b border-border last:border-b-0 transition-colors duration-200",
+    mobileMenuAlt: "absolute top-full left-0 right-0 bg-background border-b border-border z-50 animate-in fade-in slide-in-from-top-2 duration-200",
+    closeButton: "p-2 hover:bg-muted rounded transition-colors",
+  },
+  
+  // Error States
+  errorContainer: {
+    wrapper: "mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8",
+    content: "flex min-h-[500px] flex-col items-center justify-center gap-6 rounded-lg border border-border bg-muted/30 p-8 text-center",
+    icon: "flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-destructive",
+    title: "text-2xl font-semibold text-foreground",
+    message: "text-sm text-muted-foreground",
+    button: "rounded-lg bg-accent px-6 py-3 font-medium text-white transition-all hover:bg-accent/90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2",
+  },
+  
+  // Badge Styles
+  badge: {
+    base: "inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium",
+    success: "bg-green-100 text-green-700 border-green-700/20",
+    warning: "bg-orange-100 text-orange-700 border-orange-700/20",
+    info: "bg-yellow-100 text-yellow-700 border-yellow-700/20",
+    error: "bg-red-100 text-red-700 border-red-700/20",
+    dot: "h-2 w-2 rounded-full",
+    dotSuccess: "bg-green-500",
+    dotWarning: "bg-orange-500",
+    dotInfo: "bg-yellow-500",
+    dotError: "bg-red-500",
+  },
+  
+  // Pagination
+  pagination: {
+    nav: "flex items-center gap-4",
+    button: "inline-flex items-center rounded-md border px-4 py-2 text-sm font-medium transition-colors duration-150",
+    buttonActive: "bg-background text-foreground hover:bg-muted",
+    buttonDisabled: "pointer-events-none border-dashed text-muted-foreground/70",
+    pageInfo: "text-sm text-muted-foreground",
+  },
+  
+  // Filter Components
+  filter: {
+    sidebar: "w-full sm:w-64 p-6 bg-white rounded-2xl border-2 border-border/50 shadow-lg space-y-6",
+    sectionTitle: "font-bold text-lg mb-4 text-foreground",
+    checkbox: "w-4 h-4 rounded border-2 border-border text-foreground focus:ring-2 focus:ring-foreground/20 transition-colors",
+    checkboxLabel: "flex items-center gap-3 cursor-pointer group",
+    checkboxText: "text-sm text-foreground group-hover:text-foreground/80 transition-colors",
+  },
+  
+  // Color Swatches
+  colorSwatch: {
+    container: "flex flex-wrap gap-3 justify-start items-center",
+    button: "w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-foreground/60 shadow",
+    buttonSelected: "ring-2 ring-foreground border-4",
+    buttonDisabled: "opacity-40 cursor-not-allowed",
+    buttonHover: "hover:scale-110 hover:border-foreground/80 cursor-pointer",
+  },
+  
+  // Hero Badge
+  heroBadge: {
+    base: "mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-white/80 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-accent shadow-sm transition-all duration-300 hover:shadow-md hover:border-border",
+  },
 } as const;
 
 // LAYOUT expandido

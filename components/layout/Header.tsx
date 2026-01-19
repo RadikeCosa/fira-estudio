@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 import { NAV_LINKS } from "@/lib/constants/navigation";
+import { COMPONENTS, COLORS } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
 
 /**
@@ -21,11 +22,11 @@ export function Header() {
 
   return (
     <>
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-zinc-200 dark:border-zinc-800 transition-colors">
-        <div className="px-6 py-4 flex justify-between items-center max-w-lg mx-auto">
+      <nav className={cn(COMPONENTS.header.base, COLORS.border)}>
+        <div className={COMPONENTS.header.container}>
           {/* Logo */}
           <Link href="/" className="hover:opacity-70 transition-opacity">
-            <h1 className="font-display text-xl tracking-widest uppercase font-bold">
+            <h1 className={COMPONENTS.header.logo}>
               {SITE_CONFIG.name}
             </h1>
           </Link>
@@ -33,7 +34,7 @@ export function Header() {
           {/* Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-colors"
+            className={COMPONENTS.header.menuButton}
             aria-label={isMenuOpen ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={isMenuOpen}
           >
@@ -49,7 +50,7 @@ export function Header() {
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 backdrop-blur-sm"
+          className={COMPONENTS.mobileNav.overlay}
           onClick={() => setIsMenuOpen(false)}
           aria-hidden="true"
         />
@@ -58,7 +59,7 @@ export function Header() {
       {/* Mobile Menu Panel */}
       <div
         className={cn(
-          "fixed top-0 right-0 h-full w-64 bg-background z-50 shadow-2xl transform transition-transform duration-300 ease-in-out",
+          COMPONENTS.mobileNav.menu,
           isMenuOpen ? "translate-x-0" : "translate-x-full"
         )}
         role="dialog"
@@ -69,7 +70,7 @@ export function Header() {
         <div className="flex justify-end p-6">
           <button
             onClick={() => setIsMenuOpen(false)}
-            className="p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-colors"
+            className={COMPONENTS.mobileNav.closeButton}
             aria-label="Cerrar menú"
           >
             <X className="w-6 h-6" />
@@ -83,7 +84,11 @@ export function Header() {
               key={link.href}
               href={link.href}
               onClick={() => setIsMenuOpen(false)}
-              className="block py-4 text-base font-medium hover:text-primary transition-colors border-b border-zinc-200 dark:border-zinc-800 last:border-0"
+              className={cn(
+                "block py-4 text-base font-medium transition-colors",
+                COLORS.border,
+                "border-b last:border-0"
+              )}
             >
               {link.label}
             </Link>
@@ -92,7 +97,7 @@ export function Header() {
 
         {/* Decorative text at bottom */}
         <div className="absolute bottom-6 left-6 right-6">
-          <p className="text-xs text-zinc-400 uppercase tracking-[0.2em] text-center">
+          <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center">
             Creaciones Textiles
           </p>
         </div>

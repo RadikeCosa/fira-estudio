@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/Badge";
 import type { Variacion } from "@/lib/types";
 import { STOCK_THRESHOLDS } from "@/lib/constants";
 
@@ -19,72 +20,27 @@ interface StockBadgeProps {
  * @param className - Clases CSS adicionales
  */
 export function StockBadge({ variacion, className = "" }: StockBadgeProps) {
-  // Determinar el estado y estilo del badge
   const getBadgeConfig = () => {
     if (variacion.stock === -1) {
-      return {
-        text: "Agotado",
-        bgColor: "bg-red-100",
-        textColor: "text-red-700",
-        borderColor: "border-red-700/20",
-        dotColor: "bg-red-500",
-      };
+      return { variant: 'error' as const, text: "Agotado" };
     }
-
     if (!variacion.activo) {
-      return {
-        text: "No disponible",
-        bgColor: "bg-red-100",
-        textColor: "text-red-700",
-        borderColor: "border-red-700/20",
-        dotColor: "bg-red-500",
-      };
+      return { variant: 'error' as const, text: "No disponible" };
     }
-
     if (variacion.stock === 0) {
-      return {
-        text: "A pedido",
-        bgColor: "bg-yellow-100",
-        textColor: "text-yellow-700",
-        borderColor: "border-yellow-700/20",
-        dotColor: "bg-yellow-500",
-      };
+      return { variant: 'info' as const, text: "A pedido" };
     }
-
     if (variacion.stock <= STOCK_THRESHOLDS.lowStock) {
-      return {
-        text: `¡Solo quedan ${variacion.stock}!`,
-        bgColor: "bg-orange-100",
-        textColor: "text-orange-700",
-        borderColor: "border-orange-700/20",
-        dotColor: "bg-orange-500",
-      };
+      return { variant: 'warning' as const, text: `¡Solo quedan ${variacion.stock}!` };
     }
-
-    return {
-      text: `${variacion.stock} disponibles`,
-      bgColor: "bg-green-100",
-      textColor: "text-green-700",
-      borderColor: "border-green-700/20",
-      dotColor: "bg-green-500",
-    };
+    return { variant: 'success' as const, text: `${variacion.stock} disponibles` };
   };
-
+  
   const config = getBadgeConfig();
-
+  
   return (
-    <div
-      className={`
-        inline-flex items-center gap-2
-        px-4 py-2
-        rounded-full
-        ${config.bgColor}
-        border ${config.borderColor}
-        ${className}
-      `}
-    >
-      <div className={`h-2 w-2 rounded-full ${config.dotColor}`} />
-      <p className={`text-sm font-medium ${config.textColor}`}>{config.text}</p>
-    </div>
+    <Badge variant={config.variant} showDot className={className}>
+      {config.text}
+    </Badge>
   );
 }

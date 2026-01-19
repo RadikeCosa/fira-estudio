@@ -1,5 +1,7 @@
 "use client";
 import { useState } from "react";
+import { COMPONENTS } from "@/lib/design/tokens";
+import { cn } from "@/lib/utils";
 
 export interface ColorSwatchesProps {
   colores: string[];
@@ -29,7 +31,7 @@ export function ColorSwatches({
 
   return (
     <div
-      className="flex flex-wrap gap-3 justify-start items-center"
+      className={COMPONENTS.colorSwatch.container}
       aria-label="Selector de color"
     >
       {colores.map((color) => {
@@ -48,14 +50,20 @@ export function ColorSwatches({
             onClick={() => !isDisabled && onColorChange(color)}
             onMouseEnter={() => setHovered(color)}
             onMouseLeave={() => setHovered(null)}
-            className={`w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary/60 shadow ${colorClass} ${isSelected ? "ring-2 ring-primary border-4" : ""} ${isDisabled ? "opacity-40 cursor-not-allowed" : "hover:scale-110 hover:border-primary/80 cursor-pointer"}`}
+            className={cn(
+              COMPONENTS.colorSwatch.button,
+              colorClass,
+              isSelected && COMPONENTS.colorSwatch.buttonSelected,
+              isDisabled && COMPONENTS.colorSwatch.buttonDisabled,
+              !isDisabled && COMPONENTS.colorSwatch.buttonHover
+            )}
           >
             {isSelected ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 20 20"
                 fill="currentColor"
-                className="w-5 h-5 text-primary"
+                className="w-5 h-5 text-foreground"
                 aria-hidden="true"
               >
                 <path

@@ -1,5 +1,5 @@
 import { HOME_CONTENT } from "@/lib/content/home";
-import { SPACING, ANIMATIONS } from "@/lib/design/tokens";
+import { SPACING, ANIMATIONS, COMPONENTS } from "@/lib/design/tokens";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -12,7 +12,7 @@ function HeroBadge() {
   return (
     <div
       className={cn(
-        "mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-white/80 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-accent shadow-sm transition-all duration-300 hover:shadow-md hover:border-border",
+        COMPONENTS.heroBadge.base,
         ANIMATIONS.shimmer,
         ANIMATIONS.fadeIn,
       )}

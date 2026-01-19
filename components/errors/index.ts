@@ -3,7 +3,5 @@
  * Exports all specific error boundary components
  */
 
-export { NetworkError } from "./NetworkError";
-export { DatabaseError } from "./DatabaseError";
+export { ErrorDisplay } from "./ErrorDisplay";
 export { NotFoundError } from "./NotFoundError";
-export { GenericError } from "./GenericError";

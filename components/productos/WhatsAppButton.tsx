@@ -6,6 +6,7 @@ import { WHATSAPP, SITE_CONFIG } from "@/lib/constants";
 import { formatPrice } from "@/lib/utils";
 import { trackWhatsAppClick } from "@/lib/analytics/gtag";
 import { useRateLimit } from "@/hooks/useRateLimit";
+import { cn } from "@/lib/utils";
 
 interface WhatsAppButtonProps {
   producto: Producto;
@@ -30,6 +31,7 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
     windowMs: 60000,
     key: "whatsapp_clicks",
   });
+  
   // Construir mensaje pre-formateado
   const construirMensaje = (): string => {
     let mensaje = `Hola! Me interesa este producto de ${SITE_CONFIG.name}: `;
@@ -100,36 +102,22 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
       target="_blank"
       rel="noopener noreferrer"
       onClick={handleClick}
-      className={`
-        group
-        inline-flex items-center justify-center gap-3
-        w-full
-        px-8 py-4 rounded-xl
-        ${
-          isRateLimited
-            ? "bg-gradient-to-r from-gray-400 to-gray-300 cursor-not-allowed"
-            : "bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600"
-        }
-        text-white font-semibold text-base
-        shadow-lg
-        transition-all duration-300
-        ${!isRateLimited && "hover:shadow-xl hover:scale-[1.02]"}
-        focus:outline-none
-        focus:ring-2
-        ${
-          isRateLimited
-            ? "focus:ring-gray-400"
-            : "focus:ring-green-500"
-        }
-        focus:ring-offset-2
-      `}
+      className={cn(
+        "group inline-flex items-center justify-center gap-3 w-full",
+        "px-8 py-4 rounded-xl font-semibold text-base shadow-lg",
+        "transition-all duration-300",
+        "focus:outline-none focus:ring-2 focus:ring-offset-2",
+        isRateLimited
+          ? "bg-gradient-to-r from-gray-400 to-gray-300 cursor-not-allowed text-white focus:ring-gray-400"
+          : "bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white hover:shadow-xl hover:scale-[1.02] focus:ring-green-500"
+      )}
       aria-disabled={isRateLimited}
     >
       <MessageCircle
-        className={`w-5 h-5 ${
-          !isRateLimited &&
-          "motion-safe:transition-transform motion-safe:group-hover:rotate-12"
-        }`}
+        className={cn(
+          "w-5 h-5",
+          !isRateLimited && "motion-safe:transition-transform motion-safe:group-hover:rotate-12"
+        )}
       />
       <span>{getButtonText()}</span>
     </a>

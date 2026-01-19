@@ -5,6 +5,7 @@ import { Categoria, ProductoCompleto } from "@/lib/types";
 import { useProductFilters } from "./useProductFilters";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
+import { COMPONENTS } from "@/lib/design/tokens";
 
 export interface FilterBarProps {
   categorias: Categoria[];
@@ -55,29 +56,23 @@ export function FilterBar({ categorias, productos }: FilterBarProps) {
   };
 
   return (
-    <aside className="w-full sm:w-64 p-6 bg-white rounded-2xl border-2 border-border/50 shadow-lg space-y-6">
+    <aside className={COMPONENTS.filter.sidebar}>
       {/* Categories Section */}
       <div>
-        <h3 className="font-bold text-lg mb-4 text-foreground">Categorías</h3>
+        <h3 className={COMPONENTS.filter.sectionTitle}>Categorías</h3>
         <div className="flex flex-col gap-3">
           {categorias.map((categoria) => (
             <label
               key={categoria.id}
-              className="flex items-center gap-3 cursor-pointer group"
+              className={COMPONENTS.filter.checkboxLabel}
             >
               <input
                 type="checkbox"
                 checked={filters.categorias.includes(categoria.id)}
                 onChange={() => handleCategoriaToggle(categoria.id)}
-                className="
-                  w-4 h-4 rounded
-                  border-2 border-border
-                  text-foreground
-                  focus:ring-2 focus:ring-foreground/20
-                  transition-colors
-                "
+                className={COMPONENTS.filter.checkbox}
               />
-              <span className="text-sm text-foreground group-hover:text-foreground/80 transition-colors">
+              <span className={COMPONENTS.filter.checkboxText}>
                 {categoria.nombre}
               </span>
             </label>
@@ -87,7 +82,7 @@ export function FilterBar({ categorias, productos }: FilterBarProps) {
 
       {/* Price Range Section */}
       <div>
-        <h3 className="font-bold text-lg mb-4 text-foreground">
+        <h3 className={COMPONENTS.filter.sectionTitle}>
           Rango de Precio
         </h3>
         <div className="space-y-3">

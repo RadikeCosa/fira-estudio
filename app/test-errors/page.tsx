@@ -1,12 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import {
-  NetworkError,
-  DatabaseError,
-  NotFoundError,
-  GenericError,
-} from "@/components/errors";
+import { ErrorDisplay } from "@/components/errors/ErrorDisplay";
+import { NotFoundError } from "@/components/errors";
 
 export default function TestErrorsPage() {
   const [selectedError, setSelectedError] = useState<string>("network");
@@ -66,15 +62,18 @@ export default function TestErrorsPage() {
           </button>
         </div>
 
-        {selectedError === "network" && <NetworkError onRetry={handleRetry} />}
+        {selectedError === "network" && (
+          <ErrorDisplay type="network" onRetry={handleRetry} />
+        )}
         {selectedError === "database" && (
-          <DatabaseError onRetry={handleRetry} />
+          <ErrorDisplay type="database" onRetry={handleRetry} />
         )}
         {selectedError === "notfound" && (
           <NotFoundError message="Este es un mensaje personalizado de error" />
         )}
         {selectedError === "generic" && (
-          <GenericError
+          <ErrorDisplay
+            type="generic"
             onRetry={handleRetry}
             error={new Error("Example error message for testing")}
           />

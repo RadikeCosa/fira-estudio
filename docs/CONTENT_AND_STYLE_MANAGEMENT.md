@@ -615,3 +615,156 @@ For questions about this architecture, reference:
 - This document - Content and style management
 
 **Remember:** If it's text → change in `lib/content/`. If it's a color/size → change in `lib/design/` or `app/globals.css`. If it's a component → it probably already exists in `components/ui/`!
+
+---
+
+## 🔄 Recent Refactoring (January 2026)
+
+### New Components
+
+#### Badge
+- **Location:** `components/ui/Badge.tsx`
+- **Variants:** success, warning, info, error
+- **Props:** variant, children, showDot, className
+- **Usage:**
+  ```tsx
+  import { Badge } from "@/components/ui/Badge";
+  
+  <Badge variant="success" showDot>Stock disponible</Badge>
+  <Badge variant="error">Agotado</Badge>
+  <Badge variant="warning">¡Solo quedan 3!</Badge>
+  <Badge variant="info">A pedido</Badge>
+  ```
+
+#### ErrorDisplay
+- **Location:** `components/errors/ErrorDisplay.tsx`
+- **Types:** network, database, generic
+- **Replaces:** NetworkError, DatabaseError, GenericError (now deleted)
+- **Usage:**
+  ```tsx
+  import { ErrorDisplay } from "@/components/errors/ErrorDisplay";
+  
+  <ErrorDisplay type="network" onRetry={handleRetry} />
+  <ErrorDisplay type="database" onRetry={handleRetry} />
+  <ErrorDisplay type="generic" onRetry={handleRetry} error={error} />
+  ```
+
+### Expanded Design Tokens
+
+All tokens are in `lib/design/tokens.ts`:
+
+#### COMPONENTS.header.*
+- `base` - Fixed header with backdrop blur
+- `container` - Header content container
+- `logo` - Logo text styles
+- `menuButton` - Mobile menu button
+
+#### COMPONENTS.footer.*
+- `base` - Footer base styles
+- `container` - Footer content container
+- `logo` - Footer logo text
+- `subtitle` - Footer subtitle
+- `nav` - Navigation links container
+- `navLink` - Individual nav link
+- `socialLinks` - Social icons container
+- `socialIcon` - Individual social icon
+- `copyright` - Copyright text
+
+#### COMPONENTS.mobileNav.*
+- `hamburger` - Hamburger button container
+- `hamburgerLine` - Individual hamburger line
+- `overlay` - Menu backdrop overlay
+- `menu` - Slide-in menu panel
+- `menuLink` - Menu item link
+- `mobileMenuAlt` - Alternative mobile menu style
+- `closeButton` - Close button
+
+#### COMPONENTS.errorContainer.*
+- `wrapper` - Outer container
+- `content` - Inner content area
+- `icon` - Error icon container
+- `title` - Error title
+- `message` - Error message
+- `button` - Retry button
+
+#### COMPONENTS.badge.*
+- `base` - Badge base styles
+- `success/warning/info/error` - Variant styles
+- `dot` - Status dot
+- `dotSuccess/dotWarning/dotInfo/dotError` - Dot variants
+
+#### COMPONENTS.pagination.*
+- `nav` - Pagination nav container
+- `button` - Pagination button base
+- `buttonActive` - Active button state
+- `buttonDisabled` - Disabled button state
+- `pageInfo` - Page counter text
+
+#### COMPONENTS.filter.*
+- `sidebar` - Filter sidebar container
+- `sectionTitle` - Section heading
+- `checkbox` - Checkbox input
+- `checkboxLabel` - Checkbox label container
+- `checkboxText` - Checkbox label text
+
+#### COMPONENTS.colorSwatch.*
+- `container` - Swatches container
+- `button` - Individual swatch button
+- `buttonSelected` - Selected state
+- `buttonDisabled` - Disabled state
+- `buttonHover` - Hover effects
+
+#### COMPONENTS.heroBadge.*
+- `base` - Hero section badge
+
+### Migration Examples
+
+#### Before (Hardcoded):
+```tsx
+// ❌ Hardcoded classes
+<div className="w-full sm:w-64 p-6 bg-white rounded-2xl border-2 border-border/50 shadow-lg">
+  <h3 className="font-bold text-lg mb-4 text-foreground">Categorías</h3>
+  <input className="w-4 h-4 rounded border-2 border-border" />
+</div>
+```
+
+#### After (Using Tokens):
+```tsx
+// ✅ Using centralized tokens
+import { COMPONENTS } from "@/lib/design/tokens";
+
+<aside className={COMPONENTS.filter.sidebar}>
+  <h3 className={COMPONENTS.filter.sectionTitle}>Categorías</h3>
+  <input className={COMPONENTS.filter.checkbox} />
+</aside>
+```
+
+### Refactored Components
+
+The following components now use centralized design tokens:
+
+**Layout:**
+- `components/layout/Header.tsx` - Uses `COMPONENTS.header.*`
+- `components/layout/Footer.tsx` - Uses `COMPONENTS.footer.*`
+- `components/layout/MobileNav.tsx` - Uses `COMPONENTS.mobileNav.*`
+
+**Products:**
+- `components/productos/StockBadge.tsx` - Uses `Badge` component
+- `components/productos/WhatsAppButton.tsx` - Uses `cn()` utility
+- `components/productos/Pagination.tsx` - Uses `COMPONENTS.pagination.*`
+- `components/productos/FilterBar.tsx` - Uses `COMPONENTS.filter.*`
+- `components/productos/ColorSwatches.tsx` - Uses `COMPONENTS.colorSwatch.*`
+
+**Home:**
+- `components/home/HeroSection.tsx` - Uses `COMPONENTS.heroBadge.*`
+
+**Errors:**
+- All error pages now use unified `ErrorDisplay` component
+
+### Benefits
+
+1. **Consistency:** All components follow the same style patterns
+2. **Maintainability:** Update styles in one place, changes reflect everywhere
+3. **Reusability:** Badge component eliminates duplicate code
+4. **Type Safety:** Design tokens are strongly typed
+5. **Developer Experience:** Autocomplete for all design tokens
