@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -8,14 +8,18 @@ import { Footer } from "@/components/layout/Footer";
 import { SITE_CONFIG } from "@/lib/constants"; // ← Importar
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const playfair = Playfair_Display({
   subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-display",
+  display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const inter = Inter({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-sans",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -40,12 +44,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
-      >
+    <html lang="es" className={`${playfair.variable} ${inter.variable}`}>
+      <body className="font-sans antialiased min-h-screen">
         <Header />
-        <main className="flex-grow">{children}</main>
+        <main className="min-h-screen">{children}</main>
         <Footer />
         <SpeedInsights />
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!} />
