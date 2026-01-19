@@ -43,7 +43,7 @@ export default async function Home() {
   // Obtener productos destacados
   const productosResult = await getProductos({ page: 1, pageSize: 50 });
   const productosDestacados = productosResult.items
-    .filter((p: any) => p.destacado)
+    .filter((p) => p.destacado)
     .slice(0, 4);
 
   // Generate Organization schema for SEO
