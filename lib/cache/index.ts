@@ -40,6 +40,10 @@ export const CACHE_CONFIG = {
     revalidate: 3600, // 1 hour
     tags: ["productos"] as string[],
   },
+  productos_filtrados: {
+    revalidate: 7200, // 2 hours (for category-filtered queries)
+    tags: ["productos"] as string[],
+  },
   categorias: {
     revalidate: 86400, // 24 hours
     tags: ["categorias"] as string[],

@@ -14,6 +14,10 @@ export const CACHE_CONFIG = {
     revalidate: 3600, // 1 hour
     tags: ["productos"],
   },
+  productos_filtrados: {
+    revalidate: 7200, // 2 hours (for category-filtered queries)
+    tags: ["productos"],
+  },
   categorias: {
     revalidate: 86400, // 24 hours
     tags: ["categorias"],
@@ -30,6 +34,28 @@ export const CACHE_CONFIG = {
 ```
 
 ## Usage
+
+### Automatic Cache Selection
+
+The `getProductos()` function automatically selects the appropriate cache configuration:
+
+```typescript
+import { getProductos } from "@/lib/supabase/queries";
+
+// General listing - uses 'productos' config (1 hour)
+const productos = await getProductos();
+const productosPage2 = await getProductos({ page: 2 });
+
+// Category-filtered - uses 'productos_filtrados' config (2 hours)
+const manteles = await getProductos({ categoriaSlug: "manteles" });
+const cojines = await getProductos({ categoriaSlug: "cojines", page: 2 });
+```
+
+**Why longer cache for filtered queries?**
+- Category-filtered results are more stable (products don't move between categories frequently)
+- Categories themselves rarely change
+- Reduces database load for commonly visited category pages
+- Manual invalidation still available via `revalidateProductos()`
 
 ### In Server Components
 
@@ -127,11 +153,12 @@ export const myCachedQuery = createCachedQuery<[string], MyData>(
 ### Cache Duration Guidelines
 
 - **categorias (24h)**: Most stable data, rarely changes
-- **productos (1h)**: Product listings, moderate update frequency
+- **productos_filtrados (2h)**: Category-filtered products, more stable than general listing
+- **productos (1h)**: General product listings, moderate update frequency
 - **producto_detail (1h)**: Individual products, same update frequency as listings
 - **productos_relacionados (1h)**: Related products, aligned with main products
 
-All product-related caches can be invalidated immediately using `revalidateProducto(slug)` or `revalidateProductos()`.
+All product-related caches share the `"productos"` tag and can be invalidated immediately using `revalidateProducto(slug)` or `revalidateProductos()`.
 
 ## Cache Tags
 

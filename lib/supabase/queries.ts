@@ -101,6 +101,7 @@ async function getProductosInternal(
 
 /**
  * Obtiene productos activos con sus relaciones (con cache)
+ * Usa cache más largo (2h) cuando hay filtro de categoría
  * @param params - Optional parameters for filtering and pagination
  * @returns Lista de productos completos (destacados primero, luego por nombre)
  */
@@ -109,10 +110,15 @@ export async function getProductos(
 ): Promise<PaginatedResult<ProductoCompleto>> {
   const supabase = await createClient();
 
+  // Usar configuración específica si hay filtro de categoría
+  const cacheConfig = params?.categoriaSlug 
+    ? CACHE_CONFIG.productos_filtrados  // 2 horas (más estable)
+    : CACHE_CONFIG.productos;           // 1 hora (general)
+
   const cachedFn = createCachedQuery<
     [SupabaseClient, GetProductosParams?],
     PaginatedResult<ProductoCompleto>
-  >(getProductosInternal, CACHE_CONFIG.productos);
+  >(getProductosInternal, cacheConfig);
 
   return cachedFn(supabase, params);
 }
