@@ -20,6 +20,7 @@ export const SITE_CONFIG = {
   description:
     "Textiles artesanales para tu hogar. Manteles, servilletas y caminos de mesa únicos, hechos a mano en Argentina.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://mumaestudio.com",
+  email: "contacto@mumaestudio.com",
   locale: "es_AR",
   keywords: SITE_KEYWORDS, // ← Sin as const aquí
 } as const;

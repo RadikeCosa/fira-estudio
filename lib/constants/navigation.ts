@@ -18,9 +18,8 @@ export interface SocialLink {
  * Main navigation links displayed in Header and Footer
  */
 export const NAV_LINKS: NavLink[] = [
-  { label: "Home", href: "/" },
   { label: "Productos", href: "/productos" },
-  { label: "Sobre Nosotros", href: "/sobre-nosotros" },
+  { label: "Nosotros", href: "/sobre-nosotros" },
   { label: "Contacto", href: "/contacto" },
 ];
 
