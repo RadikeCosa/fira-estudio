@@ -129,8 +129,8 @@ describe("ContactForm", () => {
   it("uses Card component with correct props", () => {
     const { container } = render(<ContactForm />);
     
-    // Card should have border and shadow classes
-    const card = container.querySelector(".rounded-2xl");
+    // Card should have border and shadow classes (minimalist rounded-md)
+    const card = container.querySelector(".rounded-md");
     expect(card).toBeInTheDocument();
   });
 
