@@ -18,6 +18,9 @@ const EMAIL_REGEX = /^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9
 const TELEFONO_REGEX = /^\+?[0-9\s\-()]{10,20}$/;
 const TEXTO_REGEX = /^[a-zA-ZáéíóúÁÉÍÓÚñÑüÜ\s]+$/;
 
+/** Maximum length for sanitized text */
+const MAX_SANITIZED_LENGTH = 1000;
+
 /** TypeScript Types */
 
 export interface ValidationResult {
@@ -162,9 +165,14 @@ export function validateMensaje(mensaje: string): ValidationResult {
  * @returns Sanitized text safe for use
  */
 export function sanitizeText(text: string): string {
-  // Remove HTML tags (multiple passes to handle nested/malformed tags)
-  let sanitized = text.replace(/<[^>]*>/g, "");
-  sanitized = sanitized.replace(/<[^>]*>/g, ""); // Second pass for nested tags
+  let sanitized = text;
+  
+  // Remove HTML tags with multiple passes until no more tags found
+  let previousLength = sanitized.length;
+  do {
+    previousLength = sanitized.length;
+    sanitized = sanitized.replace(/<[^>]*>/g, "");
+  } while (sanitized.length !== previousLength);
   
   // Remove any remaining angle brackets and dangerous characters
   sanitized = sanitized.replace(/[<>"']/g, "");
@@ -172,9 +180,9 @@ export function sanitizeText(text: string): string {
   // Trim whitespace
   sanitized = sanitized.trim();
   
-  // Limit to 1000 characters as additional security
-  if (sanitized.length > 1000) {
-    sanitized = sanitized.substring(0, 1000);
+  // Limit to MAX_SANITIZED_LENGTH as additional security
+  if (sanitized.length > MAX_SANITIZED_LENGTH) {
+    sanitized = sanitized.substring(0, MAX_SANITIZED_LENGTH);
   }
   
   return sanitized;

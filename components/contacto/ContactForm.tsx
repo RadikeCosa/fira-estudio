@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { Button } from "@/components/ui/Button";
@@ -30,6 +30,22 @@ export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [rateLimitMessage, setRateLimitMessage] = useState<string>("");
   
+  // Refs for focus management and timeout cleanup
+  const nombreRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+  const telefonoRef = useRef<HTMLInputElement>(null);
+  const mensajeRef = useRef<HTMLTextAreaElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
+  
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
@@ -45,9 +61,9 @@ export function ContactForm() {
     const formData = new FormData(e.currentTarget);
     const formElement = e.currentTarget;
     
-    // Honeypot detection (bot trap)
+    // Honeypot detection (bot trap) - check for non-empty string value
     const honeypot = formData.get("website");
-    if (honeypot) {
+    if (honeypot && typeof honeypot === "string" && honeypot.trim().length > 0) {
       // Silent rejection - don't give feedback to bots
       return;
     }
@@ -66,11 +82,15 @@ export function ContactForm() {
     if (!validation.isValid) {
       setErrors(validation.errors);
       
-      // Focus on first field with error
-      const firstErrorField = Object.keys(validation.errors)[0];
-      if (firstErrorField) {
-        const element = document.getElementById(firstErrorField);
-        element?.focus();
+      // Focus on first field with error using refs
+      if (validation.errors.nombre) {
+        nombreRef.current?.focus();
+      } else if (validation.errors.email) {
+        emailRef.current?.focus();
+      } else if (validation.errors.telefono) {
+        telefonoRef.current?.focus();
+      } else if (validation.errors.mensaje) {
+        mensajeRef.current?.focus();
       }
       
       return;
@@ -99,7 +119,7 @@ ${data.mensaje}
     window.open(WHATSAPP.getUrl(message), "_blank");
     
     // Reset form after 1 second
-    setTimeout(() => {
+    timeoutRef.current = setTimeout(() => {
       setIsSubmitting(false);
       if (formElement) {
         formElement.reset();
@@ -143,6 +163,7 @@ ${data.mensaje}
         />
         
         <Input
+          ref={nombreRef}
           id="nombre"
           name="nombre"
           label={form.fields.nombre.label}
@@ -154,6 +175,7 @@ ${data.mensaje}
         />
 
         <Input
+          ref={emailRef}
           id="email"
           name="email"
           type="email"
@@ -166,6 +188,7 @@ ${data.mensaje}
         />
 
         <Input
+          ref={telefonoRef}
           id="telefono"
           name="telefono"
           type="tel"
@@ -178,6 +201,7 @@ ${data.mensaje}
         />
 
         <Textarea
+          ref={mensajeRef}
           id="mensaje"
           name="mensaje"
           label={form.fields.mensaje.label}
