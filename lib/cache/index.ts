@@ -45,7 +45,7 @@ export const CACHE_CONFIG = {
     tags: ["categorias"] as string[],
   },
   producto_detail: {
-    revalidate: 1800, // 30 minutes
+    revalidate: 3600, // 1 hour
     tags: ["productos"] as string[],
   },
   productos_relacionados: {

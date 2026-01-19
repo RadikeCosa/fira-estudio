@@ -6,7 +6,7 @@ describe("CACHE_CONFIG", () => {
   it("has correct revalidate times", () => {
     assert.equal(CACHE_CONFIG.productos.revalidate, 3600); // 1 hour
     assert.equal(CACHE_CONFIG.categorias.revalidate, 86400); // 24 hours
-    assert.equal(CACHE_CONFIG.producto_detail.revalidate, 1800); // 30 minutes
+    assert.equal(CACHE_CONFIG.producto_detail.revalidate, 3600); // 1 hour
     assert.equal(CACHE_CONFIG.productos_relacionados.revalidate, 3600); // 1 hour
   });
 
@@ -36,8 +36,8 @@ describe("createCachedQuery", () => {
     assert.ok(CACHE_CONFIG.categorias.revalidate > CACHE_CONFIG.productos.revalidate);
     assert.ok(CACHE_CONFIG.categorias.revalidate > CACHE_CONFIG.producto_detail.revalidate);
     
-    // Products list should cache longer than individual product details
-    assert.ok(CACHE_CONFIG.productos.revalidate > CACHE_CONFIG.producto_detail.revalidate);
+    // Product detail now has same cache as products list
+    assert.equal(CACHE_CONFIG.producto_detail.revalidate, CACHE_CONFIG.productos.revalidate);
     
     // Related products should have same cache as products list
     assert.equal(CACHE_CONFIG.productos_relacionados.revalidate, CACHE_CONFIG.productos.revalidate);

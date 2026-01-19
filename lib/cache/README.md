@@ -19,7 +19,7 @@ export const CACHE_CONFIG = {
     tags: ["categorias"],
   },
   producto_detail: {
-    revalidate: 1800, // 30 minutes
+    revalidate: 3600, // 1 hour
     tags: ["productos"],
   },
   productos_relacionados: {
@@ -123,6 +123,15 @@ export const myCachedQuery = createCachedQuery<[string], MyData>(
 3. **Revalidate after mutations** - Keep cache fresh after updates
 4. **Choose appropriate revalidation times** - Balance freshness vs performance
 5. **Use proper cache tags** - Enable targeted invalidation
+
+### Cache Duration Guidelines
+
+- **categorias (24h)**: Most stable data, rarely changes
+- **productos (1h)**: Product listings, moderate update frequency
+- **producto_detail (1h)**: Individual products, same update frequency as listings
+- **productos_relacionados (1h)**: Related products, aligned with main products
+
+All product-related caches can be invalidated immediately using `revalidateProducto(slug)` or `revalidateProductos()`.
 
 ## Cache Tags
 

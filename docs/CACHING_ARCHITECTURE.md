@@ -170,7 +170,7 @@ export const CACHE_CONFIG = {
     tags: ["categorias"],
   },
   producto_detail: {
-    revalidate: 1800,      // 30 minutes
+    revalidate: 3600,      // 1 hour
     tags: ["productos"],
   },
 };
