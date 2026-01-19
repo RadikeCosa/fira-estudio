@@ -15,7 +15,7 @@ export function getUniqueSizes(variaciones: Variacion[]): string[] {
   const uniqueSizes = Array.from(new Set(activeSizes));
 
   // Natural sort for dimensions (e.g., "150x200cm" before "180x250cm")
-  return uniqueSizes.sort((a, b) => {
+  return uniqueSizes.sort((a: string, b: string) => {
     // Extract numeric values for comparison
     const matchA = a.match(/^(\d+)x(\d+)/);
     const matchB = b.match(/^(\d+)x(\d+)/);

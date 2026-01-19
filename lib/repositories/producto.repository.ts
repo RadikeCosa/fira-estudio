@@ -2,7 +2,7 @@
  * Producto repository backed by Supabase
  */
 import { createClient } from "@/lib/supabase/server";
-import type { ProductoCompleto } from "@/lib/types";
+import type { ProductoCompleto, Variacion, ImagenProducto } from "@/lib/types";
 import { BaseRepository } from "./base.repository";
 import { RepositoryError } from "./errors";
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -180,12 +180,12 @@ export class ProductoRepository extends BaseRepository<ProductoCompleto> {
   private sortRelations(producto: ProductoCompleto): ProductoCompleto {
     return {
       ...producto,
-      variaciones: [...producto.variaciones].sort((a, b) => {
+      variaciones: [...producto.variaciones].sort((a: Variacion, b: Variacion) => {
         const sizeCompare = a.tamanio.localeCompare(b.tamanio);
         if (sizeCompare !== 0) return sizeCompare;
         return a.color.localeCompare(b.color);
       }),
-      imagenes: [...producto.imagenes].sort((a, b) => a.orden - b.orden),
+      imagenes: [...producto.imagenes].sort((a: ImagenProducto, b: ImagenProducto) => a.orden - b.orden),
     };
   }
 }

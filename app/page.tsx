@@ -1,66 +1,65 @@
-import { Metadata } from "next";
-import { SITE_CONFIG } from "@/lib/constants";
-import { getProductos } from "@/lib/supabase/queries";
-import { generateOrganizationSchema } from "@/lib/seo/structured-data";
-import { renderJsonLd } from "@/lib/seo/structured-data";
 import { HeroSection } from "@/components/home/HeroSection";
-import { FeaturedProductsSection } from "@/components/home/FeaturedProductsSection";
-import { CategoriesSection } from "@/components/home/CategoriesSection";
-import { FinalCTASection } from "@/components/home/FinalCTASection";
+import { TextureDivider } from "@/components/home/TextureDivider";
+import { FeaturedProducts } from "@/components/home/FeaturedProducts";
+import { CollectionsGrid } from "@/components/home/CollectionsGrid";
+import { ContactSection } from "@/components/home/ContactSection";
+import { ProgressBar } from "@/components/layout/ProgressBar";
+import type { Metadata } from "next";
+import { SITE_CONFIG } from "@/lib/constants";
+
+/**
+ * Home Page - Muma Estudio
+ * 
+ * Estructura:
+ * 1. Hero Section - Badge, título, descripción, CTAs
+ * 2. Texture Divider - Imagen de textura grayscale
+ * 3. Featured Products - Grid de productos destacados
+ * 4. Collections Grid - Grid 2x2 de colecciones
+ * 5. Contact Section - CTA de consulta personalizada
+ * 6. Progress Bar - Barra de progreso de scroll
+ */
 
 export const metadata: Metadata = {
-  title: {
-    default: `${SITE_CONFIG.name} - Textiles Artesanales`,
-    template: `%s | ${SITE_CONFIG.name}`,
-  },
-  description: SITE_CONFIG.description,
-  keywords: SITE_CONFIG.keywords,
+  title: `${SITE_CONFIG.name} | Textiles Artesanales`,
+  description:
+    "Piezas únicas diseñadas para transformar tus espacios cotidianos en lugares especiales. Textiles artesanales hechos a mano.",
   openGraph: {
+    title: `${SITE_CONFIG.name} | Textiles Artesanales`,
+    description:
+      "Piezas únicas diseñadas para transformar tus espacios cotidianos en lugares especiales.",
     type: "website",
-    locale: SITE_CONFIG.locale,
-    siteName: SITE_CONFIG.name,
-    title: `${SITE_CONFIG.name} - Textiles Artesanales`,
-    description: SITE_CONFIG.description,
+    locale: "es_AR",
     url: SITE_CONFIG.url,
-    images: [
-      {
-        url: `${SITE_CONFIG.url}/og-image.jpg`,
-        width: 1200,
-        height: 630,
-        alt: SITE_CONFIG.name,
-      },
-    ],
+    siteName: SITE_CONFIG.name,
   },
   twitter: {
     card: "summary_large_image",
-    title: `${SITE_CONFIG.name} - Textiles Artesanales`,
-    description: SITE_CONFIG.description,
-    images: [`${SITE_CONFIG.url}/og-image.jpg`],
+    title: `${SITE_CONFIG.name} | Textiles Artesanales`,
+    description:
+      "Piezas únicas diseñadas para transformar tus espacios cotidianos en lugares especiales.",
   },
 };
 
-export default async function Home() {
-  // Obtener productos destacados
-  const productosResult = await getProductos({ page: 1, pageSize: 50 });
-  const productosDestacados = productosResult.items
-    .filter((p: any) => p.destacado)
-    .slice(0, 4);
-
-  // Generate Organization schema for SEO
-  const organizationSchema = generateOrganizationSchema();
-
+export default function HomePage() {
   return (
     <>
-      {/* JSON-LD structured data for organization */}
-      <script {...renderJsonLd(organizationSchema)} />
-      <div className="min-h-screen">
-        <HeroSection />
-        {productosDestacados.length > 0 && (
-          <FeaturedProductsSection productos={productosDestacados} />
-        )}
-        <CategoriesSection />
-        <FinalCTASection />
-      </div>
+      {/* Hero Section */}
+      <HeroSection />
+
+      {/* Texture Divider */}
+      <TextureDivider />
+
+      {/* Featured Products */}
+      <FeaturedProducts />
+
+      {/* Collections Grid */}
+      <CollectionsGrid />
+
+      {/* Contact Section */}
+      <ContactSection />
+
+      {/* Progress Bar */}
+      <ProgressBar />
     </>
   );
 }
