@@ -78,7 +78,7 @@ export function ContactForm() {
     const rawData = {
       nombre: (formData.get("nombre") as string) || "",
       email: (formData.get("email") as string) || "",
-      telefono: formData.get("telefono") ? (formData.get("telefono") as string) : undefined,
+      telefono: (formData.get("telefono") as string) || "",
       mensaje: (formData.get("mensaje") as string) || "",
     };
     
@@ -86,7 +86,7 @@ export function ContactForm() {
     const fieldsToCheck = [
       { field: "nombre", value: rawData.nombre },
       { field: "email", value: rawData.email },
-      { field: "telefono", value: rawData.telefono || "" },
+      { field: "telefono", value: rawData.telefono },
       { field: "mensaje", value: rawData.mensaje },
     ];
     

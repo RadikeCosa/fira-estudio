@@ -176,12 +176,26 @@ export async function GET(): Promise<NextResponse> {
 
 /**
  * Auto-cleanup: Remove expired records every 5 minutes
+ * Uses lazy initialization to prevent multiple intervals during hot reloading
  */
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, record] of rateLimitStore.entries()) {
-    if (now > record.resetAt) {
-      rateLimitStore.delete(key);
+let cleanupInterval: NodeJS.Timeout | null = null;
+
+if (!cleanupInterval) {
+  cleanupInterval = setInterval(() => {
+    const now = Date.now();
+    for (const [key, record] of rateLimitStore.entries()) {
+      if (now > record.resetAt) {
+        rateLimitStore.delete(key);
+      }
     }
+  }, 300000); // 5 minutes
+
+  // Clean up interval on module unload (for development)
+  if (process.env.NODE_ENV === "development") {
+    process.on("SIGTERM", () => {
+      if (cleanupInterval) {
+        clearInterval(cleanupInterval);
+      }
+    });
   }
-}, 300000); // 5 minutes
+}

@@ -45,7 +45,7 @@ export function logSecurityEvent(
     console.warn("[SECURITY]", JSON.stringify(logEntry));
   }
 
-  // TODO: Integrate with Sentry or other monitoring service
+  // TODO(#future): Integrate with monitoring service like Sentry for production alerting
   // Example: Sentry.captureMessage(`Security event: ${event}`, {
   //   level: 'warning',
   //   extra: logEntry,
