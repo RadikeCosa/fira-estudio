@@ -1,33 +1,44 @@
 import Link from "next/link";
 import { Instagram, Mail } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
-import { NAV_LINKS } from "@/lib/constants/navigation";
+import { NAV_LINKS, SOCIAL_LINKS } from "@/lib/constants/navigation";
 import { COMPONENTS, COLORS } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
-
 /**
- * Footer - Pie de página con diseño boutique
- * 
- * Features:
- * - Logo centrado con subtitle decorativo
- * - Grid de links de navegación
- * - Iconos sociales
- * - Copyright con tracking ultra-wide
+ * Footer - Pie de página 100% configurable
  */
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
+  // Mapeo de íconos para redes sociales
+  const getIcon = (key: string): React.ReactNode => {
+    switch (key) {
+      case "instagram":
+        return <Instagram className="w-6 h-6" aria-hidden="true" />;
+      case "email":
+        return <Mail className="w-6 h-6" aria-hidden="true" />;
+      default:
+        return null;
+    }
+  };
+
   return (
-    <footer className={cn(COMPONENTS.footer.base, COMPONENTS.footer.container, COLORS.border)}>
-      {/* Logo & Subtitle */}
+    <footer
+      className={cn(
+        COMPONENTS.footer.base,
+        COMPONENTS.footer.container,
+        COLORS.border,
+      )}
+    >
+      {/* Logo y subtítulo desde SITE_CONFIG */}
       <div className="mb-10">
         <h2 className={COMPONENTS.footer.logo}>{SITE_CONFIG.name}</h2>
         <p className={COMPONENTS.footer.subtitle}>
-          Creaciones Textiles y Digitales
+          {SITE_CONFIG.footerSubtitle}
         </p>
       </div>
 
-      {/* Navigation Links */}
+      {/* Enlaces de navegación desde NAV_LINKS */}
       <nav className={COMPONENTS.footer.nav} aria-label="Enlaces principales">
         {NAV_LINKS.map((link) => (
           <Link
@@ -40,30 +51,28 @@ export function Footer() {
         ))}
       </nav>
 
-      {/* Social Links */}
-      <div className={COMPONENTS.footer.socialLinks} aria-label="Redes sociales">
-        {/* Instagram */}
-        <a
-          href="https://instagram.com/mumaestudio"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={COMPONENTS.footer.socialIcon}
-          aria-label="Instagram de Muma Estudio"
-        >
-          <Instagram className="w-6 h-6" aria-hidden="true" />
-        </a>
-
-        {/* Email */}
-        <a
-          href={`mailto:${SITE_CONFIG.email}`}
-          className={COMPONENTS.footer.socialIcon}
-          aria-label="Enviar email a Muma Estudio"
-        >
-          <Mail className="w-6 h-6" aria-hidden="true" />
-        </a>
+      {/* Íconos y enlaces sociales desde SOCIAL_LINKS */}
+      <div
+        className={COMPONENTS.footer.socialLinks}
+        aria-label="Redes sociales"
+      >
+        {Object.entries(SOCIAL_LINKS).map(([key, social]) => (
+          <a
+            key={key}
+            href={social.href}
+            target={social.href.startsWith("http") ? "_blank" : undefined}
+            rel={
+              social.href.startsWith("http") ? "noopener noreferrer" : undefined
+            }
+            className={COMPONENTS.footer.socialIcon}
+            aria-label={social.ariaLabel}
+          >
+            {getIcon(key)}
+          </a>
+        ))}
       </div>
 
-      {/* Copyright */}
+      {/* Copyright dinámico y sin hardcodeo */}
       <p className={COMPONENTS.footer.copyright}>
         © {currentYear} {SITE_CONFIG.name}. Todos los derechos reservados.
       </p>

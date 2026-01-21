@@ -23,6 +23,8 @@ export const SITE_CONFIG = {
   email: "contacto@mumaestudio.com",
   locale: "es_AR",
   keywords: SITE_KEYWORDS, // ← Sin as const aquí
+  /** Subtítulo para el footer, configurable */
+  footerSubtitle: "Creaciones Textiles y Digitales",
 } as const;
 
 /** Configuración de WhatsApp */
@@ -33,11 +35,11 @@ export const WHATSAPP = {
   get number(): string {
     return process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5492999XXXXXX";
   },
-  
+
   /**
    * Genera URL de WhatsApp con mensaje pre-formateado
    * Incluye timestamp para dificultar scraping automatizado
-   * 
+   *
    * @param message - Mensaje a enviar
    * @returns URL completa de WhatsApp
    */
