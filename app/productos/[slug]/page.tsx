@@ -11,6 +11,7 @@ import {
   renderJsonLd,
 } from "@/lib/seo/structured-data";
 import { SITE_CONFIG } from "@/lib/constants";
+import { buildMetadata } from "@/lib/seo/metadata";
 
 interface ProductPageProps {
   params: {
@@ -44,22 +45,11 @@ export async function generateMetadata({
     producto.imagenes.find((img) => img.es_principal)?.url ||
     producto.imagenes[0]?.url;
 
-  return {
+  return buildMetadata({
     title: producto.nombre,
-    description: description,
-    openGraph: {
-      title: `${producto.nombre} | ${SITE_CONFIG.name}`,
-      description: description,
-      type: "website",
-      images: mainImage ? [`${SITE_CONFIG.url}${mainImage}`] : [],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: producto.nombre,
-      description: description,
-      images: mainImage ? [`${SITE_CONFIG.url}${mainImage}`] : [],
-    },
-  };
+    description,
+    image: mainImage ? `${SITE_CONFIG.url}${mainImage}` : undefined,
+  });
 }
 
 /**
@@ -90,7 +80,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       {/* JSON-LD structured data */}
       <script {...renderJsonLd(productSchema)} />
 
-      <main className="min-h-screen py-12 md:py-16 lg:py-20 bg-gradient-to-b from-white to-muted/30">
+      <main className="min-h-screen py-12 md:py-16 lg:py-20 bg-linear-to-b from-white to-muted/30">
         <div className="container max-w-7xl mx-auto px-4">
           {/* Breadcrumbs */}
           <Breadcrumbs items={breadcrumbItems} />

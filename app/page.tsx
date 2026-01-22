@@ -6,6 +6,7 @@ import { FinalCTASection } from "@/components/home/FinalCTASection";
 import { ProgressBar } from "@/components/layout/ProgressBar";
 import type { Metadata } from "next";
 import { SITE_CONFIG } from "@/lib/constants";
+import { buildMetadata } from "@/lib/seo/metadata";
 
 /**
  * Home Page - Muma Estudio
@@ -19,23 +20,10 @@ import { SITE_CONFIG } from "@/lib/constants";
  * 6. Progress Bar - Barra de progreso de scroll
  */
 
-export const metadata: Metadata = {
-  title: `${SITE_CONFIG.name}`,
+export const metadata: Metadata = buildMetadata({
+  title: SITE_CONFIG.name,
   description: SITE_CONFIG.description,
-  openGraph: {
-    title: `${SITE_CONFIG.name}`,
-    description: SITE_CONFIG.description,
-    type: "website",
-    locale: "es_AR",
-    url: SITE_CONFIG.url,
-    siteName: SITE_CONFIG.name,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: `${SITE_CONFIG.name}`,
-    description: SITE_CONFIG.description,
-  },
-};
+});
 
 export default function HomePage() {
   return (

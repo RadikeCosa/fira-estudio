@@ -10,6 +10,7 @@ import {
   renderJsonLd,
 } from "@/lib/seo/structured-data";
 import { SITE_CONFIG } from "@/lib/constants";
+import { buildMetadata } from "@/lib/seo/metadata";
 import { PRODUCTOS_CONTENT } from "@/lib/content/productos";
 
 interface ProductosPageProps {
@@ -46,19 +47,13 @@ export async function generateMetadata({
     }
   }
 
-  return {
+  return buildMetadata({
     title: categoriaName,
     description: categoriaDescription,
-    openGraph: {
-      title: `${categoriaName} | ${SITE_CONFIG.name}`,
-      description: categoriaDescription,
-      type: "website",
-      url: categoriaSlug
-        ? `${SITE_CONFIG.url}/productos?categoria=${categoriaSlug}`
-        : `${SITE_CONFIG.url}/productos`,
-      siteName: SITE_CONFIG.name,
-    },
-  };
+    url: categoriaSlug
+      ? `${SITE_CONFIG.url}/productos?categoria=${categoriaSlug}`
+      : `${SITE_CONFIG.url}/productos`,
+  });
 }
 
 export default async function ProductosPage({

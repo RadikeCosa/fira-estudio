@@ -1,14 +1,15 @@
 import { Metadata } from "next";
+import { buildMetadata } from "@/lib/seo/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ContactForm } from "@/components/contacto/ContactForm";
 import { ContactInfo } from "@/components/contacto/ContactInfo";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
 import { SITE_CONFIG } from "@/lib/constants";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildMetadata({
   title: "Contacto",
   description: `Contactate con ${SITE_CONFIG.name}. Envianos tu consulta y te responderemos a la brevedad.`,
-};
+});
 
 export default function ContactoPage() {
   const { page } = CONTACTO_CONTENT;
