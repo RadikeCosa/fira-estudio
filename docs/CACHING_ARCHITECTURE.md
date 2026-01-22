@@ -16,18 +16,19 @@ Prior to this fix, the code structure was:
 // ❌ BROKEN - cookies() called inside cache
 async function getProductosInternal(): Promise<Producto[]> {
   const supabase = await createClient(); // ← calls cookies() internally
-  return supabase.from('productos').select('*');
+  return supabase.from("productos").select("*");
 }
 
 export const getProductos = createCachedQuery(
-  getProductosInternal,  // Function gets wrapped in unstable_cache()
-  CACHE_CONFIG.productos
+  getProductosInternal, // Function gets wrapped in unstable_cache()
+  CACHE_CONFIG.productos,
 );
 ```
 
 This caused the error:
+
 ```
-Error: Route / used `cookies()` inside a function cached with `unstable_cache()`. 
+Error: Route / used `cookies()` inside a function cached with `unstable_cache()`.
 Accessing Dynamic data sources inside a cache scope is not supported.
 ```
 
@@ -38,21 +39,21 @@ The fix moves `createClient()` (which calls `cookies()`) outside the cached func
 ```typescript
 // ✅ FIXED - cookies() called outside cache
 async function getProductosInternal(
-  supabase: SupabaseClient,  // ← Client passed as parameter
-  params?: Params
+  supabase: SupabaseClient, // ← Client passed as parameter
+  params?: Params,
 ): Promise<Producto[]> {
   // No createClient() here - uses the passed client
-  return supabase.from('productos').select('*');
+  return supabase.from("productos").select("*");
 }
 
 export async function getProductos(params?: Params): Promise<Producto[]> {
   const supabase = await createClient(); // ✅ cookies() called OUTSIDE cache
-  
+
   const cachedFn = createCachedQuery<[SupabaseClient, Params?], Producto[]>(
     getProductosInternal,
-    CACHE_CONFIG.productos
+    CACHE_CONFIG.productos,
   );
-  
+
   return cachedFn(supabase, params); // Client passed to cached function
 }
 ```
@@ -85,6 +86,7 @@ export class ProductoRepository extends BaseRepository<ProductoCompleto> {
 ```
 
 **Benefits:**
+
 - Cached queries can inject the client created outside cache
 - Non-cached queries can still call the repository without passing a client
 - Backwards compatible with existing code
@@ -106,12 +108,12 @@ async function getDataInternal(
 // Public cached function - creates client outside cache
 export async function getData(...params): Promise<Data> {
   const supabase = await createClient(); // ✅ Outside cache
-  
+
   const cachedFn = createCachedQuery<[SupabaseClient, ...], Data>(
     getDataInternal,
     CACHE_CONFIG.entity
   );
-  
+
   return cachedFn(supabase, ...params);
 }
 
@@ -138,14 +140,14 @@ export function createCachedQuery<TArgs extends unknown[], TResult>(
 
   // Layer 1: React cache (request-level deduplication)
   const reactCached = cache(fn);
-  
+
   // Layer 2: unstable_cache (cross-request persistence)
   return (...args: TArgs) => {
     const cacheKey = JSON.stringify(args);
     const nextCached = unstable_cache(
       async () => reactCached(...args),
       [cacheKey],
-      { revalidate: config.revalidate, tags: config.tags }
+      { revalidate: config.revalidate, tags: config.tags },
     );
     return nextCached();
   };
@@ -153,6 +155,7 @@ export function createCachedQuery<TArgs extends unknown[], TResult>(
 ```
 
 **Note:** The Supabase client is part of `args` and gets serialized in the cache key. This is acceptable because:
+
 1. The client contains auth state (cookies) that should affect caching
 2. The client itself isn't cached - only the query results are cached
 3. Each unique auth state gets its own cache entry
@@ -162,15 +165,15 @@ export function createCachedQuery<TArgs extends unknown[], TResult>(
 ```typescript
 export const CACHE_CONFIG = {
   productos: {
-    revalidate: 3600,      // 1 hour
+    revalidate: 3600, // 1 hour
     tags: ["productos"],
   },
   categorias: {
-    revalidate: 86400,     // 24 hours
+    revalidate: 3600, // 1 hour
     tags: ["categorias"],
   },
   producto_detail: {
-    revalidate: 3600,      // 1 hour
+    revalidate: 3600, // 1 hour
     tags: ["productos"],
   },
 };
@@ -187,7 +190,7 @@ import { getProductos, getCategorias } from "@/lib/supabase/queries";
 export default async function ProductosPage() {
   const productos = await getProductos({ page: 1 });
   const categorias = await getCategorias();
-  
+
   return <ProductGrid productos={productos} />;
 }
 ```
@@ -246,9 +249,9 @@ If you need to add a new cached query:
 // 1. Internal function
 async function getNewDataInternal(
   supabase: SupabaseClient,
-  filter?: Filter
+  filter?: Filter,
 ): Promise<Data[]> {
-  const { data } = await supabase.from('table').select('*');
+  const { data } = await supabase.from("table").select("*");
   return data ?? [];
 }
 
@@ -257,7 +260,7 @@ export async function getNewData(filter?: Filter): Promise<Data[]> {
   const supabase = await createClient();
   const cachedFn = createCachedQuery<[SupabaseClient, Filter?], Data[]>(
     getNewDataInternal,
-    CACHE_CONFIG.entity
+    CACHE_CONFIG.entity,
   );
   return cachedFn(supabase, filter);
 }

@@ -3,16 +3,16 @@
  * - React cache(): Deduplicates requests within a single render
  * - unstable_cache(): Persists data across requests
  * - Skips caching in development mode
- * 
+ *
  * IMPORTANT: For Next.js 16+ compatibility, dynamic data sources like cookies()
  * must be called OUTSIDE the cached function and passed as parameters.
- * 
+ *
  * @example
  * // ✅ CORRECT - createClient() called outside cache scope
  * async function getDataInternal(supabase: SupabaseClient) {
  *   return supabase.from('table').select('*');
  * }
- * 
+ *
  * export async function getData() {
  *   const supabase = await createClient(); // Called outside cache scope
  *   const cachedFn = createCachedQuery<[SupabaseClient], Data[]>(
@@ -21,7 +21,7 @@
  *   );
  *   return cachedFn(supabase);
  * }
- * 
+ *
  * // ❌ WRONG - createClient() called inside cache
  * async function getDataInternal() {
  *   const supabase = await createClient(); // ❌ Called inside cache scope!
@@ -45,7 +45,7 @@ export const CACHE_CONFIG = {
     tags: ["productos"] as string[],
   },
   categorias: {
-    revalidate: 86400, // 24 hours
+    revalidate: 3600, // 1 hour
     tags: ["categorias"] as string[],
   },
   producto_detail: {
@@ -70,14 +70,14 @@ interface CacheOptions {
  * @param fn - Async function to cache
  * @param config - Cache configuration (revalidate time and tags)
  * @returns Cached version of the function
- * 
+ *
  * @example
  * // Create internal function that accepts Supabase client
  * async function getProductosInternal(supabase: SupabaseClient, limit: number) {
  *   const { data } = await supabase.from('productos').select('*').limit(limit);
  *   return data;
  * }
- * 
+ *
  * // Wrapper function calls createClient() outside cache and passes client
  * export async function getProductos(limit: number) {
  *   const supabase = await createClient(); // Called outside cache scope
@@ -105,7 +105,7 @@ export function createCachedQuery<TArgs extends unknown[], TResult>(
     // Exclude first argument (Supabase client) from cache key - it contains circular refs
     // Only query parameters (pagination, filters, slugs, etc.) should determine cache uniqueness
     const cacheKey = JSON.stringify(args.slice(1));
-    
+
     const nextCached = unstable_cache(
       async () => reactCached(...args),
       [cacheKey],
