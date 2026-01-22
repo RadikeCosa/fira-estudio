@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { useSearchParams } from "next/navigation";
 import { CategoryFilter } from "./CategoryFilter";
 import type { Categoria } from "@/lib/types";
-import * as gtag from "@/lib/analytics/gtag";
+import type { ReadonlyURLSearchParams } from "next/navigation";
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
@@ -16,6 +16,13 @@ vi.mock("@/lib/analytics/gtag", () => ({
 }));
 
 describe("CategoryFilter", () => {
+  // Helper to create typed mock for useSearchParams
+  const mockSearchParams = (categoria: string | null) => {
+    vi.mocked(useSearchParams).mockReturnValue({
+      get: vi.fn().mockReturnValue(categoria),
+    } as unknown as ReadonlyURLSearchParams);
+  };
+
   const mockCategorias: Categoria[] = [
     {
       id: "cat-1",
@@ -45,9 +52,7 @@ describe("CategoryFilter", () => {
   });
 
   it("renders all categories", () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: vi.fn().mockReturnValue(null),
-    } as any);
+    mockSearchParams(null);
 
     render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -57,9 +62,7 @@ describe("CategoryFilter", () => {
   });
 
   it("renders 'Todos' button", () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: vi.fn().mockReturnValue(null),
-    } as any);
+    mockSearchParams(null);
 
     render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -67,9 +70,7 @@ describe("CategoryFilter", () => {
   });
 
   it("marks 'Todos' as active when no category is selected", () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: vi.fn().mockReturnValue(null),
-    } as any);
+    mockSearchParams(null);
 
     render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -79,9 +80,7 @@ describe("CategoryFilter", () => {
   });
 
   it("marks category as active when selected", () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: vi.fn().mockReturnValue("manteles"),
-    } as any);
+    mockSearchParams("manteles");
 
     render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -91,9 +90,7 @@ describe("CategoryFilter", () => {
   });
 
   it("renders correct links for each category", () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: vi.fn().mockReturnValue(null),
-    } as any);
+    mockSearchParams(null);
 
     render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -111,9 +108,7 @@ describe("CategoryFilter", () => {
   });
 
   it("renders 'Todos' link to /productos", () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: vi.fn().mockReturnValue(null),
-    } as any);
+    mockSearchParams(null);
 
     render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -122,9 +117,7 @@ describe("CategoryFilter", () => {
   });
 
   it("handles empty categories array", () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: vi.fn().mockReturnValue(null),
-    } as any);
+    mockSearchParams(null);
 
     const { container } = render(<CategoryFilter categorias={[]} />);
 
@@ -133,9 +126,7 @@ describe("CategoryFilter", () => {
   });
 
   it("marks only one category as active at a time", () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: vi.fn().mockReturnValue("servilletas"),
-    } as any);
+    mockSearchParams("servilletas");
 
     render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -151,9 +142,7 @@ describe("CategoryFilter", () => {
   });
 
   it("has horizontal scrollable layout", () => {
-    vi.mocked(useSearchParams).mockReturnValue({
-      get: vi.fn().mockReturnValue(null),
-    } as any);
+    mockSearchParams(null);
 
     const { container } = render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -164,9 +153,7 @@ describe("CategoryFilter", () => {
   // Accessibility Tests
   describe("Accessibility", () => {
     it("has semantic navigation structure", () => {
-      vi.mocked(useSearchParams).mockReturnValue({
-        get: vi.fn().mockReturnValue(null),
-      } as any);
+      mockSearchParams(null);
 
       const { container } = render(
         <CategoryFilter categorias={mockCategorias} />
@@ -181,9 +168,7 @@ describe("CategoryFilter", () => {
     });
 
     it("has tablist role on button container", () => {
-      vi.mocked(useSearchParams).mockReturnValue({
-        get: vi.fn().mockReturnValue(null),
-      } as any);
+      mockSearchParams(null);
 
       const { container } = render(
         <CategoryFilter categorias={mockCategorias} />
@@ -194,9 +179,7 @@ describe("CategoryFilter", () => {
     });
 
     it("has proper ARIA attributes on tabs", () => {
-      vi.mocked(useSearchParams).mockReturnValue({
-        get: vi.fn().mockReturnValue("manteles"),
-      } as any);
+      mockSearchParams("manteles");
 
       render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -215,9 +198,7 @@ describe("CategoryFilter", () => {
     });
 
     it("has aria-current on Todos when no category selected", () => {
-      vi.mocked(useSearchParams).mockReturnValue({
-        get: vi.fn().mockReturnValue(null),
-      } as any);
+      mockSearchParams(null);
 
       render(<CategoryFilter categorias={mockCategorias} />);
 
@@ -228,9 +209,7 @@ describe("CategoryFilter", () => {
     });
 
     it("has focus-visible styles for keyboard navigation", () => {
-      vi.mocked(useSearchParams).mockReturnValue({
-        get: vi.fn().mockReturnValue(null),
-      } as any);
+      mockSearchParams(null);
 
       render(<CategoryFilter categorias={mockCategorias} />);
 
