@@ -36,22 +36,17 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
   const construirMensaje = (): string => {
     let mensaje = `Hola! Me interesa este producto de ${SITE_CONFIG.name}: `;
     mensaje += `${producto.nombre}`;
-
     if (variacion) {
       mensaje += ` - Tamaño: ${variacion.tamanio}`;
       mensaje += `, Color: ${variacion.color}`;
       mensaje += `, Precio: ${formatPrice(variacion.precio)}`;
-
-      // Agregar pregunta según disponibilidad de stock
       if (variacion.stock === 0) {
-        mensaje += `. ¿Cuál es el tiempo de fabricación?`;
+        mensaje += ", a pedido";
       } else {
-        mensaje += `. ¿Está disponible para envío inmediato?`;
+        mensaje += ", disponible en stock";
       }
-    } else {
-      mensaje += `. ¿Podrías darme más información?`;
     }
-
+    mensaje += ". ¿Cómo hago para comprarlo?";
     return mensaje;
   };
 
