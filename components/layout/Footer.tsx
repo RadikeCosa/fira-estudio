@@ -63,9 +63,13 @@ export function Footer() {
                 <a
                   key={key}
                   href={social.href}
-                  target={social.href.startsWith("http") ? "_blank" : undefined}
+                  target={
+                    social.href && social.href.startsWith("http")
+                      ? "_blank"
+                      : undefined
+                  }
                   rel={
-                    social.href.startsWith("http")
+                    social.href && social.href.startsWith("http")
                       ? "noopener noreferrer"
                       : undefined
                   }
