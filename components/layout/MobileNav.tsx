@@ -107,7 +107,10 @@ export function MobileNav({
       {/* Overlay/Backdrop */}
       {isOpen && (
         <div
-          className={cn(COMPONENTS.mobileNav.overlay, "top-[57px]")}
+          className={cn(
+            COMPONENTS.mobileNav.overlay,
+            "top-[57px] bg-black/40 backdrop-blur-sm",
+          )}
           onClick={closeMenu}
           aria-hidden="true"
         />
@@ -118,48 +121,38 @@ export function MobileNav({
         <div
           ref={menuRef}
           id="mobile-nav-menu"
-          className={COMPONENTS.mobileNav.mobileMenuAlt}
+          className={cn(
+            COMPONENTS.mobileNav.mobileMenuAlt,
+            "fixed top-[57px] left-0 right-0 z-50 h-[calc(100vh-57px)] flex flex-col bg-white/95 shadow-xl",
+          )}
           role="dialog"
           aria-modal="true"
           aria-label="Menú de navegación"
         >
-          {/* Logo (opcional) */}
-          {logo && (
-            <div className="flex justify-center items-center p-6">
-              <span className="text-lg font-bold">{logo}</span>
-            </div>
-          )}
-          {/* Close Button */}
-          <div className="flex justify-end p-6">
-            <button
-              onClick={closeMenu}
-              className={COMPONENTS.mobileNav.closeButton}
-              aria-label="Cerrar menú"
-            >
-              <span aria-hidden="true">×</span>
-            </button>
+          {/* Links y decorativo ocupan todo el espacio superior */}
+          <div className="flex-1 flex flex-col justify-between overflow-y-auto">
+            <ul className="flex flex-col gap-2 px-6 pt-6 pb-4">
+              {links.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={closeMenu}
+                    className={COMPONENTS.mobileNav.menuLink}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            {/* Decorative text solo si hay espacio suficiente */}
+            {decorativeText && (
+              <div className="px-6 pb-6 pt-2">
+                <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center">
+                  {decorativeText}
+                </p>
+              </div>
+            )}
           </div>
-          <ul className="flex flex-col list-none m-0 p-0">
-            {links.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={closeMenu}
-                  className={COMPONENTS.mobileNav.menuLink}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          {/* Decorative text at bottom (opcional) */}
-          {decorativeText && (
-            <div className="absolute bottom-6 left-6 right-6">
-              <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center">
-                {decorativeText}
-              </p>
-            </div>
-          )}
         </div>
       )}
     </div>
