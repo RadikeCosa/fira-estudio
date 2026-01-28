@@ -1,6 +1,19 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
+
+// Altura del header para mobile nav
+const HEADER_HEIGHT = 57;
+
+// Jerarquía de capas para MobileNav:
+// Z_INDEX.TRIGGER (60): Botón hamburguesa siempre visible
+// Z_INDEX.MENU    (50): Menú móvil (panel deslizante)
+// Z_INDEX.OVERLAY (40): Overlay/backdrop oscurecido
+const Z_INDEX = {
+  OVERLAY: 40,
+  MENU: 50,
+  TRIGGER: 60,
+} as const;
 import Link from "next/link";
 import type { NavLink } from "@/lib/constants/navigation";
 import { useScrollLock, useEscapeKey } from "@/hooks";
@@ -24,13 +37,15 @@ export function MobileNav({
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const closeMenu = (): void => {
+  // Memoiza para evitar recrear la función en cada render
+  const closeMenu = useCallback((): void => {
     setIsOpen(false);
-  };
+  }, []);
 
-  const toggleMenu = (): void => {
-    setIsOpen(!isOpen);
-  };
+  // Memoiza para evitar recrear la función en cada render
+  const toggleMenu = useCallback((): void => {
+    setIsOpen((prev) => !prev);
+  }, []);
 
   // Lock body scroll when menu is open
   useScrollLock(isOpen);
@@ -38,32 +53,50 @@ export function MobileNav({
   // Close menu on ESC key press
   useEscapeKey(closeMenu, isOpen);
 
-  // Focus trap: keep focus inside menu when open
+  // Focus trap: mantiene el foco dentro del menú móvil cuando está abierto
   useEffect(() => {
     if (!isOpen || !menuRef.current) return;
+
+    // Selecciona todos los elementos focusables dentro del menú
     const focusable = menuRef.current.querySelectorAll<HTMLElement>(
       'a, button, textarea, input, select, [tabindex]:not([tabindex="-1"])',
     );
-    if (focusable.length) focusable[0].focus();
 
-    const handleTab = (e: KeyboardEvent) => {
+    // Si no hay elementos focusables, no hacer nada
+    if (focusable.length === 0) return;
+
+    // Lleva el foco al primer elemento focusable
+    focusable[0].focus();
+
+    // Función manejadora para el tabbing cíclico
+    function handleTabTrap(e: KeyboardEvent) {
       if (e.key !== "Tab") return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
+
+      // Si Shift+Tab y estamos en el primero, saltar al último
       if (e.shiftKey) {
         if (document.activeElement === first) {
           e.preventDefault();
           last.focus();
         }
       } else {
+        // Si Tab y estamos en el último, saltar al primero
         if (document.activeElement === last) {
           e.preventDefault();
           first.focus();
         }
       }
+    }
+
+    // Agrega el event listener para el focus trap
+    const menu = menuRef.current;
+    menu.addEventListener("keydown", handleTabTrap);
+
+    // Cleanup: elimina el event listener al desmontar o cerrar menú
+    return () => {
+      menu.removeEventListener("keydown", handleTabTrap);
     };
-    menuRef.current.addEventListener("keydown", handleTab);
-    return () => menuRef.current?.removeEventListener("keydown", handleTab);
   }, [isOpen]);
 
   // Restore focus to hamburger button when menu closes
@@ -79,7 +112,7 @@ export function MobileNav({
       <button
         ref={buttonRef}
         onClick={toggleMenu}
-        className={COMPONENTS.mobileNav.hamburger}
+        className={cn(COMPONENTS.mobileNav.hamburger, `z-[${Z_INDEX.TRIGGER}]`)}
         aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
         aria-expanded={isOpen}
         aria-controls="mobile-nav-menu"
@@ -104,57 +137,59 @@ export function MobileNav({
         />
       </button>
 
-      {/* Overlay/Backdrop */}
-      {isOpen && (
-        <div
-          className={cn(
-            COMPONENTS.mobileNav.overlay,
-            "top-[57px] bg-black/40 backdrop-blur-sm",
-          )}
-          onClick={closeMenu}
-          aria-hidden="true"
-        />
-      )}
+      {/* Overlay/Backdrop (siempre en el DOM) */}
+      <div
+        className={cn(
+          COMPONENTS.mobileNav.overlay,
+          `top-[${HEADER_HEIGHT}px] bg-black/40 backdrop-blur-sm fixed left-0 right-0 z-[${Z_INDEX.OVERLAY}] transition-opacity duration-300 ease-out motion-reduce:transition-none`,
+          isOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
+        )}
+        onClick={closeMenu}
+        aria-hidden="true"
+      />
 
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div
-          ref={menuRef}
-          id="mobile-nav-menu"
-          className={cn(
-            COMPONENTS.mobileNav.mobileMenuAlt,
-            "fixed top-[57px] left-0 right-0 z-50 h-[calc(100vh-57px)] flex flex-col bg-white/95 shadow-xl",
+      {/* Mobile Menu (siempre en el DOM) */}
+      <div
+        ref={menuRef}
+        id="mobile-nav-menu"
+        className={cn(
+          COMPONENTS.mobileNav.mobileMenuAlt,
+          `fixed top-[${HEADER_HEIGHT}px] left-0 right-0 z-[${Z_INDEX.MENU}] h-[calc(100vh-${HEADER_HEIGHT}px)] flex flex-col bg-white/95 shadow-xl transition-transform duration-300 ease-out motion-reduce:transition-none`,
+          isOpen ? "translate-x-0" : "translate-x-full",
+          "will-change-transform",
+        )}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menú de navegación"
+        tabIndex={-1}
+      >
+        {/* Links y decorativo ocupan todo el espacio superior */}
+        <div className="flex-1 flex flex-col justify-between overflow-y-auto">
+          <ul className="flex flex-col gap-2 px-6 pt-6 pb-4">
+            {links.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  onClick={closeMenu}
+                  className={COMPONENTS.mobileNav.menuLink}
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          {/* Decorative text solo si hay espacio suficiente */}
+          {decorativeText && (
+            <div className="px-6 pb-6 pt-2">
+              <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center">
+                {decorativeText}
+              </p>
+            </div>
           )}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Menú de navegación"
-        >
-          {/* Links y decorativo ocupan todo el espacio superior */}
-          <div className="flex-1 flex flex-col justify-between overflow-y-auto">
-            <ul className="flex flex-col gap-2 px-6 pt-6 pb-4">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    onClick={closeMenu}
-                    className={COMPONENTS.mobileNav.menuLink}
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            {/* Decorative text solo si hay espacio suficiente */}
-            {decorativeText && (
-              <div className="px-6 pb-6 pt-2">
-                <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center">
-                  {decorativeText}
-                </p>
-              </div>
-            )}
-          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

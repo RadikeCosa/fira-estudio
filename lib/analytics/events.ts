@@ -40,6 +40,42 @@ export const VARIATION_SELECT = {
 } as const;
 
 /**
+ * Add to cart event
+ * Tracks when users add a product to cart (GA4 recommended event)
+ */
+export const ADD_TO_CART = {
+  name: "add_to_cart",
+  category: "ecommerce",
+} as const;
+
+/**
+ * Remove from cart event
+ * Tracks when users remove a product from cart
+ */
+export const REMOVE_FROM_CART = {
+  name: "remove_from_cart",
+  category: "ecommerce",
+} as const;
+
+/**
+ * View cart event
+ * Tracks when users view their shopping cart
+ */
+export const VIEW_CART = {
+  name: "view_cart",
+  category: "ecommerce",
+} as const;
+
+/**
+ * Begin checkout event
+ * Tracks when users initiate checkout process (GA4 recommended event)
+ */
+export const BEGIN_CHECKOUT = {
+  name: "begin_checkout",
+  category: "ecommerce",
+} as const;
+
+/**
  * All analytics events grouped for easy access
  */
 export const ANALYTICS_EVENTS = {
@@ -47,6 +83,10 @@ export const ANALYTICS_EVENTS = {
   PRODUCT_VIEW,
   CATEGORY_FILTER,
   VARIATION_SELECT,
+  ADD_TO_CART,
+  REMOVE_FROM_CART,
+  VIEW_CART,
+  BEGIN_CHECKOUT,
 } as const;
 
 /**
