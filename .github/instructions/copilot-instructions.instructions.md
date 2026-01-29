@@ -386,10 +386,26 @@ GitHub Copilot will automatically activate these skills when relevant:
 - Use when: Building selectors, price calculations, stock management
 - Triggers: "variaciones", "tamaño", "color", "selector", "stock"
 
+**Testing patterns:**
+
+- 📋 `.github/skills/testing/SKILL.md`
+- Use when: Writing tests, ensuring code quality, edge cases
+- Triggers: "test", "testing", "edge cases"
+
+**Accessibility & performance:**
+
+- 📋 `.github/skills/accesibility-perfomance/SKILL.md`
+- Use when: Ensuring accessibility, performance optimization
+- Triggers: "accessibility", "performance", "optimization"
+
 **Reference Documentation:**
 
 - 📋 `.github/reference/database-schema.md` - Complete SQL schema
 - 📋 `.github/reference/business-logic.md` - Business rules and workflows
+- 📋 `.github/skills/testing/SKILL.md` - Testing patterns
+- 📋 `.github/skills/accesibility-perfomance/SKILL.md` - Accessibility & performance
+- 📋 `.github/skills/supabase-queries/SKILL.md` - Database operations
+- 📋 `.github/skills/product-variations/SKILL.md` - Product variations
 
 ---
 
@@ -473,12 +489,16 @@ This file contains **core rules only**. For detailed patterns and implementation
 - Supabase query patterns → `.github/skills/supabase-queries/SKILL.md`
 - WhatsApp integration → `.github/skills/whatsapp-integration/SKILL.md`
 - Product variations → `.github/skills/product-variations/SKILL.md`
+- Testing patterns → `.github/skills/testing/SKILL.md`
+- Accessibility & performance → `.github/skills/accesibility-perfomance/SKILL.md`
 
 **Reference Documentation (Manual Lookup):**
 
 - Complete database schema → `.github/reference/database-schema.md`
 - Business rules & workflows → `.github/reference/business-logic.md`
 - Content & style management → `docs/CONTENT_AND_STYLE_MANAGEMENT.md`
+- Testing patterns → `.github/skills/testing/SKILL.md`
+- Accessibility & performance → `.github/skills/accesibility-perfomance/SKILL.md`
 
 **Code Implementation:**
 
