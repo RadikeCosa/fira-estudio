@@ -80,7 +80,7 @@ describe("MobileNav", () => {
       render(<MobileNav links={mockLinks} />);
 
       const button = screen.getByLabelText("Toggle navigation menu");
-      
+
       // Open menu
       fireEvent.click(button);
       expect(screen.getByText("Inicio")).toBeInTheDocument();
@@ -155,7 +155,7 @@ describe("MobileNav", () => {
     it("renders without errors with custom hooks", () => {
       // This test verifies MobileNav can render with mocked hooks
       render(<MobileNav links={mockLinks} />);
-      
+
       const button = screen.getByLabelText("Toggle navigation menu");
       expect(button).toBeInTheDocument();
     });
@@ -164,7 +164,7 @@ describe("MobileNav", () => {
       render(<MobileNav links={mockLinks} />);
 
       const button = screen.getByLabelText("Toggle navigation menu");
-      
+
       // Initially closed
       expect(button).toHaveAttribute("aria-expanded", "false");
 
@@ -194,8 +194,28 @@ describe("MobileNav", () => {
 
       const menu = screen.getByRole("list");
       const menuContainer = menu.closest("div");
-      
+
       expect(menuContainer).toHaveClass("animate-in", "fade-in");
+    });
+  });
+
+  describe("Z-index layering", () => {
+    it("hamburger button has z-[60]", () => {
+      render(<MobileNav links={mockLinks} />);
+      const button = screen.getByLabelText("Abrir menú");
+      expect(button).toHaveClass("z-[60]");
+    });
+
+    it("overlay has z-[40]", () => {
+      render(<MobileNav links={mockLinks} />);
+      const overlay = document.querySelector('[aria-hidden="true"]');
+      expect(overlay).toHaveClass("z-[40]");
+    });
+
+    it("mobile menu has z-[50]", () => {
+      render(<MobileNav links={mockLinks} />);
+      const menu = screen.getByRole("dialog");
+      expect(menu).toHaveClass("z-[50]");
     });
   });
 });

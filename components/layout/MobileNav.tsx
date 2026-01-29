@@ -5,15 +5,6 @@ import { useState, useCallback } from "react";
 // Altura del header para mobile nav
 const HEADER_HEIGHT = 57;
 
-// Jerarquía de capas para MobileNav:
-// Z_INDEX.TRIGGER (60): Botón hamburguesa siempre visible
-// Z_INDEX.MENU    (50): Menú móvil (panel deslizante)
-// Z_INDEX.OVERLAY (40): Overlay/backdrop oscurecido
-const Z_INDEX = {
-  OVERLAY: 40,
-  MENU: 50,
-  TRIGGER: 60,
-} as const;
 import Link from "next/link";
 import type { NavLink } from "@/lib/constants/navigation";
 import { useScrollLock, useEscapeKey } from "@/hooks";
@@ -112,7 +103,7 @@ export function MobileNav({
       <button
         ref={buttonRef}
         onClick={toggleMenu}
-        className={cn(COMPONENTS.mobileNav.hamburger, `z-[${Z_INDEX.TRIGGER}]`)}
+        className={cn(COMPONENTS.mobileNav.hamburger, "z-[60]")}
         aria-label={isOpen ? "Cerrar menú" : "Abrir menú"}
         aria-expanded={isOpen}
         aria-controls="mobile-nav-menu"
@@ -141,7 +132,7 @@ export function MobileNav({
       <div
         className={cn(
           COMPONENTS.mobileNav.overlay,
-          `top-[${HEADER_HEIGHT}px] bg-black/40 backdrop-blur-sm fixed left-0 right-0 z-[${Z_INDEX.OVERLAY}] transition-opacity duration-300 ease-out motion-reduce:transition-none`,
+          "top-[57px] bg-black/40 backdrop-blur-sm fixed left-0 right-0 z-[40] transition-opacity duration-300 ease-out motion-reduce:transition-none",
           isOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none",
@@ -156,7 +147,7 @@ export function MobileNav({
         id="mobile-nav-menu"
         className={cn(
           COMPONENTS.mobileNav.mobileMenuAlt,
-          `fixed top-[${HEADER_HEIGHT}px] left-0 right-0 z-[${Z_INDEX.MENU}] h-[calc(100vh-${HEADER_HEIGHT}px)] flex flex-col bg-white/95 shadow-xl transition-transform duration-300 ease-out motion-reduce:transition-none`,
+          "fixed top-[57px] left-0 right-0 z-[50] h-[calc(100vh-57px)] flex flex-col bg-white/95 shadow-xl transition-transform duration-300 ease-out motion-reduce:transition-none",
           isOpen ? "translate-x-0" : "translate-x-full",
           "will-change-transform",
         )}
