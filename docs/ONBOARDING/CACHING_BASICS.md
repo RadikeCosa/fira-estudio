@@ -38,15 +38,13 @@ import { getProductos } from "@/lib/supabase/queries";
 export default async function ProductosPage() {
   // Primera llamada - va a la base de datos
   const productos = await getProductos();
-  
+
   // Segunda llamada - devuelve cache (same request)
   const productosAgain = await getProductos();  // ✓ No va a DB
-  
+
   return <div>{/* ... */}</div>;
 }
 ```
-
-**Analogy:** Eres un mesero en un restaurante. El cliente pide "traeme la lista de bebidas". La buscas una vez y durante esa orden, si el cliente pide nuevamente "traeme la lista de bebidas", le das la misma lista sin ir a la cocina de nuevo.
 
 ### 2. Full Route Cache (Next.js Cache)
 
@@ -70,8 +68,6 @@ export default async function ProductosPage() {
 }
 ```
 
-**Analogy:** El mesero guarda una copia de la "lista de bebidas de hoy" en su bolsillo. Cada cliente que llega en la próxima hora recibe esa copia. A las 2 horas, consigue una lista actualizada.
-
 ---
 
 ## Cache en Fira Estudio
@@ -79,35 +75,27 @@ export default async function ProductosPage() {
 Usamos **React Cache** + **unstable_cache** de Next.js:
 
 ```typescript
-// lib/supabase/queries.ts
-
-// PASO 1: Función interna que hace la consulta
+// lib/supabase/queries.ts// PASO 1: Función interna que hace la consulta
 async function getProductosInternal(supabase: SupabaseClient) {
-  return supabase
-    .from("productos")
-    .select("*")
-    .order("nombre");
+  return supabase.from("productos").select("*").order("nombre");
 }
 
 // PASO 2: Función pública que aplica cache
 export async function getProductos() {
-  const supabase = await createClient();  // ← IMPORTANTE: Fuera del cache
-  
-  const cachedFn = createCachedQuery(
-    getProductosInternal,
-    {
-      revalidate: 3600,      // Cachea 1 hora
-      tags: ["productos"],   // Etiqueta para invalidación
-    }
-  );
-  
+  const supabase = await createClient(); // ← IMPORTANTE: Fuera del cache
+
+  const cachedFn = createCachedQuery(getProductosInternal, {
+    revalidate: 3600, // Cachea 1 hora
+    tags: ["productos"], // Etiqueta para invalidación
+  });
+
   return cachedFn(supabase);
 }
 
 // PASO 3: Función "Fresh" para cuando necesitas datos nuevos
 export async function getProductosFresh() {
   const supabase = await createClient();
-  return getProductosInternal(supabase);  // Sin cache
+  return getProductosInternal(supabase); // Sin cache
 }
 ```
 
@@ -118,6 +106,7 @@ export async function getProductosFresh() {
 ## Cuándo Usar Cache vs Fresh
 
 ### ✅ Usa CACHE para:
+
 - Catálogos de productos (cambian poco)
 - Categorías
 - Configuración general
@@ -131,6 +120,7 @@ export async function getCategories() {
 ```
 
 ### ✅ Usa FRESH para:
+
 - Stock en tiempo real
 - Datos del usuario (email, perfil)
 - Carrito
@@ -152,12 +142,9 @@ Cuando cambias datos en la base de datos, necesitas limpiar el cache para que ot
 ### Opción 1: Esperar a que expire
 
 ```typescript
-export const getProductos = createCachedQuery(
-  getProductosInternal,
-  {
-    revalidate: 3600,  // Espera 1 hora a que se limpie solo
-  }
-);
+export const getProductos = createCachedQuery(getProductosInternal, {
+  revalidate: 3600, // Espera 1 hora a que se limpie solo
+});
 ```
 
 Después de 1 hora, automáticamente obtiene datos frescos.
@@ -165,20 +152,18 @@ Después de 1 hora, automáticamente obtiene datos frescos.
 ### Opción 2: Invalidar manualmente
 
 ```typescript
-"use server"  // Server Action
+"use server"; // Server Action
 
 import { revalidateTag } from "next/cache";
 
 export async function updateProducto(id: string, data: ProductoUpdate) {
   const supabase = await createClient();
   await supabase.from("productos").update(data).eq("id", id);
-  
+
   // Limpia el cache inmediatamente
-  revalidateTag("productos");  // ← "productos" es la etiqueta
+  revalidateTag("productos"); // ← "productos" es la etiqueta
 }
 ```
-
-**Analogía:** El mesero tiene la lista en su bolsillo (cache). Si el restaurante agrega bebidas nuevas, alguien le tira la lista vieja (revalidateTag) y debe buscar una actualizada.
 
 ---
 
@@ -189,10 +174,10 @@ export async function updateProducto(id: string, data: ProductoUpdate) {
 ```typescript
 export const getProductos = createCachedQuery(
   async () => {
-    const supabase = await createClient();  // ✗ calls cookies()!
+    const supabase = await createClient(); // ✗ calls cookies()!
     return supabase.from("productos").select("*");
   },
-  { revalidate: 3600 }
+  { revalidate: 3600 },
 );
 
 // Error: Route used `cookies()` inside a function cached with `unstable_cache()`
@@ -210,13 +195,12 @@ async function getProductosInternal(supabase: SupabaseClient) {
 
 // Paso 2: Función pública que hace createClient() AFUERA
 export async function getProductos() {
-  const supabase = await createClient();  // ← FUERA del cache
-  
-  const cachedFn = createCachedQuery(
-    getProductosInternal,
-    { revalidate: 3600 }
-  );
-  
+  const supabase = await createClient(); // ← FUERA del cache
+
+  const cachedFn = createCachedQuery(getProductosInternal, {
+    revalidate: 3600,
+  });
+
   return cachedFn(supabase);
 }
 ```
@@ -247,11 +231,13 @@ Si necesitas crear un nuevo query, sigue este checklist:
 
 ```typescript
 export async function getProductos() {
-  console.log("🔄 Fetching productos...");  // ← Deberías verlo solo UNA VEZ
-  
+  console.log("🔄 Fetching productos..."); // ← Deberías verlo solo UNA VEZ
+
   const supabase = await createClient();
-  const cachedFn = createCachedQuery(getProductosInternal, { revalidate: 3600 });
-  
+  const cachedFn = createCachedQuery(getProductosInternal, {
+    revalidate: 3600,
+  });
+
   return cachedFn(supabase);
 }
 
@@ -269,9 +255,9 @@ export function createCachedQuery<TArgs extends unknown[], TResult>(
 ): (...args: TArgs) => Promise<TResult> {
   if (process.env.NODE_ENV === "development") {
     console.log(`[Cache] Dev mode - caching disabled for ${fn.name}`);
-    return fn;  // ← En dev, caching está DESHABILITADO
+    return fn; // ← En dev, caching está DESHABILITADO
   }
-  
+
   // ... caching logic
 }
 ```
@@ -329,12 +315,12 @@ export async function getCategories() {
 
 ## Resumen
 
-| Concepto | Qué es | Duración | Usar cuando |
-|----------|--------|----------|-------------|
-| Request Cache | Evita re-queries en una solicitud | 1 request | Datos compartidos en página |
-| Full Route Cache | Guarda HTML renderizado | Horas/días | Página estática o semi-estática |
-| revalidate | Regenera cache después de X segundos | Configurable | Datos que cambian ocasionalmente |
-| revalidateTag | Limpia cache manualmente | Inmediato | Datos acaban de cambiar |
+| Concepto         | Qué es                               | Duración     | Usar cuando                      |
+| ---------------- | ------------------------------------ | ------------ | -------------------------------- |
+| Request Cache    | Evita re-queries en una solicitud    | 1 request    | Datos compartidos en página      |
+| Full Route Cache | Guarda HTML renderizado              | Horas/días   | Página estática o semi-estática  |
+| revalidate       | Regenera cache después de X segundos | Configurable | Datos que cambian ocasionalmente |
+| revalidateTag    | Limpia cache manualmente             | Inmediato    | Datos acaban de cambiar          |
 
 ---
 
