@@ -398,6 +398,24 @@ GitHub Copilot will automatically activate these skills when relevant:
 - Use when: Ensuring accessibility, performance optimization
 - Triggers: "accessibility", "performance", "optimization"
 
+**Custom Hooks:**
+
+- 📋 `.github/skills/custom-hooks/SKILL.md`
+- Use when: Building modals, drawers, handling ESC key and scroll locking
+- Triggers: "hooks", "modal", "drawer", "useScrollLock", "useEscapeKey"
+
+**Shopping Cart (V2 Phase 1):**
+
+- 📋 `.github/skills/carrito/SKILL.md`
+- Use when: Building cart components, managing cart state, handling items
+- Triggers: "carrito", "cart", "agregar", "comprar", "item"
+
+**Analytics & Tracking:**
+
+- 📋 `.github/skills/analytics/SKILL.md`
+- Use when: Setting up GA4 tracking, creating analytics events, debugging tracking
+- Triggers: "analytics", "ga4", "tracking", "gtag", "evento"
+
 **Reference Documentation:**
 
 - 📋 `.github/reference/database-schema.md` - Complete SQL schema
@@ -491,6 +509,9 @@ This file contains **core rules only**. For detailed patterns and implementation
 - Product variations → `.github/skills/product-variations/SKILL.md`
 - Testing patterns → `.github/skills/testing/SKILL.md`
 - Accessibility & performance → `.github/skills/accesibility-perfomance/SKILL.md`
+- Custom hooks → `.github/skills/custom-hooks/SKILL.md`
+- Shopping cart → `.github/skills/carrito/SKILL.md`
+- Analytics & tracking → `.github/skills/analytics/SKILL.md`
 
 **Reference Documentation (Manual Lookup):**
 
@@ -499,6 +520,9 @@ This file contains **core rules only**. For detailed patterns and implementation
 - Content & style management → `docs/CONTENT_AND_STYLE_MANAGEMENT.md`
 - Testing patterns → `.github/skills/testing/SKILL.md`
 - Accessibility & performance → `.github/skills/accesibility-perfomance/SKILL.md`
+- Custom hooks → `.github/skills/custom-hooks/SKILL.md`
+- Shopping cart → `.github/skills/carrito/SKILL.md`
+- Analytics & tracking → `.github/skills/analytics/SKILL.md`
 
 **Code Implementation:**
 
@@ -563,3 +587,19 @@ docs: Update README with setup instructions
 6. **Centralized constants** - import from `lib/constants`
 7. **Centralized content & styles** - import from `lib/content/` and `lib/design/tokens`
 8. **Reference skills** - detailed patterns in `.github/skills/`
+
+---
+
+## **Shopping Cart (V2 Phase 1):**
+
+- 📋 `.github/skills/carrito/SKILL.md`
+- Use when: Building cart components, managing cart state, handling items
+- Triggers: "carrito", "cart", "agregar", "comprar", "item"
+
+---
+
+## **Analytics & Tracking:**
+
+- 📋 `.github/skills/analytics/SKILL.md`
+- Use when: Setting up GA4 tracking, creating analytics events, debugging tracking
+- Triggers: "analytics", "ga4", "tracking", "gtag", "evento"

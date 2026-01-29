@@ -1,7 +1,7 @@
 ---
 title: "Testing Patterns - Fira Estudio"
 description: "Best practices for unit, integration, and e2e testing in Next.js + Supabase projects"
-version: "1.0"
+version: "1.1"
 lastUpdated: "2026-01-29"
 activationTriggers:
   - "test"
@@ -10,79 +10,85 @@ activationTriggers:
   - "unitario"
   - "integration"
   - "mock"
+  - "node:test"
 ---
 
 # Testing Skill
 
 ## 🎯 Quick Reference
 
-- Usa Vitest para unitarios/integración y React Testing Library para componentes.
-- Los tests deben ser predecibles, rápidos y no depender de servicios externos reales.
-- Ubica los archivos de test junto al código (`*.test.ts(x)`).
+- **node:test** para lógica pura (utils, SEO, analytics).
+- **Vitest** para React, hooks, DOM y browser APIs.
+- Tests rápidos, aislados y sin dependencias externas reales.
+- Tests junto al código (`*.test.ts(x)`).
 
 ---
 
-## 🧪 Tipos de Tests
+## 🧭 ¿Cuándo usar cada herramienta?
 
-- **Unitarios:** Testean funciones puras, hooks, utils y lógica de negocio.
-- **Integración:** Testean componentes con dependencias (ej: hooks, contextos, queries mockeadas).
-- **E2E (futuro):** Testean flujos completos (no implementado aún).
+**node:test**
+
+- ✅ funciones puras
+- ✅ transformaciones y cálculos
+- ✅ schemas SEO, analytics
+
+**Vitest**
+
+- ✅ componentes React
+- ✅ hooks
+- ✅ jsdom / browser APIs
 
 ---
 
-## 🗂️ Estructura de Archivos
+## ✅ Principios
 
-- Coloca los tests junto al archivo a testear:
-  - `components/ContactForm.tsx` → `components/ContactForm.test.tsx`
-  - `hooks/useRateLimit.ts` → `hooks/useRateLimit.test.ts`
-- Usa nombres descriptivos para los describe/it.
+- AAA (Arrange-Act-Assert)
+- nombres descriptivos
+- mocks solo de dependencias externas
+- cobertura inteligente (no 100% a cualquier costo)
 
 ---
 
-## 🧩 Patrones y Ejemplos
+## 🧪 Ejemplos esenciales
 
-### Test de Hook
+### node:test (lógica pura)
 
-```typescript
-import { renderHook, act } from "@testing-library/react";
-import { useRateLimit } from "./useRateLimit";
+```ts
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import { slugify } from "./index";
 
-test("bloquea después de 5 acciones", () => {
-  const { result } = renderHook(() =>
-    useRateLimit({ maxActions: 5, windowMs: 60000, key: "test" }),
-  );
-  for (let i = 0; i < 5; i++) {
-    act(() => result.current.recordAction());
-  }
-  expect(result.current.isRateLimited).toBe(true);
+describe("slugify", () => {
+  it("convierte a slug URL-safe", () => {
+    assert.equal(slugify("Mantel Floral 150x200"), "mantel-floral-150x200");
+  });
 });
 ```
 
-### Test de Componente
+### Vitest (React)
 
 ```tsx
-import { render, screen, fireEvent } from "@testing-library/react";
-import { ContactForm } from "./ContactForm";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
+import { ProductCard } from "./ProductCard";
 
-test("muestra mensaje de éxito al enviar", async () => {
-  render(<ContactForm />);
-  fireEvent.change(screen.getByLabelText(/nombre/i), {
-    target: { value: "Juan" },
+describe("ProductCard", () => {
+  it("renderiza nombre y precio", () => {
+    render(
+      <ProductCard producto={{ nombre: "Mantel", precio_desde: 15000 }} />,
+    );
+    expect(screen.getByText("Mantel")).toBeInTheDocument();
   });
-  fireEvent.click(screen.getByRole("button", { name: /enviar/i }));
-  expect(
-    await screen.findByText(/¡Gracias por tu consulta!/i),
-  ).toBeInTheDocument();
 });
 ```
 
-### Mock de Supabase
+### Mock Supabase (Vitest)
 
-```typescript
+```ts
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
     from: () => ({
-      select: () => ({ data: [{ id: 1 }], error: null }),
+      select: () => ({ data: [{ id: "1" }], error: null }),
     }),
   }),
 }));
@@ -90,34 +96,33 @@ vi.mock("@/lib/supabase/client", () => ({
 
 ---
 
-## 🛡️ Buenas Prácticas
+## 📏 Convenciones
 
-- Mockea todas las llamadas a Supabase y APIs externas.
-- Usa datos de ejemplo alineados al schema real.
-- Testea estados de loading, error y éxito.
-- Verifica accesibilidad básica (`getByRole`, `getByLabelText`).
-- No dependas de orden de ejecución ni de datos globales.
-- Mantén los tests rápidos (<1s por archivo).
+- tests junto al código
+- `getByRole` y `getByLabelText` para accesibilidad
+- tests independientes y deterministas
 
 ---
 
-## ✅ Checklist de Testing
+## ✅ Checklist
 
-- [ ] Todos los hooks y utils tienen tests unitarios
-- [ ] Componentes críticos tienen tests de integración
-- [ ] Se mockean servicios externos (Supabase, fetch)
-- [ ] Se testean estados de loading/error
-- [ ] Se verifica accesibilidad mínima
-- [ ] Los tests corren en CI y pasan sin errores
+- [ ] node:test para lógica pura
+- [ ] Vitest para React/hooks
+- [ ] mocks de Supabase/fetch
+- [ ] estados loading/error cubiertos
+- [ ] nombres claros en español
+- [ ] tests rápidos (<1s por archivo)
 
 ---
 
-## 🧰 Herramientas
+## 🧰 Comandos
 
-- [Vitest](https://vitest.dev/) (unitarios/integración)
-- [React Testing Library](https://testing-library.com/docs/react-testing-library/intro/)
-- [@testing-library/jest-dom](https://github.com/testing-library/jest-dom)
-- [msw](https://mswjs.io/) (para mocks de red, opcional)
+```bash
+npm run test:node
+npm run test:unit
+npm run test:watch
+npm run test:coverage
+```
 
 ---
 
