@@ -92,6 +92,7 @@ components/
 Los componentes se organizan por **dominio de negocio**, no por tipo técnico:
 
 ✅ **Correcto:**
+
 ```
 productos/ProductCard.tsx
 productos/ProductGrid.tsx
@@ -99,6 +100,7 @@ contacto/ContactForm.tsx
 ```
 
 ❌ **Incorrecto:**
+
 ```
 cards/ProductCard.tsx
 forms/ContactForm.tsx
@@ -128,7 +130,11 @@ interface ProductCardProps {
   imagenAlt?: string | null;
 }
 
-export function ProductCard({ producto, imagenPrincipal, imagenAlt }: ProductCardProps) {
+export function ProductCard({
+  producto,
+  imagenPrincipal,
+  imagenAlt,
+}: ProductCardProps) {
   // ...
 }
 ```
@@ -140,12 +146,14 @@ export function ProductCard({ producto, imagenPrincipal, imagenAlt }: ProductCar
 ### Server Components (Por Defecto)
 
 **Usar cuando:**
+
 - No hay interactividad del usuario
 - Se puede renderizar en el servidor
 - Se accede a datos directamente
 - No se usan hooks de React (useState, useEffect, etc.)
 
 **Ejemplos:**
+
 ```typescript
 // components/productos/ProductCard.tsx
 import Link from "next/link";
@@ -170,12 +178,14 @@ export function HeroSection() {
 ### Client Components
 
 **Usar cuando:**
+
 - Se necesita interactividad (onClick, onChange, etc.)
 - Se usan hooks: useState, useEffect, useRef, etc.
 - Se usan browser APIs: window, localStorage, etc.
 - Se requiere context de React
 
 **Ejemplos:**
+
 ```typescript
 // components/layout/MobileNav.tsx
 "use client";
@@ -196,14 +206,15 @@ import { useState, useEffect } from "react";
 import { trackVariationSelect } from "@/lib/analytics/gtag";
 
 export function ProductActions({ producto, variaciones }: ProductActionsProps) {
-  const [variacionSeleccionada, setVariacionSeleccionada] = useState<Variacion | null>(null);
-  
+  const [variacionSeleccionada, setVariacionSeleccionada] =
+    useState<Variacion | null>(null);
+
   useEffect(() => {
     if (variacionSeleccionada) {
       trackVariationSelect(producto, variacionSeleccionada);
     }
   }, [variacionSeleccionada, producto]);
-  
+
   // Client component por useState + useEffect + analytics
 }
 ```
@@ -220,12 +231,12 @@ import { ProductActions } from "@/components/productos/ProductActions"; // Clien
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const producto = await getProductoBySlug(params.slug);
-  
+
   return (
     <main>
       {/* Server components */}
       <ProductInfo producto={producto} />
-      
+
       {/* Client component island */}
       <ProductActions producto={producto} variaciones={producto.variaciones} />
     </main>
@@ -253,33 +264,37 @@ import { COLORS, TYPOGRAPHY, SPACING, COMPONENTS } from "@/lib/design/tokens";
 **Tokens disponibles:**
 
 #### COLORS
+
 ```typescript
-COLORS.text.primary        // text-foreground
-COLORS.text.secondary      // text-muted-foreground
-COLORS.background.primary  // bg-white
-COLORS.border.default      // border-border
-COLORS.border.hover        // border-foreground/30
+COLORS.text.primary; // text-foreground
+COLORS.text.secondary; // text-muted-foreground
+COLORS.background.primary; // bg-white
+COLORS.border.default; // border-border
+COLORS.border.hover; // border-foreground/30
 ```
 
 #### TYPOGRAPHY
+
 ```typescript
-TYPOGRAPHY.heading.h1    // text-4xl md:text-5xl lg:text-6xl font-bold
-TYPOGRAPHY.heading.h2    // text-3xl md:text-4xl lg:text-5xl font-bold
-TYPOGRAPHY.body.large    // text-lg text-muted-foreground
+TYPOGRAPHY.heading.h1; // text-4xl md:text-5xl lg:text-6xl font-bold
+TYPOGRAPHY.heading.h2; // text-3xl md:text-4xl lg:text-5xl font-bold
+TYPOGRAPHY.body.large; // text-lg text-muted-foreground
 ```
 
 #### SPACING
+
 ```typescript
-SPACING.section.sm       // py-8 md:py-12
-SPACING.section.md       // py-12 md:py-16 lg:py-20
-SPACING.container        // container max-w-7xl mx-auto px-4
+SPACING.section.sm; // py-8 md:py-12
+SPACING.section.md; // py-12 md:py-16 lg:py-20
+SPACING.container; // container max-w-7xl mx-auto px-4
 ```
 
 #### COMPONENTS (Específicos)
+
 ```typescript
-COMPONENTS.button.base   // Estilos base de botón
-COMPONENTS.card.base     // Estilos base de card
-COMPONENTS.error.text    // text-red-600 (para errores)
+COMPONENTS.button.base; // Estilos base de botón
+COMPONENTS.card.base; // Estilos base de card
+COMPONENTS.error.text; // text-red-600 (para errores)
 ```
 
 ### UI Primitives
@@ -287,6 +302,7 @@ COMPONENTS.error.text    // text-red-600 (para errores)
 Componentes base en `components/ui/`:
 
 #### Button
+
 ```typescript
 import { Button } from "@/components/ui/Button";
 
@@ -299,6 +315,7 @@ Variantes: `primary`, `secondary`, `outline`, `ghost`
 Tamaños: `sm`, `md`, `lg`
 
 #### Card
+
 ```typescript
 import { Card } from "@/components/ui/Card";
 
@@ -311,6 +328,7 @@ import { Card } from "@/components/ui/Card";
 Props: `hover` (boolean), `className` (string)
 
 #### Input/Textarea
+
 ```typescript
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
@@ -340,6 +358,7 @@ Props compartidas: `label`, `error`, `required`, `disabled`
 ### Layout (Estructura de Página)
 
 #### Header
+
 **Tipo:** Server Component  
 **Ubicación:** `components/layout/Header.tsx`  
 **Propósito:** Navegación principal del sitio
@@ -352,11 +371,13 @@ import { Header } from "@/components/layout/Header";
 ```
 
 **Características:**
+
 - Logo + navegación desktop
 - MobileNav integrado (client island)
 - Links: Inicio, Productos, Sobre Nosotros, Contacto
 
 #### MobileNav
+
 **Tipo:** Client Component  
 **Ubicación:** `components/layout/MobileNav.tsx`  
 **Propósito:** Menú hamburguesa responsive
@@ -367,6 +388,7 @@ import { MobileNav } from "@/components/layout/MobileNav";
 ```
 
 **Características:**
+
 - useState para open/close
 - useScrollLock hook (bloquea scroll cuando abierto)
 - useEscapeKey hook (cierra con ESC)
@@ -374,10 +396,12 @@ import { MobileNav } from "@/components/layout/MobileNav";
 - Z-index layering: button(60), menu(50), overlay(40)
 
 #### Footer
+
 **Tipo:** Server Component  
 **Ubicación:** `components/layout/Footer.tsx`
 
 **Características:**
+
 - Links de navegación
 - Redes sociales
 - Copyright
@@ -385,6 +409,7 @@ import { MobileNav } from "@/components/layout/MobileNav";
 ### Productos (Dominio Principal)
 
 #### ProductCard
+
 **Tipo:** Server Component  
 **Ubicación:** `components/productos/ProductCard.tsx`  
 **Propósito:** Tarjeta de producto en listings
@@ -392,7 +417,7 @@ import { MobileNav } from "@/components/layout/MobileNav";
 ```typescript
 import { ProductCard } from "@/components/productos/ProductCard";
 
-<ProductCard 
+<ProductCard
   producto={producto}
   imagenPrincipal={imagen.url}
   imagenAlt={imagen.alt_text}
@@ -400,11 +425,13 @@ import { ProductCard } from "@/components/productos/ProductCard";
 ```
 
 **Props:**
+
 - `producto: Producto` - Objeto producto completo
 - `imagenPrincipal?: string` - URL de imagen principal
 - `imagenAlt?: string | null` - Texto alternativo
 
 **Características:**
+
 - Badge "Destacado" si `producto.destacado === true`
 - Precio con formato "Desde $X" si múltiples variaciones
 - Hover effects (scale, shadow, translate)
@@ -412,6 +439,7 @@ import { ProductCard } from "@/components/productos/ProductCard";
 - Link a `/productos/${slug}`
 
 #### ProductGrid
+
 **Tipo:** Server Component  
 **Ubicación:** `components/productos/ProductGrid.tsx`
 
@@ -420,11 +448,13 @@ import { ProductCard } from "@/components/productos/ProductCard";
 ```
 
 **Características:**
+
 - Grid responsive: 1 col (mobile) → 2 cols (tablet) → 3 cols (desktop)
 - Maneja productos vacíos con mensaje
 - Extrae imagen principal automáticamente
 
 #### ProductGallery
+
 **Tipo:** Client Component  
 **Ubicación:** `components/productos/ProductGallery.tsx`  
 **Propósito:** Galería de imágenes con thumbnails
@@ -436,12 +466,14 @@ import { ProductCard } from "@/components/productos/ProductCard";
 ```
 
 **Características:**
+
 - useState para imagen seleccionada
 - Thumbnails clickeables
 - Indicadores activos
 - Responsive layout
 
 #### ProductActions
+
 **Tipo:** Client Component (Wrapper)  
 **Ubicación:** `components/productos/ProductActions.tsx`  
 **Propósito:** Conecta VariationSelector con WhatsAppButton
@@ -453,12 +485,14 @@ import { ProductCard } from "@/components/productos/ProductCard";
 ```
 
 **Características:**
+
 - useState para variación seleccionada
 - useEffect para tracking de analytics
 - Pasa variación a WhatsAppButton
 - Container con border y shadow
 
 #### VariationSelector
+
 **Tipo:** Client Component  
 **Ubicación:** `components/productos/VariationSelector.tsx`  
 **Propósito:** Selector de tamaño y color
@@ -471,13 +505,14 @@ interface VariationSelectorProps {
   onVariacionChange: (variacion: Variacion | null) => void;
 }
 
-<VariationSelector 
+<VariationSelector
   variaciones={variaciones}
   onVariacionChange={setVariacionSeleccionada}
 />
 ```
 
 **Características:**
+
 - Inicializa con primera variación activa
 - Selects enlazados: tamaño → color
 - Reset de color cuando cambia tamaño
@@ -486,6 +521,7 @@ interface VariationSelectorProps {
 - Utilities: `getUniqueSizes()`, `getColorsForSize()`, `findVariation()`
 
 #### WhatsAppButton
+
 **Tipo:** Client Component  
 **Ubicación:** `components/productos/WhatsAppButton.tsx`
 
@@ -496,6 +532,7 @@ interface VariationSelectorProps {
 ```
 
 **Características:**
+
 - Construye mensaje formateado para WhatsApp
 - Incluye nombre, tamaño, color, precio
 - Analytics tracking (trackWhatsAppClick)
@@ -503,6 +540,7 @@ interface VariationSelectorProps {
 - Abre en nueva pestaña
 
 #### StockBadge
+
 **Tipo:** Server Component  
 **Ubicación:** `components/productos/StockBadge.tsx`
 
@@ -511,30 +549,34 @@ interface VariationSelectorProps {
 ```
 
 **Características:**
+
 - `stock > 5`: "En stock" (verde)
 - `stock 1-5`: "Últimas unidades" (amarillo)
 - `stock = 0`: "A pedido" (azul)
 
 #### CategoryFilter
+
 **Tipo:** Client Component  
 **Ubicación:** `components/productos/CategoryFilter.tsx`
 
 ```typescript
 "use client";
 
-<CategoryFilter 
+<CategoryFilter
   categorias={categorias}
   categoriaActual={categoriaSlug}
 />
 ```
 
 **Características:**
+
 - Links con searchParams
 - Tracking de analytics
 - Badge con contador de productos
 - Botón "Todos" para reset
 
 #### ProductViewTracker
+
 **Tipo:** Client Component  
 **Ubicación:** `components/productos/ProductViewTracker.tsx`  
 **Propósito:** Analytics tracking invisible
@@ -546,6 +588,7 @@ interface VariationSelectorProps {
 ```
 
 **Características:**
+
 - Invisible (returns null)
 - useEffect para trackProductView
 - Se ejecuta solo en production con gtag
@@ -553,6 +596,7 @@ interface VariationSelectorProps {
 ### Home (Página de Inicio)
 
 #### HeroSection
+
 **Tipo:** Server Component  
 **Ubicación:** `components/home/HeroSection.tsx`
 
@@ -561,12 +605,14 @@ interface VariationSelectorProps {
 ```
 
 **Características:**
+
 - Usa `HERO_CONTENT` de lib/content
 - CTA principal a /productos
 - Hero image con gradiente
 - Responsive typography
 
 #### FeaturedProductsSection
+
 **Tipo:** Server Component  
 **Ubicación:** `components/home/FeaturedProductsSection.tsx`
 
@@ -575,6 +621,7 @@ interface VariationSelectorProps {
 ```
 
 **Características:**
+
 - Título de sección
 - FeaturedProducts grid
 - Link a /productos
@@ -583,6 +630,7 @@ interface VariationSelectorProps {
 ### Contacto
 
 #### ContactForm
+
 **Tipo:** Client Component  
 **Ubicación:** `components/contacto/ContactForm.tsx`  
 **Refactorizado:** Fix 4 (290 → 217 líneas)
@@ -594,6 +642,7 @@ interface VariationSelectorProps {
 ```
 
 **Características:**
+
 - Validación con lib/utils/validation
 - Rate limiting (3 mensajes / 5 min)
 - XSS protection
@@ -610,6 +659,7 @@ interface VariationSelectorProps {
    - Manejo de submit
 
 2. **ContactFormFields** - Renderizado de campos
+
    ```typescript
    <ContactFormFields
      form={form}
@@ -634,6 +684,7 @@ interface VariationSelectorProps {
    ```
 
 #### ContactInfo
+
 **Tipo:** Server Component  
 **Ubicación:** `components/contacto/ContactInfo.tsx`
 
@@ -642,6 +693,7 @@ interface VariationSelectorProps {
 ```
 
 **Características:**
+
 - Email, WhatsApp, Instagram
 - Horarios de atención
 - Carrusel de imágenes
@@ -649,6 +701,7 @@ interface VariationSelectorProps {
 ### UI Components (Primitivos)
 
 #### Badge
+
 ```typescript
 <Badge variant="success">En stock</Badge>
 <Badge variant="warning">Últimas unidades</Badge>
@@ -656,6 +709,7 @@ interface VariationSelectorProps {
 ```
 
 #### Breadcrumbs
+
 ```typescript
 <Breadcrumbs items={[
   { name: "Productos", url: "/productos" },
@@ -664,6 +718,7 @@ interface VariationSelectorProps {
 ```
 
 #### Carousel (Client Component)
+
 ```typescript
 "use client";
 
@@ -708,7 +763,7 @@ describe("ComponentName", () => {
   it("handles user interaction", () => {
     const handleClick = vi.fn();
     render(<ComponentName onClick={handleClick} />);
-    
+
     fireEvent.click(screen.getByRole("button"));
     expect(handleClick).toHaveBeenCalledTimes(1);
   });
@@ -718,6 +773,7 @@ describe("ComponentName", () => {
 ### Mocking Dependencies
 
 #### Mocking Módulos
+
 ```typescript
 // Mock analytics
 vi.mock("@/lib/analytics/gtag", () => ({
@@ -732,6 +788,7 @@ vi.mock("@/lib/utils/rate-limit-server", () => ({
 ```
 
 #### Mocking Next.js
+
 ```typescript
 // Mock next/link
 vi.mock("next/link", () => ({
@@ -746,19 +803,20 @@ vi.mock("next/image", () => ({
 
 ### Tests Actuales
 
-| Componente | Tests | Cobertura |
-|------------|-------|-----------|
-| ProductCard | 10 | ✅ Completa |
-| ContactForm | 14 | ✅ Completa |
-| MobileNav | 3 | ✅ Z-index |
-| ProductViewTracker | 3 | ✅ Completa |
-| Header | 2 | ⚠️ Básica |
-| StockBadge | 4 | ✅ Completa |
-| WhatsAppButton | 3 | ✅ Completa |
-| RelatedProducts | 2 | ⚠️ Básica |
-| CategoryFilter | 3 | ✅ Completa |
+| Componente         | Tests | Cobertura   |
+| ------------------ | ----- | ----------- |
+| ProductCard        | 10    | ✅ Completa |
+| ContactForm        | 14    | ✅ Completa |
+| MobileNav          | 3     | ✅ Z-index  |
+| ProductViewTracker | 3     | ✅ Completa |
+| Header             | 2     | ⚠️ Básica   |
+| StockBadge         | 4     | ✅ Completa |
+| WhatsAppButton     | 3     | ✅ Completa |
+| RelatedProducts    | 2     | ⚠️ Básica   |
+| CategoryFilter     | 3     | ✅ Completa |
 
 **Pendientes (Priority):**
+
 - VariationSelector (alto - lógica compleja)
 - ProductGallery (medio - estado de UI)
 - Carousel (medio - cliente)
@@ -806,11 +864,11 @@ export function ProductReviews({ reviews }: ProductReviewsProps) {
             </div>
             <span className="text-sm text-muted-foreground">{review.fecha}</span>
           </div>
-          
+
           <p className={expandedId === review.id ? "" : "line-clamp-3"}>
             {review.comentario}
           </p>
-          
+
           <button onClick={() => setExpandedId(expandedId === review.id ? null : review.id)}>
             {expandedId === review.id ? "Ver menos" : "Ver más"}
           </button>
@@ -822,6 +880,7 @@ export function ProductReviews({ reviews }: ProductReviewsProps) {
 ```
 
 **Test correspondiente:**
+
 ```typescript
 // components/productos/ProductReviews.test.tsx
 import { describe, it, expect } from "vitest";
@@ -864,7 +923,7 @@ import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 
 export default async function ProductPage({ params }: { params: { slug: string } }) {
   const producto = await getProductoBySlug(params.slug);
-  
+
   if (!producto) notFound();
 
   return (
@@ -888,7 +947,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
             <ProductInfo producto={producto} />
 
             {/* Actions (client - interactividad) */}
-            <ProductActions 
+            <ProductActions
               producto={producto}
               variaciones={producto.variaciones}
             />
@@ -896,7 +955,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
         </div>
 
         {/* Related (server - data fetching) */}
-        <RelatedProducts 
+        <RelatedProducts
           productoId={producto.id}
           categoriaId={producto.categoria_id}
         />
@@ -907,6 +966,7 @@ export default async function ProductPage({ params }: { params: { slug: string }
 ```
 
 **Observaciones:**
+
 - Server component principal
 - Data fetching con async/await
 - Client islands donde se necesita interactividad
@@ -926,7 +986,7 @@ export function ProductHighlight({ producto }: { producto: Producto }) {
         <h2 className={TYPOGRAPHY.heading.h2}>
           {producto.nombre}
         </h2>
-        
+
         <div className={`
           ${COMPONENTS.card.base}
           ${COLORS.background.primary}
@@ -947,11 +1007,13 @@ export function ProductHighlight({ producto }: { producto: Producto }) {
 ## Recursos Adicionales
 
 ### Documentos Relacionados
+
 - [Project Structure](./PROJECT_STRUCTURE.md) - Arquitectura completa
 - [Data & Queries](./DATA_AND_QUERIES.md) - Supabase y queries
 - [Phase 1 Complete](../PHASE_1_COMPLETE.md) - Fixes recientes
 
 ### Utilidades Importantes
+
 - `lib/utils/image.ts` - Image URL y alt text helpers
 - `lib/utils/variations.ts` - Lógica de variaciones
 - `lib/utils/validation.ts` - Validación de formularios
@@ -959,11 +1021,13 @@ export function ProductHighlight({ producto }: { producto: Producto }) {
 - `lib/content/` - Contenido centralizado
 
 ### Hooks Personalizados
+
 - `hooks/useScrollLock.ts` - Bloquea scroll (modales)
 - `hooks/useEscapeKey.ts` - Maneja tecla ESC
 - `hooks/useRateLimit.ts` - Rate limiting client-side
 
 ### Testing
+
 - Framework: Vitest + React Testing Library
 - Ejecutar tests: `npm test`
 - Coverage: `npm run test:coverage`
