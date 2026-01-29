@@ -30,7 +30,7 @@ describe("ProductCard", () => {
     render(<ProductCard producto={mockProducto} />);
 
     const image = screen.getByAltText(
-      "Mantel Floral - Textil artesanal de fira Estudio",
+      "Mantel Floral - Textil artesanal de Fira Estudio",
     );
     expect(image).toBeInTheDocument();
   });
@@ -42,7 +42,7 @@ describe("ProductCard", () => {
     );
 
     const image = screen.getByAltText(
-      "Mantel Floral - Textil artesanal de fira Estudio",
+      "Mantel Floral - Textil artesanal de Fira Estudio",
     );
     expect(image).toHaveAttribute("src", expect.stringContaining("custom.jpg"));
   });
@@ -85,7 +85,7 @@ describe("ProductCard", () => {
     render(<ProductCard producto={mockProducto} />);
 
     const image = screen.getByAltText(
-      "Mantel Floral - Textil artesanal de fira Estudio",
+      "Mantel Floral - Textil artesanal de Fira Estudio",
     );
     expect(image).toHaveAttribute(
       "src",

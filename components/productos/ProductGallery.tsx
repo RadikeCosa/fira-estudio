@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ImagenProducto } from "@/lib/types";
 import { STORAGE } from "@/lib/constants";
+import { getImageAlt, getImageUrl } from "@/lib/utils";
 
 interface ProductGalleryProps {
   imagenes: ImagenProducto[];
@@ -99,8 +100,8 @@ export function ProductGallery({ imagenes }: ProductGalleryProps) {
         "
       >
         <Image
-          src={imagenActual.url}
-          alt={imagenActual.alt_text || "Imagen del producto"}
+          src={getImageUrl(imagenActual.url)}
+          alt={getImageAlt(imagenActual.alt_text, "Imagen del producto")}
           width={800}
           height={800}
           priority
@@ -240,8 +241,8 @@ export function ProductGallery({ imagenes }: ProductGalleryProps) {
               `}
             >
               <Image
-                src={imagen.url}
-                alt={imagen.alt_text || `Miniatura ${index + 1}`}
+                src={getImageUrl(imagen.url)}
+                alt={getImageAlt(imagen.alt_text, `Miniatura ${index + 1}`)}
                 width={200}
                 height={200}
                 loading="lazy"

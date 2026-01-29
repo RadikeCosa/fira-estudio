@@ -3,7 +3,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ProductCard } from "@/components/productos/ProductCard";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getPrincipalImage } from "@/lib/utils";
 import { getProductos } from "@/lib/supabase/queries";
 
 /**
@@ -52,9 +52,7 @@ export async function FeaturedProducts({ limit = 4 }: FeaturedProductsProps) {
         {/* Products Grid with Offset Layout */}
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
           {productosDestacados.map((producto, index) => {
-            const imagenPrincipal =
-              producto.imagenes?.find((img) => img.es_principal)?.url ||
-              producto.imagenes?.[0]?.url;
+            const imagenPrincipal = getPrincipalImage(producto.imagenes ?? []);
 
             // Apply offset to odd-indexed items (2nd, 4th)
             const isOffset = index % 2 === 1;
@@ -69,7 +67,8 @@ export async function FeaturedProducts({ limit = 4 }: FeaturedProductsProps) {
               >
                 <ProductCard
                   producto={producto}
-                  imagenPrincipal={imagenPrincipal}
+                  imagenPrincipal={imagenPrincipal?.url}
+                  imagenAlt={imagenPrincipal?.alt_text}
                 />
               </div>
             );

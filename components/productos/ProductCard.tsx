@@ -1,16 +1,21 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Producto } from "@/lib/types";
-import { STORAGE } from "@/lib/constants";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, getImageUrl, getProductImageAlt } from "@/lib/utils";
 
 interface ProductCardProps {
   producto: Producto;
   imagenPrincipal?: string;
+  imagenAlt?: string | null;
 }
 
-export function ProductCard({ producto, imagenPrincipal }: ProductCardProps) {
-  const imageSrc = imagenPrincipal || STORAGE.productPlaceholder;
+export function ProductCard({
+  producto,
+  imagenPrincipal,
+  imagenAlt,
+}: ProductCardProps) {
+  const imageSrc = getImageUrl(imagenPrincipal);
+  const imageAlt = getProductImageAlt(producto.nombre, imagenAlt);
   const precioFormateado =
     producto.precio_desde != null
       ? `Desde ${formatPrice(producto.precio_desde)}`
@@ -62,7 +67,7 @@ export function ProductCard({ producto, imagenPrincipal }: ProductCardProps) {
       <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-muted/30 to-muted">
         <Image
           src={imageSrc}
-          alt={`${producto.nombre} - Textil artesanal de fira Estudio`}
+          alt={imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="
