@@ -1,17 +1,15 @@
 'use client';
 
 import { useState, useEffect, useRef } from "react";
-import { Input } from "@/components/ui/Input";
-import { Textarea } from "@/components/ui/Textarea";
-import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { ContactFormActions } from "@/components/contacto/ContactFormActions";
+import { ContactFormFields } from "@/components/contacto/ContactFormFields";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
 import { WHATSAPP } from "@/lib/constants";
 import { useRateLimit } from "@/hooks/useRateLimit";
 import {
   sanitizeText,
   validateContactForm,
-  VALIDATION_LIMITS,
   type ContactFormData,
 } from "@/lib/utils/validation";
 import { checkServerRateLimit } from "@/lib/utils/rate-limit-server";
@@ -191,98 +189,23 @@ ${data.mensaje}
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Honeypot field - invisible to humans, visible to bots */}
-        <input
-          type="text"
-          name="website"
-          tabIndex={-1}
-          autoComplete="off"
-          style={{
-            position: "absolute",
-            left: "-9999px",
-            width: "1px",
-            height: "1px",
-            opacity: 0,
-          }}
-          aria-hidden="true"
-        />
-        
-        <Input
-          ref={nombreRef}
-          id="nombre"
-          name="nombre"
-          label={form.fields.nombre.label}
-          placeholder={form.fields.nombre.placeholder}
-          error={errors.nombre}
-          maxLength={VALIDATION_LIMITS.nombre.max}
+        <ContactFormFields
+          form={form}
+          errors={errors}
           disabled={isSubmitting || isRateLimited}
-          required
+          nombreRef={nombreRef}
+          emailRef={emailRef}
+          telefonoRef={telefonoRef}
+          mensajeRef={mensajeRef}
         />
 
-        <Input
-          ref={emailRef}
-          id="email"
-          name="email"
-          type="email"
-          label={form.fields.email.label}
-          placeholder={form.fields.email.placeholder}
-          error={errors.email}
-          maxLength={VALIDATION_LIMITS.email.max}
+        <ContactFormActions
+          buttonText={getButtonText()}
           disabled={isSubmitting || isRateLimited}
-          required
+          rateLimitMessage={rateLimitMessage}
+          isRateLimited={isRateLimited}
+          submitHelperText={form.submitHelperText}
         />
-
-        <Input
-          ref={telefonoRef}
-          id="telefono"
-          name="telefono"
-          type="tel"
-          label={form.fields.telefono.label}
-          helperText={form.fields.telefono.helper}
-          placeholder={form.fields.telefono.placeholder}
-          error={errors.telefono}
-          maxLength={VALIDATION_LIMITS.telefono.max}
-          disabled={isSubmitting || isRateLimited}
-        />
-
-        <Textarea
-          ref={mensajeRef}
-          id="mensaje"
-          name="mensaje"
-          label={form.fields.mensaje.label}
-          placeholder={form.fields.mensaje.placeholder}
-          rows={5}
-          error={errors.mensaje}
-          maxLength={VALIDATION_LIMITS.mensaje.max}
-          disabled={isSubmitting || isRateLimited}
-          required
-        />
-
-        <Button 
-          type="submit" 
-          variant="primary" 
-          size="md" 
-          className="w-full group"
-          disabled={isSubmitting || isRateLimited}
-        >
-          {getButtonText()}
-        </Button>
-        
-        {rateLimitMessage && (
-          <p className="text-center text-sm text-orange-600 font-medium">
-            {rateLimitMessage}
-          </p>
-        )}
-        
-        {isRateLimited && !rateLimitMessage && (
-          <p className="text-center text-sm text-orange-600 font-medium">
-            Límite de mensajes alcanzado. Esperá unos minutos.
-          </p>
-        )}
-
-        <p className="text-center text-sm text-muted-foreground">
-          {form.submitHelperText}
-        </p>
       </form>
     </Card>
   );
