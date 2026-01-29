@@ -1,5 +1,5 @@
 ---
-title: "GitHub Copilot Instructions - Fira Estudio"
+name: "GitHub Copilot Instructions - Fira Estudio"
 description: "Development guidelines for textile e-commerce with Next.js 16 + Supabase"
 version: "3.0"
 lastUpdated: "2026-01-16"

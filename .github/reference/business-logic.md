@@ -276,23 +276,6 @@ formatPrice(999)    → "$999"
 
 ---
 
-### Tax and Legal Compliance
-
-**Current (V1):**
-
-- Prices shown are final (tax included)
-- No invoice generation
-- No formal checkout process
-
-**Future (V2):**
-
-- Integrate with AFIP (Argentine tax system)
-- Generate electronic invoices
-- Show price breakdown: subtotal + IVA
-- Support tax-exempt customers
-
----
-
 ## Image Management
 
 ### Image Upload Flow
@@ -301,7 +284,7 @@ formatPrice(999)    → "$999"
 1. Admin Uploads Image
    ↓
 2. Validation
-   - File type: JPG, PNG, WebP
+   - File type: WebP
    - Max size: 5MB
    - Min dimensions: 800x800px
    - Aspect ratio: Square preferred
@@ -840,29 +823,6 @@ CREATE TABLE pedidos_items (
   cantidad INTEGER,
   precio_unitario INTEGER
 );
-```
-
----
-
-### User Accounts
-
-**Features:**
-
-- Email/password authentication
-- Order history
-- Saved addresses
-- Wishlist
-
-**Implementation:**
-
-```typescript
-// Supabase Auth
-import { createClient } from "@/lib/supabase/client";
-
-const { data, error } = await supabase.auth.signUp({
-  email: "user@example.com",
-  password: "password",
-});
 ```
 
 ---
