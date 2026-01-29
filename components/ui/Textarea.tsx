@@ -18,10 +18,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             className="mb-2 block text-sm font-semibold text-foreground"
           >
             {label}
-            {required && <span className="ml-1 text-red-600">*</span>}
+            {required && (
+              <span className={cn("ml-1", COMPONENTS.error.label)}>*</span>
+            )}
           </label>
         )}
-        
+
         <textarea
           ref={ref}
           required={required}
@@ -31,22 +33,29 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
             COMPONENTS.input.focus,
             COMPONENTS.input.hover,
             "resize-none",
-            error && "border-red-600 focus:border-red-600 focus:ring-red-600/10",
-            className
+            error &&
+              cn(
+                COMPONENTS.error.border,
+                COMPONENTS.error.focus,
+                COMPONENTS.error.ring,
+              ),
+            className,
           )}
           {...props}
         />
-        
+
         {error && (
-          <p className="mt-2 text-sm text-red-600">{error}</p>
+          <p className={cn("mt-2 text-sm", COMPONENTS.error.message)}>
+            {error}
+          </p>
         )}
-        
+
         {helperText && !error && (
           <p className="mt-2 text-sm text-muted-foreground">{helperText}</p>
         )}
       </div>
     );
-  }
+  },
 );
 
 Textarea.displayName = "Textarea";
