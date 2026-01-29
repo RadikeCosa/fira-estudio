@@ -44,9 +44,11 @@ export function getColorsForSize(
   variaciones: Variacion[],
   tamanio: string,
 ): string[] {
-  return variaciones
+  const colors = variaciones
     .filter((v) => v.activo && v.tamanio === tamanio)
     .map((v) => v.color);
+
+  return Array.from(new Set(colors));
 }
 
 /**

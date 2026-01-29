@@ -80,7 +80,8 @@ export function useRateLimit({
 
   // Initial check and cleanup
   useEffect(() => {
-    setTimeout(checkStatus, 0);
+    const timeoutId = setTimeout(checkStatus, 0);
+    return () => clearTimeout(timeoutId);
   }, [checkStatus]);
 
   // Update countdown timer

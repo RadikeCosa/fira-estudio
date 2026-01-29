@@ -6,6 +6,7 @@ next.config.ts
 eslint.config.mjs
 postcss.config.mjs
 vitest.config.ts
+
 3. Tipos, utilidades y hooks globales
 
 types.ts

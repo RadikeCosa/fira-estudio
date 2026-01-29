@@ -6,9 +6,49 @@ Bienvenido al equipo de Fira Estudio. Esta carpeta tiene guías beginner-friendl
 
 ---
 
-## 🗺️ Mapa de Onboarding
+## 🗺️ Mapa de Onboarding - Día 1 a Día 3
 
-### 1️⃣ **Caching** - Almacenar datos para que sea rápido
+### Día 1: Conceptos Fundamentales (45 minutos)
+
+#### 1️⃣ **Estructura del Proyecto** - Dónde viven las cosas
+
+- **Archivo:** [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md)
+- **Para:** Entender la organización del código desde cero
+- **Tiempo:** 15-20 minutos
+- **Includes:**
+  - Qué es app/ y lib/ (con analogías de restaurante)
+  - Directorio completo explicado
+  - Dónde poner cada tipo de archivo
+  - Server vs Client Components
+  - Errores comunes
+  - Convenciones de nombres
+
+**¿Cuándo leer?** PRIMERO. Es tu primer doc para entender cómo está organizado todo.
+
+---
+
+#### 2️⃣ **Datos y Consultas** - Cómo obtener información
+
+- **Archivo:** [DATA_AND_QUERIES.md](DATA_AND_QUERIES.md)
+- **Para:** Trabajar con Supabase y escribir queries
+- **Tiempo:** 20-25 minutos
+- **Includes:**
+  - Qué es Supabase (con analogía)
+  - Tablas principales (categorias, productos, variaciones)
+  - El patrón de 3 capas (internal → cached → fresh)
+  - Repository pattern (por qué lo usamos)
+  - Cómo crear un nuevo query paso a paso
+  - Error handling
+  - 5 errores comunes
+
+**¿Cuándo leer?** Después de PROJECT_STRUCTURE. Es fundamental para trabajar con datos.
+
+---
+
+### Día 1-2: Temas Específicos (33 minutos)
+
+#### 3️⃣ **Caching** - Almacenar datos para que sea rápido
+
 - **Archivo:** [CACHING_BASICS.md](CACHING_BASICS.md)
 - **Para:** Si no entiendes qué es "cache" o cómo Next.js lo maneja
 - **Tiempo:** 10-15 minutos
@@ -22,7 +62,8 @@ Bienvenido al equipo de Fira Estudio. Esta carpeta tiene guías beginner-friendl
 
 ---
 
-### 2️⃣ **Metadata** - Información que ve Google y redes sociales
+#### 4️⃣ **Metadata** - Información que ve Google y redes sociales
+
 - **Archivo:** [METADATA_BASICS.md](METADATA_BASICS.md)
 - **Para:** Si no sabes qué es metadata o SEO
 - **Tiempo:** 10 minutos
@@ -37,7 +78,8 @@ Bienvenido al equipo de Fira Estudio. Esta carpeta tiene guías beginner-friendl
 
 ---
 
-### 3️⃣ **Analytics** - Entender qué hacen tus usuarios
+#### 5️⃣ **Analytics** - Entender qué hacen tus usuarios
+
 - **Archivo:** [ANALYTICS_BASICS.md](ANALYTICS_BASICS.md)
 - **Para:** Si no sabes qué es Google Analytics o GA4
 - **Tiempo:** 8 minutos
@@ -54,23 +96,47 @@ Bienvenido al equipo de Fira Estudio. Esta carpeta tiene guías beginner-friendl
 
 ## 🔄 Flujo Recomendado
 
-### Si acabas de empezar (Día 1-2)
+### Opción 1: Ordenado por Relevancia (RECOMENDADO - Días 1-2)
 
 ```
-1. Lee CACHING_BASICS.md (15 min)
-   ↓
-2. Lee METADATA_BASICS.md (10 min)
-   ↓
-3. Lee ANALYTICS_BASICS.md (8 min)
-   ↓
-4. Abre cada archivo .md en la carpeta docs/ para ver cómo se implementa
+DÍA 1:
+1. PROJECT_STRUCTURE.md (20 min) - Entender dónde viven las cosas
+2. DATA_AND_QUERIES.md (25 min) - Aprender a obtener datos
+
+DÍA 2:
+3. CACHING_BASICS.md (15 min) - Optimizar velocidad
+4. METADATA_BASICS.md (10 min) - SEO y redes sociales
+5. ANALYTICS_BASICS.md (8 min) - Entender usuarios
+
+Total: ~78 minutos
 ```
 
-**Total:** ~33 minutos + exploración
+Después: Abre código real (app/, lib/) y experimenta.
 
-### Si necesitas aprender específicamente
+---
+
+### Opción 2: Solo lo Esencial (Si tienes prisa)
 
 ```
+"Necesito empezar AHORA"
+↓
+1. PROJECT_STRUCTURE.md (20 min)
+2. DATA_AND_QUERIES.md (25 min)
+
+Eso es suficiente para empezar. Lees los otros cuando los necesites.
+```
+
+---
+
+### Opción 3: Por Necesidad Específica
+
+```
+"¿Cómo creo una nueva página?"
+→ PROJECT_STRUCTURE.md
+
+"¿Cómo obtengo datos de la BD?"
+→ DATA_AND_QUERIES.md
+
 "¿Cómo cacheo un query?"
 → CACHING_BASICS.md
 
@@ -81,17 +147,23 @@ Bienvenido al equipo de Fira Estudio. Esta carpeta tiene guías beginner-friendl
 → ANALYTICS_BASICS.md
 ```
 
+```
+
 ---
 
 ## 📖 Documentación Avanzada
 
-Estos documentos beginner apuntan a documentación más técnica:
+Después de leer los basics, puedes profundizar:
 
-| Concepto | Beginner | Avanzado |
-|----------|----------|----------|
-| Caching | CACHING_BASICS.md | [docs/CACHING_ARCHITECTURE.md](../CACHING_ARCHITECTURE.md) |
-| Metadata | METADATA_BASICS.md | [docs/METADATA_STANDARD.md](../METADATA_STANDARD.md) |
-| Analytics | ANALYTICS_BASICS.md | [.github/skills/analytics/SKILL.md](../../.github/skills/analytics/SKILL.md) |
+| Tema | Beginner | Avanzado |
+|------|----------|----------|
+| **Estructura** | PROJECT_STRUCTURE.md | - |
+| **Datos** | DATA_AND_QUERIES.md | [docs/CACHING_ARCHITECTURE.md](../CACHING_ARCHITECTURE.md) |
+| **Caching** | CACHING_BASICS.md | [docs/CACHING_ARCHITECTURE.md](../CACHING_ARCHITECTURE.md) |
+| **Metadata/SEO** | METADATA_BASICS.md | [docs/METADATA_STANDARD.md](../METADATA_STANDARD.md) |
+| **Analytics** | ANALYTICS_BASICS.md | [.github/skills/analytics/SKILL.md](../../.github/skills/analytics/SKILL.md) |
+| **Errores** | (cubierto en DATA_AND_QUERIES) | [docs/error-boundaries.md](../error-boundaries.md) |
+| **Design System** | (cubierto en PROJECT_STRUCTURE) | [docs/STYLE_MANAGEMENT.md](../STYLE_MANAGEMENT.md) |
 
 ---
 
@@ -163,6 +235,7 @@ Si agregás un nuevo miembro al equipo:
 
 ---
 
-**Última actualización:** 29/01/2026  
-**Lenguaje:** Español 🇦🇷  
+**Última actualización:** 29/01/2026
+**Lenguaje:** Español 🇦🇷
 **Para:** Nuevos desarrolladores, sin experiencia requerida
+```
