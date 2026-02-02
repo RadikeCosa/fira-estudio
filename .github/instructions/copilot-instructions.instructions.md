@@ -198,7 +198,7 @@ import { createClient } from "@/lib/supabase/client";
 - ⚠️ **Cannot order nested relations** - sort in JavaScript after fetch
 - Use `.single()` for queries expecting one result
 
-📋 **Complete query patterns:** `.github/skills/supabase-queries/SKILL.md`
+📋 **Complete query patterns:** `.github/skills/data-layer/SKILL.md`
 
 **Repository Layer (productos):**
 
@@ -337,62 +337,34 @@ import { getProductos, getProductoBySlug } from "@/lib/supabase/queries";
 
 GitHub Copilot will automatically activate these skills when relevant:
 
-**Database Operations:**
+**Data Layer (Database & Variations):**
 
-- 📋 `.github/skills/supabase-queries/SKILL.md`
-- Use when: Building queries, handling relations, filtering/sorting data
-- Triggers: "query", "relaciones", "obtener productos", "filtrar"
+- 📋 `.github/skills/data-layer/SKILL.md`
+- Use when: Building queries, handling relations, product variations, filtering/sorting data
+- Triggers: "query", "relaciones", "supabase", "variaciones", "tamaño", "color", "stock", "precio", "getProductos", "getProductoBySlug", "VariationSelector"
 
-**WhatsApp Integration:**
+**E-commerce (Cart & Analytics):**
 
-- 📋 `.github/skills/whatsapp-integration/SKILL.md`
-- Use when: Creating contact links, formatting messages, WhatsApp buttons
-- Triggers: "WhatsApp", "mensaje", "consulta", "contacto"
+- 📋 `.github/skills/ecommerce/SKILL.md`
+- Use when: Shopping cart, analytics tracking, GA4 events, conversion tracking
+- Triggers: "carrito", "cart", "agregar", "checkout", "analytics", "ga4", "tracking", "gtag", "evento"
 
-**Product Variations:**
+**Interactions (WhatsApp & Hooks):**
 
-- 📋 `.github/skills/product-variations/SKILL.md`
-- Use when: Building selectors, price calculations, stock management
-- Triggers: "variaciones", "tamaño", "color", "selector", "stock"
+- 📋 `.github/skills/interactions/SKILL.md`
+- Use when: WhatsApp integration, custom hooks, modals, drawers, focus management
+- Triggers: "whatsapp", "consulta", "rate-limit", "hooks", "useScrollLock", "useEscapeKey", "modal", "drawer"
 
-**Testing patterns:**
+**Quality (Testing & A11y/Performance):**
 
-- 📋 `.github/skills/testing/SKILL.md`
-- Use when: Writing tests, ensuring code quality, edge cases
-- Triggers: "test", "testing", "edge cases"
-
-**Accessibility & performance:**
-
-- 📋 `.github/skills/accesibility-perfomance/SKILL.md`
-- Use when: Ensuring accessibility, performance optimization
-- Triggers: "accessibility", "performance", "optimization"
-
-**Custom Hooks:**
-
-- 📋 `.github/skills/custom-hooks/SKILL.md`
-- Use when: Building modals, drawers, handling ESC key and scroll locking
-- Triggers: "hooks", "modal", "drawer", "useScrollLock", "useEscapeKey"
-
-**Shopping Cart (V2 Phase 1):**
-
-- 📋 `.github/skills/carrito/SKILL.md`
-- Use when: Building cart components, managing cart state, handling items
-- Triggers: "carrito", "cart", "agregar", "comprar", "item"
-
-**Analytics & Tracking:**
-
-- 📋 `.github/skills/analytics/SKILL.md`
-- Use when: Setting up GA4 tracking, creating analytics events, debugging tracking
-- Triggers: "analytics", "ga4", "tracking", "gtag", "evento"
+- 📋 `.github/skills/quality/SKILL.md`
+- Use when: Writing tests, accessibility improvements, performance optimization
+- Triggers: "test", "testing", "vitest", "accessibility", "a11y", "performance", "lighthouse", "aria"
 
 **Reference Documentation:**
 
 - 📋 `.github/reference/database-schema.md` - Complete SQL schema
 - 📋 `.github/reference/business-logic.md` - Business rules and workflows
-- 📋 `.github/skills/testing/SKILL.md` - Testing patterns
-- 📋 `.github/skills/accesibility-perfomance/SKILL.md` - Accessibility & performance
-- 📋 `.github/skills/supabase-queries/SKILL.md` - Database operations
-- 📋 `.github/skills/product-variations/SKILL.md` - Product variations
 
 ---
 
@@ -416,14 +388,10 @@ This file contains **core rules only**. For detailed patterns and implementation
 
 **Skills (Activated Automatically):**
 
-- Supabase query patterns → `.github/skills/supabase-queries/SKILL.md`
-- WhatsApp integration → `.github/skills/whatsapp-integration/SKILL.md`
-- Product variations → `.github/skills/product-variations/SKILL.md`
-- Testing patterns → `.github/skills/testing/SKILL.md`
-- Accessibility & performance → `.github/skills/accesibility-perfomance/SKILL.md`
-- Custom hooks → `.github/skills/custom-hooks/SKILL.md`
-- Shopping cart → `.github/skills/carrito/SKILL.md`
-- Analytics & tracking → `.github/skills/analytics/SKILL.md`
+- Data layer (queries & variations) → `.github/skills/data-layer/SKILL.md`
+- E-commerce (cart & analytics) → `.github/skills/ecommerce/SKILL.md`
+- Interactions (WhatsApp & hooks) → `.github/skills/interactions/SKILL.md`
+- Quality (testing & a11y/performance) → `.github/skills/quality/SKILL.md`
 
 **Reference Documentation (Manual Lookup):**
 
@@ -432,11 +400,6 @@ This file contains **core rules only**. For detailed patterns and implementation
 - Component patterns & naming → `.github/reference/component-patterns.md`
 - Anti-patterns guide → `.github/reference/anti-patterns.md`
 - Content & style management → `docs/CONTENT_AND_STYLE_MANAGEMENT.md`
-- Testing patterns → `.github/skills/testing/SKILL.md`
-- Accessibility & performance → `.github/skills/accesibility-perfomance/SKILL.md`
-- Custom hooks → `.github/skills/custom-hooks/SKILL.md`
-- Shopping cart → `.github/skills/carrito/SKILL.md`
-- Analytics & tracking → `.github/skills/analytics/SKILL.md`
 
 **Code Implementation:**
 
@@ -508,3 +471,11 @@ docs: Update README with setup instructions
 6. **Centralized constants** - import from `lib/constants`
 7. **Centralized content & styles** - import from `lib/content/` and `lib/design/tokens`
 8. **Reference skills** - detailed patterns in `.github/skills/`
+
+---
+
+## **E-commerce (Cart & Analytics):**
+
+- 📋 `.github/skills/ecommerce/SKILL.md`
+- Use when: Shopping cart, analytics tracking, GA4 events, conversion tracking
+- Triggers: "carrito", "cart", "agregar", "checkout", "analytics", "ga4", "tracking", "gtag", "evento"
