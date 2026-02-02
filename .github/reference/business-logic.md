@@ -276,23 +276,6 @@ formatPrice(999)    → "$999"
 
 ---
 
-### Tax and Legal Compliance
-
-**Current (V1):**
-
-- Prices shown are final (tax included)
-- No invoice generation
-- No formal checkout process
-
-**Future (V2):**
-
-- Integrate with AFIP (Argentine tax system)
-- Generate electronic invoices
-- Show price breakdown: subtotal + IVA
-- Support tax-exempt customers
-
----
-
 ## Image Management
 
 ### Image Upload Flow
@@ -301,7 +284,7 @@ formatPrice(999)    → "$999"
 1. Admin Uploads Image
    ↓
 2. Validation
-   - File type: JPG, PNG, WebP
+   - File type: WebP
    - Max size: 5MB
    - Min dimensions: 800x800px
    - Aspect ratio: Square preferred
@@ -844,29 +827,6 @@ CREATE TABLE pedidos_items (
 
 ---
 
-### User Accounts
-
-**Features:**
-
-- Email/password authentication
-- Order history
-- Saved addresses
-- Wishlist
-
-**Implementation:**
-
-```typescript
-// Supabase Auth
-import { createClient } from "@/lib/supabase/client";
-
-const { data, error } = await supabase.auth.signUp({
-  email: "user@example.com",
-  password: "password",
-});
-```
-
----
-
 ### Admin Panel
 
 **Features:**
@@ -972,30 +932,517 @@ Sentry.init({
 
 ---
 
-## Reference Checklist
+# Shopping Cart Lifecycle (V2 - Phase 1)
 
-Before implementing a feature, verify:
+## Cart Flow Overview
 
-- [ ] Database schema updated (if needed)
-- [ ] Types updated in `lib/types.ts`
-- [ ] Query functions created/updated
-- [ ] Server vs Client component determined
-- [ ] Error handling implemented
-- [ ] Loading states handled
-- [ ] TypeScript types explicit (no `any`)
-- [ ] Images optimized with Next.js Image
-- [ ] Mobile-responsive design
-- [ ] Accessibility (ARIA labels, alt text)
-- [ ] SEO metadata complete
-- [ ] Performance tested (Lighthouse)
-- [ ] Security validated (no XSS, SQL injection)
+```
+User on Product Detail
+         ↓
+1. Select Variation (size + color)
+   - Required before adding to cart
+   - Button disabled until selected
+         ↓
+2. Click "Agregar al Carrito"
+   - Validates variation is active
+   - Snapshots current price
+   - Tracks add_to_cart event
+   - Opens drawer automatically
+         ↓
+3. Drawer Opens (Mini-Cart)
+   - Shows added item confirmation
+   - Displays cart summary (items + subtotal)
+   - Options:
+     a) Continue shopping (close drawer)
+     b) Go to full cart (→ /carrito)
+         ↓
+4. Full Cart Page (/carrito)
+   - Edit quantities (+/-)
+   - Remove items
+   - View subtotal
+   - Price change warnings
+   - Stock validation warnings
+   - "Iniciar checkout" button (→ /checkout in Phase 2)
+```
+
+---
+
+## Data Storage
+
+### LocalStorage Structure
+
+**Key**: `fira_carrito`
+
+**Value** (JSON):
+
+```json
+{
+  "items": [
+    {
+      "id": "uuid-v4",
+      "producto_id": "prod-uuid",
+      "variacion_id": "var-uuid",
+      "cantidad": 2,
+      "precio_unitario": 15000,
+      "agregado_at": "2026-01-28T12:00:00.000Z"
+    }
+  ],
+  "subtotal": 30000,
+  "created_at": "2026-01-28T12:00:00.000Z",
+  "updated_at": "2026-01-28T12:05:00.000Z"
+}
+```
+
+### Expiration (TTL)
+
+- **Duration**: 14 days
+- **Check**: On every `getCarrito()` call
+- **Action**: If expired, clear cart and return empty state
+
+---
+
+## Business Rules
+
+### Adding to Cart
+
+**Validations:**
+
+1. Variation must be selected (cannot add base product)
+2. `variacion.activo === true`
+3. `producto.activo === true`
+4. Quantity must be > 0
+
+**Price Snapshot:**
+
+- Save `variacion.precio` as `item.precio_unitario` at add time
+- Used for subtotal calculation
+- Allows detecting price changes later
+
+**Duplicate Detection:**
+
+- If same `producto_id + variacion_id` exists in cart
+- Merge: add quantities together
+- Keep earliest `agregado_at`, update `updated_at`
+
+**Example:**
+
+```typescript
+// Existing cart has: Mantel Floral 150x200 Red x 1
+// User adds: Mantel Floral 150x200 Red x 2
+// Result: Mantel Floral 150x200 Red x 3 (merged)
+```
+
+---
+
+### Updating Quantity
+
+**Validations:**
+
+1. Quantity must be > 0
+2. If quantity === 0, remove item instead
+
+**Recalculation:**
+
+- Update `item.cantidad`
+- Recalculate `carrito.subtotal`
+- Update `carrito.updated_at`
+
+---
+
+### Removing Item
+
+**Actions:**
+
+1. Filter out item by `item.id`
+2. Recalculate `carrito.subtotal`
+3. Update `carrito.updated_at`
+4. Track `remove_from_cart` event
+
+**Empty Cart:**
+
+- If removing last item, show empty state
+- Keep cart object in localStorage (empty items array)
+- Created/updated timestamps remain
+
+---
+
+### Price Change Detection
+
+**When Loading Cart:**
+
+```typescript
+// Compare snapshot vs current price
+const currentPrice = variacion.precio;
+const snapshotPrice = item.precio_unitario;
+
+if (currentPrice !== snapshotPrice) {
+  showWarning = true;
+  warningMessage = "El precio cambió desde que agregaste este producto";
+  // Show both prices: was $X, now $Y
+}
+```
+
+**User Options:**
+
+- Continue with old price (snapshot maintained)
+- Update to new price (replace `precio_unitario`)
+- Remove item
+
+---
+
+### Stock Validation
+
+**V1 (Current Phase):**
+
+- No stock reservation
+- `stock = 0` still means "bajo pedido" (valid)
+- Show informational messages only
+
+**Warnings:**
+
+```typescript
+if (!producto.activo) {
+  warning = "Este producto ya no está disponible";
+  allowCheckout = false;
+}
+
+if (!variacion.activo) {
+  warning = "Esta variación ya no está disponible";
+  allowCheckout = false;
+}
+
+if (variacion.stock === 0) {
+  info = "Este producto se fabrica bajo pedido";
+  allowCheckout = true;
+}
+```
+
+**V2 (Future - Phase 2):**
+
+- Stock reservation on add to cart (15 min timer)
+- Real stock validation at checkout
+- Prevent checkout if insufficient stock
+
+---
+
+## Cart Persistence
+
+### LocalStorage Fallback
+
+**Safari Private Mode** or **QuotaExceededError**:
+
+```typescript
+let inMemoryCart: Carrito | null = null;
+
+try {
+  localStorage.setItem("fira_carrito", JSON.stringify(carrito));
+} catch (error) {
+  console.error("localStorage unavailable:", error);
+  inMemoryCart = carrito; // Fallback to memory
+  showWarning("Tu carrito no se guardará al cerrar la pestaña");
+}
+```
+
+**Fallback Behavior:**
+
+- Cart works normally during session
+- Lost on page refresh/close
+- Show persistent warning banner
+
+---
+
+### Cross-Tab Synchronization
+
+**Listen to storage events:**
+
+```typescript
+window.addEventListener("storage", (e) => {
+  if (e.key === "fira_carrito") {
+    // Another tab updated cart
+    const newCarrito = JSON.parse(e.newValue);
+    syncCarritoState(newCarrito);
+  }
+});
+```
+
+**Benefits:**
+
+- User has product page in Tab A
+- Opens cart in Tab B and adds item
+- Tab A badge updates automatically
+
+---
+
+## UX States
+
+### Empty Cart
+
+**In Drawer:**
+
+```
+┌────────────────────┐
+│ Tu Carrito (0)    │
+├────────────────────┤
+│                    │
+│   🛒 (icon)        │
+│                    │
+│ Tu carrito está    │
+│ vacío              │
+│                    │
+│ [Explorar Productos]│
+│                    │
+└────────────────────┘
+```
+
+**In Page (/carrito):**
+
+```
+Breadcrumbs: Home > Carrito
+
+┌─────────────────────────────┐
+│                             │
+│    🛒 (large icon)          │
+│                             │
+│  Tu carrito está vacío      │
+│                             │
+│  Agregá productos para      │
+│  comenzar tu compra         │
+│                             │
+│  [Ver Todos los Productos]  │
+│                             │
+└─────────────────────────────┘
+```
+
+---
+
+### Loading States
+
+**On Add:**
+
+```typescript
+[Agregar al Carrito] → [⏳ Agregando...] → [✓ Agregado!] → [Agregar al Carrito]
+     1s                     0.5s                0.5s              2s delay
+```
+
+**On Drawer Open:**
+
+- Show skeleton of cart items while hydrating product details
+- Once details loaded from Supabase, show full items
+
+---
+
+### Error States
+
+**LocalStorage Full:**
+
+```
+⚠️ No pudimos guardar tu carrito. Intentá eliminar algunos items.
+```
+
+**Product Inactive:**
+
+```
+⚠️ Este producto ya no está disponible y será removido al finalizar la compra.
+[Eliminar ahora]
+```
+
+**Network Error (loading details):**
+
+```
+❌ No pudimos cargar los detalles de tu carrito. [Reintentar]
+```
+
+---
+
+## Analytics Events
+
+### add_to_cart
+
+**Triggered:** User clicks "Agregar al Carrito"
+
+**Params:**
+
+```typescript
+{
+  event_category: 'ecommerce',
+  producto_id: string,
+  producto_nombre: string,
+  variacion_id: string,
+  variacion_tamanio: string,
+  variacion_color: string,
+  cantidad: number,
+  precio_unitario: number,
+  value: number, // precio_unitario * cantidad
+}
+```
+
+---
+
+### remove_from_cart
+
+**Triggered:** User removes item from cart
+
+**Params:**
+
+```typescript
+{
+  event_category: 'ecommerce',
+  producto_id: string,
+  variacion_id: string,
+  cantidad: number,
+  value: number,
+}
+```
+
+---
+
+### view_cart
+
+**Triggered:** User opens `/carrito` page
+
+**Params:**
+
+```typescript
+{
+  event_category: 'ecommerce',
+  item_count: number,
+  subtotal: number,
+  value: number, // subtotal
+}
+```
+
+---
+
+### begin_checkout
+
+**Triggered:** User clicks "Iniciar Checkout" (Phase 2)
+
+**Params:**
+
+```typescript
+{
+  event_category: 'ecommerce',
+  item_count: number,
+  subtotal: number,
+  value: number,
+  items: Array<{
+    producto_id: string,
+    variacion_id: string,
+    cantidad: number,
+    precio: number,
+  }>
+}
+```
+
+---
+
+## Security Considerations
+
+### V1 (Current - No Auth)
+
+**Safe:**
+
+- Cart data stored client-side only
+- No PII (personal identifiable information)
+- No payment info
+- Public product data only
+
+**Risks:**
+
+- User can manipulate localStorage (but doesn't affect backend)
+- Cart lost if localStorage cleared
+
+---
+
+### V2 (Future - With Auth)
+
+**When User Logs In:**
+
+1. Merge anonymous cart with server cart
+2. Resolve conflicts (keep most recent)
+3. Save merged cart to database
+4. Clear localStorage cart
+
+**Server-Side Cart Table:**
+
+```sql
+CREATE TABLE carritos (
+  id UUID PRIMARY KEY,
+  usuario_id UUID REFERENCES usuarios(id),
+  items JSONB NOT NULL,
+  subtotal INTEGER NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+---
+
+## Performance Optimizations
+
+### Debouncing Updates
+
+**Quantity Changes:**
+
+```typescript
+// Debounce localStorage writes (500ms)
+const debouncedSave = debounce((carrito) => {
+  setCarrito(carrito);
+}, 500);
+```
+
+**Benefits:**
+
+- User drags quantity slider: 1 → 5
+- Only 1 localStorage write (not 5)
+
+---
+
+### Lazy Loading Product Details
+
+**On Cart Load:**
+
+1. Parse localStorage → get item IDs
+2. Show skeleton with cached names/prices
+3. Fetch full product details async
+4. Hydrate cart with images, current prices
+
+**Why:**
+
+- Instant cart render (no loading spinner)
+- Network requests don't block UI
+
+---
+
+## Migration Path to V2
+
+### Phase 1 (Current)
+
+- ✅ Anonymous cart (localStorage)
+- ✅ Add/remove/update items
+- ✅ Drawer + Page UI
+- ✅ Price change detection
+- ⏸️ No checkout (future)
+
+### Phase 2 (Next)
+
+- 🔄 Mercado Pago integration
+- 🔄 Server Actions for checkout
+- 🔄 Stock reservation (15 min)
+- 🔄 Order creation
+
+### Phase 3 (Future)
+
+- 🔮 User accounts (Supabase Auth)
+- 🔮 Server-side cart storage
+- 🔮 Cart merge on login
+- 🔮 Order history
 
 ---
 
 ## Related Documentation
 
-- Database Schema: `.github/reference/database-schema.md`
-- Core Instructions: `.github/instructions/copilot-instructions.instructions.md`
-- Supabase Queries: `.github/skills/supabase-queries/SKILL.md`
-- WhatsApp Integration: `.github/skills/whatsapp-integration/SKILL.md`
-- Product Variations: `.github/skills/product-variations/SKILL.md`
+- Cart Skill: `.github/skills/carrito/SKILL.md`
+- Analytics Events: `lib/analytics/events.ts`
+- Content: `lib/content/carrito.ts`
+- Types: `lib/types/carrito.ts`

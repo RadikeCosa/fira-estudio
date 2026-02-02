@@ -69,6 +69,14 @@ export const COMPONENTS = {
       "focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground/10",
     hover: "hover:border-foreground/30",
   },
+  error: {
+    text: "text-red-600",
+    border: "border-red-600",
+    ring: "focus:ring-red-600/10",
+    focus: "focus:border-red-600",
+    label: "text-red-600",
+    message: "text-red-600",
+  },
   card: {
     base: "rounded-2xl border-2 border-border/50 bg-white shadow-lg",
     paddingSm: "p-6",

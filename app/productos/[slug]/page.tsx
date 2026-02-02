@@ -4,12 +4,10 @@ import { getProductoBySlug } from "@/lib/supabase/queries";
 import { ProductGallery } from "@/components/productos/ProductGallery";
 import { ProductInfo } from "@/components/productos/ProductInfo";
 import { ProductActions } from "@/components/productos/ProductActions";
+import { ProductViewTracker } from "@/components/productos/ProductViewTracker";
 import { RelatedProducts } from "@/components/productos/RelatedProducts";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
-import {
-  generateProductSchema,
-  renderJsonLd,
-} from "@/lib/seo/structured-data";
+import { generateProductSchema, renderJsonLd } from "@/lib/seo/structured-data";
 import { SITE_CONFIG } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo/metadata";
 
@@ -79,6 +77,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <>
       {/* JSON-LD structured data */}
       <script {...renderJsonLd(productSchema)} />
+
+      {/* Track product page view */}
+      <ProductViewTracker producto={producto} />
 
       <main className="min-h-screen py-12 md:py-16 lg:py-20 bg-linear-to-b from-white to-muted/30">
         <div className="container max-w-7xl mx-auto px-4">

@@ -1,5 +1,6 @@
 import type { ProductoCompleto } from "@/lib/types";
 import { ERROR_MESSAGES } from "@/lib/constants";
+import { getPrincipalImage } from "@/lib/utils";
 import { ProductCard } from "./ProductCard";
 
 interface ProductGridProps {
@@ -43,15 +44,14 @@ export function ProductGrid({ productos }: ProductGridProps) {
     >
       {productos.map((producto) => {
         // Extraer imagen principal
-        const imagenPrincipal =
-          producto.imagenes.find((img) => img.es_principal)?.url ||
-          producto.imagenes[0]?.url;
+        const imagenPrincipal = getPrincipalImage(producto.imagenes);
 
         return (
           <ProductCard
             key={producto.id}
             producto={producto}
-            imagenPrincipal={imagenPrincipal}
+            imagenPrincipal={imagenPrincipal?.url}
+            imagenAlt={imagenPrincipal?.alt_text}
           />
         );
       })}

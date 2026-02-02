@@ -1,12 +1,33 @@
-# Custom Hooks Usage Examples
+---
+title: "Custom Hooks - Fira Estudio"
+description: "useScrollLock and useEscapeKey patterns for modals, drawers, and overlays"
+version: "1.0"
+lastUpdated: "2026-01-29"
+activationTriggers:
+  - "hooks"
+  - "custom hooks"
+  - "useScrollLock"
+  - "useEscapeKey"
+  - "modal"
+  - "drawer"
+---
 
-## Overview
+# Custom Hooks Skill
 
-This document demonstrates how to use the custom hooks created during the MobileNav refactoring.
+## 🎯 Quick Reference
 
-## useScrollLock
+Two lightweight hooks for UI interactions:
 
-Locks body scroll when active. Useful for modals, drawers, and full-screen overlays.
+1. **useScrollLock** - Locks body scroll when active
+2. **useEscapeKey** - Handles ESC key press
+
+Both are zero-dependency and fully tested.
+
+---
+
+## 📌 useScrollLock
+
+Locks body scroll when active. Perfect for modals, drawers, and full-screen overlays.
 
 ### Basic Usage
 
@@ -34,9 +55,11 @@ function Modal({ isOpen, onClose, children }) {
 - Handles edge cases (e.g., preserves `overflow: scroll`)
 - Zero dependencies
 
-## useEscapeKey
+---
 
-Handles ESC key press. Useful for closing modals, drawers, and dialogs.
+## 📌 useEscapeKey
+
+Handles ESC key press. Perfect for closing modals, drawers, and dialogs.
 
 ### Basic Usage
 
@@ -60,7 +83,6 @@ import { useEscapeKey } from "@/hooks";
 
 function SearchOverlay({ isOpen, onClose }) {
   const handleEscape = () => {
-    // Custom logic before closing
     console.log("Search cancelled");
     onClose();
   };
@@ -77,9 +99,11 @@ function SearchOverlay({ isOpen, onClose }) {
 - Flexible callback function
 - Optional `isActive` parameter (defaults to `true`)
 - Cleans up event listener on unmount
-- Only responds to Escape key (ignores other keys)
+- Only responds to Escape key
 
-## Using Both Hooks Together
+---
+
+## 🔗 Using Both Hooks Together
 
 Perfect combination for modals, drawers, and overlays:
 
@@ -95,15 +119,13 @@ function Drawer({ isOpen, onClose, children }) {
 
   return (
     <>
-      {/* Backdrop */}
       {isOpen && (
-        <div 
+        <div
           className="fixed inset-0 bg-black/50 z-40"
           onClick={onClose}
         />
       )}
 
-      {/* Drawer */}
       {isOpen && (
         <div className="fixed right-0 top-0 h-full w-80 bg-white z-50">
           {children}
@@ -114,7 +136,9 @@ function Drawer({ isOpen, onClose, children }) {
 }
 ```
 
-## Real-World Examples
+---
+
+## 💡 Real-World Examples
 
 ### Image Lightbox
 
@@ -157,7 +181,7 @@ function FilterPanel({ isOpen, onClose, filters }) {
 ```typescript
 function ConfirmDialog({ isOpen, onConfirm, onCancel, message }) {
   useScrollLock(isOpen);
-  useEscapeKey(onCancel, isOpen); // ESC cancels
+  useEscapeKey(onCancel, isOpen);
 
   if (!isOpen) return null;
 
@@ -175,44 +199,34 @@ function ConfirmDialog({ isOpen, onConfirm, onCancel, message }) {
 }
 ```
 
-## MobileNav Example
+---
 
-The original implementation that uses both hooks:
+## ✅ Best Practices
 
-```typescript
-function MobileNav({ links }) {
-  const [isOpen, setIsOpen] = useState(false);
+1. **Always provide isActive parameter** - Only activate hooks when needed
+2. **Clean callbacks** - Keep escape callbacks simple and focused
+3. **Combine hooks** - Use both for better UX (scroll lock + ESC key)
+4. **Test edge cases** - Ensure hooks work with nested components
+5. **Performance** - Hooks are lightweight and don't impact performance
 
-  const closeMenu = () => setIsOpen(false);
-  const toggleMenu = () => setIsOpen(!isOpen);
+---
 
-  // Lock body scroll when menu is open
-  useScrollLock(isOpen);
-
-  // Close menu on ESC key press
-  useEscapeKey(closeMenu, isOpen);
-
-  return (
-    // ... menu JSX
-  );
-}
-```
-
-## Best Practices
-
-1. **Always provide isActive parameter**: Only activate hooks when needed
-2. **Clean callbacks**: Keep escape callbacks simple and focused
-3. **Combine hooks**: Use both for better UX (scroll lock + ESC key)
-4. **Test edge cases**: Ensure hooks work with nested components
-5. **Performance**: Hooks are lightweight and don't impact performance
-
-## Testing
+## 🧪 Testing
 
 Both hooks have comprehensive test coverage:
 
-- `useScrollLock`: 5 tests covering lock/unlock, cleanup, state changes
-- `useEscapeKey`: 7 tests covering callbacks, activation, cleanup, key filtering
+- `useScrollLock` - 5 tests (lock/unlock, cleanup, state changes)
+- `useEscapeKey` - 7 tests (callbacks, activation, cleanup, key filtering)
 
-See test files for examples:
+See test files:
+
 - `hooks/useScrollLock.test.ts`
 - `hooks/useEscapeKey.test.ts`
+
+---
+
+## 📚 References
+
+- `hooks/useScrollLock.ts`
+- `hooks/useEscapeKey.ts`
+- `hooks/index.ts`

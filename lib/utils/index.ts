@@ -12,6 +12,13 @@ export {
   formatters,
 } from "./formatters";
 
+export {
+  getImageAlt,
+  getImageUrl,
+  getPrincipalImage,
+  getProductImageAlt,
+} from "./image";
+
 /**
  * Merge Tailwind CSS classes with proper precedence
  * @param inputs - Class values to merge

@@ -1,5 +1,5 @@
 ---
-title: "GitHub Copilot Instructions - Fira Estudio"
+name: "GitHub Copilot Instructions - Fira Estudio"
 description: "Development guidelines for textile e-commerce with Next.js 16 + Supabase"
 version: "3.0"
 lastUpdated: "2026-01-16"
@@ -386,10 +386,44 @@ GitHub Copilot will automatically activate these skills when relevant:
 - Use when: Building selectors, price calculations, stock management
 - Triggers: "variaciones", "tamaño", "color", "selector", "stock"
 
+**Testing patterns:**
+
+- 📋 `.github/skills/testing/SKILL.md`
+- Use when: Writing tests, ensuring code quality, edge cases
+- Triggers: "test", "testing", "edge cases"
+
+**Accessibility & performance:**
+
+- 📋 `.github/skills/accesibility-perfomance/SKILL.md`
+- Use when: Ensuring accessibility, performance optimization
+- Triggers: "accessibility", "performance", "optimization"
+
+**Custom Hooks:**
+
+- 📋 `.github/skills/custom-hooks/SKILL.md`
+- Use when: Building modals, drawers, handling ESC key and scroll locking
+- Triggers: "hooks", "modal", "drawer", "useScrollLock", "useEscapeKey"
+
+**Shopping Cart (V2 Phase 1):**
+
+- 📋 `.github/skills/carrito/SKILL.md`
+- Use when: Building cart components, managing cart state, handling items
+- Triggers: "carrito", "cart", "agregar", "comprar", "item"
+
+**Analytics & Tracking:**
+
+- 📋 `.github/skills/analytics/SKILL.md`
+- Use when: Setting up GA4 tracking, creating analytics events, debugging tracking
+- Triggers: "analytics", "ga4", "tracking", "gtag", "evento"
+
 **Reference Documentation:**
 
 - 📋 `.github/reference/database-schema.md` - Complete SQL schema
 - 📋 `.github/reference/business-logic.md` - Business rules and workflows
+- 📋 `.github/skills/testing/SKILL.md` - Testing patterns
+- 📋 `.github/skills/accesibility-perfomance/SKILL.md` - Accessibility & performance
+- 📋 `.github/skills/supabase-queries/SKILL.md` - Database operations
+- 📋 `.github/skills/product-variations/SKILL.md` - Product variations
 
 ---
 
@@ -473,12 +507,22 @@ This file contains **core rules only**. For detailed patterns and implementation
 - Supabase query patterns → `.github/skills/supabase-queries/SKILL.md`
 - WhatsApp integration → `.github/skills/whatsapp-integration/SKILL.md`
 - Product variations → `.github/skills/product-variations/SKILL.md`
+- Testing patterns → `.github/skills/testing/SKILL.md`
+- Accessibility & performance → `.github/skills/accesibility-perfomance/SKILL.md`
+- Custom hooks → `.github/skills/custom-hooks/SKILL.md`
+- Shopping cart → `.github/skills/carrito/SKILL.md`
+- Analytics & tracking → `.github/skills/analytics/SKILL.md`
 
 **Reference Documentation (Manual Lookup):**
 
 - Complete database schema → `.github/reference/database-schema.md`
 - Business rules & workflows → `.github/reference/business-logic.md`
 - Content & style management → `docs/CONTENT_AND_STYLE_MANAGEMENT.md`
+- Testing patterns → `.github/skills/testing/SKILL.md`
+- Accessibility & performance → `.github/skills/accesibility-perfomance/SKILL.md`
+- Custom hooks → `.github/skills/custom-hooks/SKILL.md`
+- Shopping cart → `.github/skills/carrito/SKILL.md`
+- Analytics & tracking → `.github/skills/analytics/SKILL.md`
 
 **Code Implementation:**
 
@@ -543,3 +587,19 @@ docs: Update README with setup instructions
 6. **Centralized constants** - import from `lib/constants`
 7. **Centralized content & styles** - import from `lib/content/` and `lib/design/tokens`
 8. **Reference skills** - detailed patterns in `.github/skills/`
+
+---
+
+## **Shopping Cart (V2 Phase 1):**
+
+- 📋 `.github/skills/carrito/SKILL.md`
+- Use when: Building cart components, managing cart state, handling items
+- Triggers: "carrito", "cart", "agregar", "comprar", "item"
+
+---
+
+## **Analytics & Tracking:**
+
+- 📋 `.github/skills/analytics/SKILL.md`
+- Use when: Setting up GA4 tracking, creating analytics events, debugging tracking
+- Triggers: "analytics", "ga4", "tracking", "gtag", "evento"

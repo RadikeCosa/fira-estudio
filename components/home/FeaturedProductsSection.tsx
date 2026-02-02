@@ -4,7 +4,7 @@ import { SectionHeader } from "@/components/ui/SectionHeader";
 import { ProductCard } from "@/components/productos/ProductCard";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, getPrincipalImage } from "@/lib/utils";
 import type { ProductoCompleto } from "@/lib/types";
 
 interface FeaturedProductsSectionProps {
@@ -24,14 +24,13 @@ export function FeaturedProductsSection({
         <SectionHeader title={title} description={description} />
         <div className={LAYOUT.grid.products}>
           {productos.map((producto) => {
-            const imagenPrincipal =
-              producto.imagenes?.find((img) => img.es_principal)?.url ||
-              producto.imagenes?.[0]?.url;
+            const imagenPrincipal = getPrincipalImage(producto.imagenes ?? []);
             return (
               <div key={producto.id} className="shine-effect rounded-2xl">
                 <ProductCard
                   producto={producto}
-                  imagenPrincipal={imagenPrincipal}
+                  imagenPrincipal={imagenPrincipal?.url}
+                  imagenAlt={imagenPrincipal?.alt_text}
                 />
               </div>
             );
