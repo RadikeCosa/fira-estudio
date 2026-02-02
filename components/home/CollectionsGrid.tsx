@@ -9,15 +9,23 @@ import type { Categoria } from "@/lib/types";
 import { HOME_CONTENT } from "@/lib/content/home";
 
 /**
- * CollectionsGrid - Grid 2x2 de colecciones con manteles full-width
+ * CollectionsGrid - Grid 3-col en desktop para 6 categorías
  *
  * Layout:
- * ┌─────────────────────┐
- * │     Manteles        │  (full-width)
- * └─────────────────────┘
- * ┌──────────┬──────────┐
- * │Servilleta│ Caminos  │  (2 columns)
- * └──────────┴──────────┘
+ * MOBILE (1 col):     TABLET (2 col):         DESKTOP (3 col):
+ * ┌─────┐             ┌────┬────┐             ┌────┬────┬────┐
+ * │  1  │             │ 1  │ 2  │             │ 1* │ 2  │ 3  │ (* featured)
+ * ├─────┤             ├────┼────┤             ├────┼────┼────┤
+ * │  2  │             │ 3  │ 4  │             │ 4  │ 5  │ 6  │
+ * ├─────┤             ├────┼────┤             └────┴────┴────┘
+ * │  3  │             │ 5  │ 6  │
+ * ├─────┤             └────┴────┘
+ * │  4  │
+ * ├─────┤
+ * │  5  │
+ * ├─────┤
+ * │  6  │
+ * └─────┘
  */
 
 const PLACEHOLDER_IMAGE = "/images/placeholders/placeholder-image.jpeg";
@@ -43,12 +51,7 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
       aria-label={`Explorar colección ${collection.nombre}`}
     >
       {/* Image Container */}
-      <div
-        className={cn(
-          "relative overflow-hidden bg-linear-to-br from-muted/50 to-muted",
-          featured ? "aspect-video" : "aspect-2/3",
-        )}
-      >
+      <div className="relative aspect-2/3 overflow-hidden bg-linear-to-br from-muted/50 to-muted">
         {collection.imagen ? (
           <Image
             src={collection.imagen}

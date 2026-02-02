@@ -2,23 +2,28 @@
 
 Este documento detalla las imágenes necesarias para que la página de inicio funcione correctamente con el diseño boutique/minimalista implementado.
 
-## Colecciones (3 imágenes)
+## Colecciones (6 imágenes - Layout 3-col)
+
+Layout optimizado:
+
+- **Mobile:** 1 columna
+- **Tablet:** 2 columnas
+- **Desktop:** 3 columnas (2 filas de 3 items)
 
 ### 1. Manteles
 
 - **Ruta:** `public/images/colecciones/manteles.jpg`
-- **Dimensiones recomendadas:** 1920x820px (21:9 panorámico)
+- **Dimensiones recomendadas:** 800x1200px (2:3 vertical)
 - **Formato:** JPG o WebP
-- **Peso máximo:** 500KB (optimizado)
-- **Descripción:** Imagen panorámica de manteles artesanales, preferiblemente con detalle de textura y ambiente de mesa decorada
-- **Nota:** Esta imagen se mostrará en formato wide (full-width) en la grilla de colecciones
+- **Peso máximo:** 350KB (optimizado)
+- **Descripción:** Imagen vertical de manteles artesanales, preferiblemente con detalle de textura y ambiente de mesa decorada
 
 ### 2. Servilletas
 
 - **Ruta:** `public/images/colecciones/servilletas.jpg`
 - **Dimensiones recomendadas:** 800x1200px (2:3 vertical)
 - **Formato:** JPG o WebP
-- **Peso máximo:** 400KB (optimizado)
+- **Peso máximo:** 350KB (optimizado)
 - **Descripción:** Imagen vertical de servilletas de lino o algodón, mostrando texturas y dobleces
 
 ### 3. Caminos de Mesa
@@ -26,8 +31,32 @@ Este documento detalla las imágenes necesarias para que la página de inicio fu
 - **Ruta:** `public/images/colecciones/caminos.jpg`
 - **Dimensiones recomendadas:** 800x1200px (2:3 vertical)
 - **Formato:** JPG o WebP
-- **Peso máximo:** 400KB (optimizado)
+- **Peso máximo:** 350KB (optimizado)
 - **Descripción:** Imagen vertical de caminos de mesa decorativos en ambiente real
+
+### 4. Paños de Cocina
+
+- **Ruta:** `public/images/colecciones/panos.jpg`
+- **Dimensiones recomendadas:** 800x1200px (2:3 vertical)
+- **Formato:** JPG o WebP
+- **Peso máximo:** 350KB (optimizado)
+- **Descripción:** Imagen vertical de paños absorbentes y resistentes en ambiente de cocina
+
+### 5. Mantas
+
+- **Ruta:** `public/images/colecciones/mantas.jpg`
+- **Dimensiones recomendadas:** 800x1200px (2:3 vertical)
+- **Formato:** JPG o WebP
+- **Peso máximo:** 350KB (optimizado)
+- **Descripción:** Imagen vertical de mantas suaves y decorativas, mostrando textura y comodidad
+
+### 6. Tote Bag
+
+- **Ruta:** `public/images/colecciones/tote-bag.jpg`
+- **Dimensiones recomendadas:** 800x1200px (2:3 vertical)
+- **Formato:** JPG o WebP
+- **Peso máximo:** 350KB (optimizado)
+- **Descripción:** Imagen vertical de bolsas de tela reutilizables, mostrando detalle y funcionalidad
 
 ## Texturas (1 imagen)
 
@@ -88,12 +117,14 @@ const COLLECTIONS = [
 **Redimensionado:**
 
 ```bash
-# Con ImageMagick
-convert input.jpg -resize 1920x820^ -gravity center -extent 1920x820 output.jpg
+# Para todas las imágenes de colecciones (800x1200px - 2:3 vertical)
+convert input.jpg -resize 800x1200^ -gravity center -extent 800x1200 output.jpg
 
 # Con Sharp (Node.js)
-npm install sharp
-node -e "require('sharp')('input.jpg').resize(1920, 820, {fit: 'cover'}).toFile('output.jpg')"
+node -e "
+const sharp = require('sharp');
+sharp('input.jpg').resize(800, 1200, {fit: 'cover'}).toFile('output.jpg');
+"
 ```
 
 **Conversión a WebP:**
@@ -117,16 +148,19 @@ Next.js optimiza automáticamente las imágenes cuando usás el componente `<Ima
 
 ## Checklist de Implementación
 
-- [ ] Crear directorios `public/images/colecciones/` y `public/images/textures/`
-- [ ] Agregar imagen `manteles.jpg` (1920x820px)
+- [ ] Crear directorio `public/images/colecciones/`
+- [ ] Agregar imagen `manteles.jpg` (800x1200px)
 - [ ] Agregar imagen `servilletas.jpg` (800x1200px)
 - [ ] Agregar imagen `caminos.jpg` (800x1200px)
-- [ ] Agregar imagen `linen-texture.jpg` (1920x300px)
-- [ ] Optimizar todas las imágenes (< 500KB cada una)
+- [ ] Agregar imagen `panos.jpg` (800x1200px)
+- [ ] Agregar imagen `mantas.jpg` (800x1200px)
+- [ ] Agregar imagen `tote-bag.jpg` (800x1200px)
+- [ ] Agregar imagen `linen-texture.jpg` (1920x300px - en `public/images/textures/`)
+- [ ] Optimizar todas las imágenes (< 350KB cada una)
 - [ ] Actualizar productos destacados en base de datos (`destacado = true`)
 - [ ] Verificar que productos tengan imágenes principales (`es_principal = true`)
 - [ ] Test visual en dev mode (`npm run dev`)
-- [ ] Verificar carga de imágenes en diferentes tamaños de pantalla
+- [ ] Verificar carga de imágenes en diferentes tamaños de pantalla (mobile, tablet, desktop)
 
 ## Migración de Placeholders a Imágenes Reales
 
@@ -137,10 +171,13 @@ Cuando estés listo para reemplazar los placeholders por imágenes reales:
 3. **Recarga la página** - Next.js detectará las nuevas imágenes automáticamente
 
 ```bash
-# Ejemplo de reemplazo
+# Ejemplo de reemplazo - 6 colecciones
 cp ~/Downloads/mis-manteles.jpg public/images/colecciones/manteles.jpg
 cp ~/Downloads/mis-servilletas.jpg public/images/colecciones/servilletas.jpg
 cp ~/Downloads/mis-caminos.jpg public/images/colecciones/caminos.jpg
+cp ~/Downloads/mis-panos.jpg public/images/colecciones/panos.jpg
+cp ~/Downloads/mis-mantas.jpg public/images/colecciones/mantas.jpg
+cp ~/Downloads/mis-tote.jpg public/images/colecciones/tote-bag.jpg
 cp ~/Downloads/textura-lino.jpg public/images/textures/linen-texture.jpg
 ```
 
