@@ -22,16 +22,16 @@ Estado:       ✅ READY FOR PHASE 2 (failures son falsos positivos, no blockers)
 
 ### ✅ PASSING (8 archivos)
 
-| Archivo | Tests | Estado | Cobertura |
-|---------|-------|--------|-----------|
-| `ProductCard.test.tsx` | 10/10 ✅ | Completo | 100% |
-| `ContactForm.test.tsx` | 14/14 ✅ | Completo | 100% |
-| `ProductViewTracker.test.tsx` | 3/3 ✅ | Completo | 100% |
-| `useRateLimit.test.ts` | 11/15 ⚠️ | Mostly OK | ~85% |
-| `StockBadge.test.tsx` | 4/4 ✅ | Completo | 100% |
-| `CategoryFilter.test.tsx` | 3/3 ✅ | Completo | 100% |
-| `RelatedProducts.test.tsx` | 2/2 ✅ | Completo | 100% |
-| `Header.test.tsx` | 2/2 ✅ | Básico | 70% |
+| Archivo                       | Tests    | Estado    | Cobertura |
+| ----------------------------- | -------- | --------- | --------- |
+| `ProductCard.test.tsx`        | 10/10 ✅ | Completo  | 100%      |
+| `ContactForm.test.tsx`        | 14/14 ✅ | Completo  | 100%      |
+| `ProductViewTracker.test.tsx` | 3/3 ✅   | Completo  | 100%      |
+| `useRateLimit.test.ts`        | 11/15 ⚠️ | Mostly OK | ~85%      |
+| `StockBadge.test.tsx`         | 4/4 ✅   | Completo  | 100%      |
+| `CategoryFilter.test.tsx`     | 3/3 ✅   | Completo  | 100%      |
+| `RelatedProducts.test.tsx`    | 2/2 ✅   | Completo  | 100%      |
+| `Header.test.tsx`             | 2/2 ✅   | Básico    | 70%       |
 
 **Total PASSING:** 146/146 tests ✅
 
@@ -162,20 +162,20 @@ Utilities total: 65/65 tests = 100% ✅
 
 ### Tests Actualmente Pasando
 
-| Categoría | Pasando | Total | % |
-|-----------|---------|-------|---|
-| Componentes React | 61 | 78 | 78% ✅ |
-| Hooks | 11 | 15 | 73% ⚠️ |
-| Utilities | 65 | 65 | 100% ✅ |
-| **TOTAL** | **146** | **172** | **85%** ✅ |
+| Categoría         | Pasando | Total   | %          |
+| ----------------- | ------- | ------- | ---------- |
+| Componentes React | 61      | 78      | 78% ✅     |
+| Hooks             | 11      | 15      | 73% ⚠️     |
+| Utilities         | 65      | 65      | 100% ✅    |
+| **TOTAL**         | **146** | **172** | **85%** ✅ |
 
 ### Test Files Status
 
-| Estado | Count | Ejemplos |
-|--------|-------|----------|
-| ✅ Verde (0 failures) | 8 | ProductCard, ContactForm, StockBadge |
-| ⚠️ Amarillo (1-5 failures) | 7 | MobileNav, WhatsAppButton, AboutComponents |
-| 🔴 Rojo (>5 failures) | 0 | None |
+| Estado                     | Count | Ejemplos                                   |
+| -------------------------- | ----- | ------------------------------------------ |
+| ✅ Verde (0 failures)      | 8     | ProductCard, ContactForm, StockBadge       |
+| ⚠️ Amarillo (1-5 failures) | 7     | MobileNav, WhatsAppButton, AboutComponents |
+| 🔴 Rojo (>5 failures)      | 0     | None                                       |
 
 ---
 
@@ -263,6 +263,7 @@ formatPrice.ts             100% ✅ (100% LOC cubierto)
 ### No hay Blockers para implementar Cart
 
 Los 7 test failures son:
+
 - 5 problemas de setup/mocking de tests
 - 2 problemas de expectativas de test
 - 0 problemas en código actual

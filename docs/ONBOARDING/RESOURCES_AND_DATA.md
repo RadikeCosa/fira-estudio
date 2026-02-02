@@ -132,13 +132,16 @@ export function getImageUrl(imagePath?: string): string {
   if (!imagePath) return "/images/placeholder.jpg";
   if (imagePath.startsWith("http")) return imagePath;
   if (imagePath.startsWith("/")) return imagePath;
-  
+
   // Construir URL de Supabase
   return `${SUPABASE_URL}/storage/v1/object/public/productos/${imagePath}`;
 }
 
 // Alt text
-export function getProductImageAlt(productName: string, customAlt?: string): string {
+export function getProductImageAlt(
+  productName: string,
+  customAlt?: string,
+): string {
   return customAlt || `Imagen de ${productName}`;
 }
 
@@ -260,6 +263,7 @@ CREATE INDEX idx_consultas_created ON consultas(created_at);
 ### SQL Scripts
 
 #### main.sql
+
 **Propósito:** Schema completo + tablas vacías
 
 ```bash
@@ -268,11 +272,13 @@ psql -f sql-code/main.sql
 ```
 
 **Contenido:**
+
 - CREATE TABLE statements
 - Índices
 - Row Level Security (RLS) policies
 
 #### init-real-data.sql
+
 **Propósito:** Cargar datos de producción reales
 
 ```bash
@@ -281,11 +287,13 @@ psql -f sql-code/init-real-data.sql
 ```
 
 **Incluye:**
+
 - ~20 productos reales con variaciones
 - 5 categorías
 - Imágenes principales
 
 #### mock-data.sql
+
 **Propósito:** Datos de prueba para desarrollo local
 
 ```bash
@@ -294,11 +302,13 @@ psql -f sql-code/mock-data.sql
 ```
 
 **Incluye:**
+
 - 5 productos simples
 - 2-3 variaciones cada uno
 - Imágenes placeholder
 
 #### add-data.sql
+
 **Propósito:** Scripts reutilizables para agregar datos
 
 ```sql
@@ -312,6 +322,7 @@ VALUES ('...', '150x200cm', 'Rojo', 15000, 5, true);
 ```
 
 #### data.csv
+
 **Propósito:** Importar datos desde CSV
 
 ```csv
@@ -334,7 +345,7 @@ import { createBrowserClient } from "@supabase/ssr";
 export const createClient = () =>
   createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
   );
 ```
 
@@ -359,7 +370,7 @@ export async function getProductos(filters?: {
   }
 
   const { data, count } = await query;
-  
+
   return {
     productos: data,
     totalPages: Math.ceil((count || 0) / (filters?.pageSize || 12)),
@@ -391,9 +402,7 @@ export async function getCategorias() {
 
 // Insertar consulta (Contact Form)
 export async function insertConsulta(consulta: ConsultaInsert) {
-  const { error } = await supabase
-    .from("consultas")
-    .insert([consulta]);
+  const { error } = await supabase.from("consultas").insert([consulta]);
 
   if (error) throw error;
 }
@@ -410,10 +419,10 @@ import { revalidatePath, revalidateTag } from "next/cache";
 
 export async function updateProductoAdmin(productoId: string) {
   // ... actualizar producto
-  
+
   // Revalidar página del producto
   revalidatePath(`/productos/${slug}`, "page");
-  
+
   // Revalidar listado
   revalidatePath("/productos", "page");
 }
@@ -517,12 +526,14 @@ pg_dump -h db.supabase.co -U postgres -d postgres > backup.sql
 ### Agregar Nuevo Producto
 
 **Via SQL:**
+
 ```sql
 INSERT INTO productos (nombre, slug, descripcion, categoria_id, precio_desde, activo)
 VALUES ('Nuevo', 'nuevo', 'Desc', 'cat-id', 15000, true);
 ```
 
 **Via Admin UI (Futuro):**
+
 ```
 1. Login en admin panel
 2. Click "Nuevo Producto"
@@ -535,7 +546,10 @@ VALUES ('Nuevo', 'nuevo', 'Desc', 'cat-id', 15000, true);
 
 ```typescript
 // API endpoint (futuro)
-export async function updateVariacion(variaciónId: string, updates: Partial<Variacion>) {
+export async function updateVariacion(
+  variaciónId: string,
+  updates: Partial<Variacion>,
+) {
   const { error } = await supabase
     .from("variaciones")
     .update(updates)
@@ -600,7 +614,7 @@ CREATE POLICY "Consultas insertable by all" ON consultas
 // Rate limiting en API
 export async function POST(request: Request) {
   const ip = request.ip || request.headers.get("x-forwarded-for");
-  
+
   const allowed = await checkRateLimit(ip);
   if (!allowed) {
     return new Response("Too many requests", { status: 429 });
@@ -621,12 +635,12 @@ export async function POST(request: Request) {
 SELECT count(*) FROM pg_stat_activity;
 
 -- Ver queries lentas
-SELECT * FROM pg_stat_statements 
-WHERE mean_exec_time > 1000 
+SELECT * FROM pg_stat_statements
+WHERE mean_exec_time > 1000
 ORDER BY mean_exec_time DESC;
 
 -- Ver tamaño de tablas
-SELECT 
+SELECT
   schemaname,
   tablename,
   pg_size_pretty(pg_total_relation_size(schemaname||'.'||tablename)) as size
@@ -648,10 +662,12 @@ Supabase Dashboard > Storage
 ## Recursos Adicionales
 
 ### Documentos Relacionados
+
 - [Pages & Routes](./PAGES_AND_ROUTES.md) - Data fetching en páginas
 - [Configuration & Standards](./CONFIGURATION.md) - Environment setup
 
 ### Links Útiles
+
 - [Supabase Docs](https://supabase.com/docs)
 - [PostgreSQL Docs](https://www.postgresql.org/docs/)
 - [Next.js Image Optimization](https://nextjs.org/docs/app/api-reference/components/image)

@@ -407,5 +407,3 @@ Si necesitas agregar nuevos campos o cambiar la estructura:
 - [SEO Best Practices](https://developers.google.com/search/docs)
 
 ---
-
-**Última actualización:** 29/01/2026

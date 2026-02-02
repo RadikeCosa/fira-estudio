@@ -1,11 +1,3 @@
-# 📚 Onboarding - Guías para Nuevos Desarrolladores
-
-Bienvenido al equipo de Fira Estudio. Esta carpeta tiene guías beginner-friendly para entender los tres pilares técnicos principales del proyecto.
-
-**No necesitas experiencia previa en estos temas. Estos documentos explican como si fuera tu primer día.**
-
----
-
 ## 🗺️ Mapa de Onboarding - Día 1 a Día 3
 
 ### Día 1: Conceptos Fundamentales (45 minutos)
@@ -16,7 +8,7 @@ Bienvenido al equipo de Fira Estudio. Esta carpeta tiene guías beginner-friendl
 - **Para:** Entender la organización del código desde cero
 - **Tiempo:** 15-20 minutos
 - **Includes:**
-  - Qué es app/ y lib/ (con analogías de restaurante)
+  - Qué es app/ y lib
   - Directorio completo explicado
   - Dónde poner cada tipo de archivo
   - Server vs Client Components

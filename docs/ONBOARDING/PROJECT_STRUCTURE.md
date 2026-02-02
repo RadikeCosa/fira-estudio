@@ -1,8 +1,6 @@
 # 📁 Estructura del Proyecto - Para Nuevos Desarrolladores
 
-Bienvenido a Fira Estudio. Este documento explica cómo está organizado el código de forma que puedas entender dónde poner cada cosa.
-
-**No necesitas experiencia previa en Next.js o TypeScript. Este doc explica todo desde cero.**
+Este documento explica cómo está organizado el código de forma que puedas entender dónde poner cada cosa.
 
 ---
 
@@ -23,8 +21,6 @@ app/
 └── sobre-nosotros/
     └── page.tsx        → http://tutienda.com/sobre-nosotros
 ```
-
-**Analogía:** La carpeta `app/` es como un **menú de restaurante**. Cada archivo es una página del menú.
 
 ---
 
