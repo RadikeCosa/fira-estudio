@@ -398,72 +398,15 @@ GitHub Copilot will automatically activate these skills when relevant:
 
 ## ❌ What NOT to Do
 
-### Anti-Patterns to Avoid
+**Critical Anti-Patterns:**
 
-**TypeScript:**
+1. ❌ Never use `any` type
+2. ❌ Cannot order nested relations in Supabase (sort in JavaScript)
+3. ❌ Don't use `disponible` column (use `activo`)
+4. ❌ Don't use Client Component unnecessarily
+5. ❌ Don't hardcode text or styles (use centralized content/tokens)
 
-```typescript
-// ❌ Never use 'any'
-const data: any = await fetch();
-
-// ❌ Don't skip return types
-function getUser() {
-  return user;
-}
-
-// ❌ Don't use implicit types
-let value = getData();
-```
-
-**Supabase:**
-
-```typescript
-// ❌ Cannot order nested relations
-.order('variaciones(precio)') // Doesn't work!
-
-// ✅ Sort in JavaScript instead
-data.forEach(p => {
-  p.variaciones.sort((a, b) => a.precio - b.precio);
-});
-
-// ❌ Wrong column name
-.eq('disponible', true) // Column doesn't exist
-
-// ✅ Use correct column
-.eq('activo', true)
-```
-
-**Components:**
-
-```typescript
-// ❌ Don't use Client Component unnecessarily
-'use client';
-export default async function Page() {
-  const data = await fetch(); // Can be Server Component!
-}
-
-// ❌ Don't forget to handle loading states
-export default async function Page() {
-  const data = await getProductos();
-  return <List data={data} />; // Missing Suspense!
-}
-```
-
-**Styling:**
-
-```typescript
-// ❌ Don't use inline styles
-<div style={{ color: 'red' }}>
-
-// ✅ Use Tailwind classes
-<div className="text-red-500">
-
-// ❌ Don't hardcode breakpoints
-@media (min-width: 768px) { }
-
-// ✅ Use Tailwind breakpoints
-className="md:flex-row"
-```
+📋 **Complete anti-patterns guide**: `.github/reference/anti-patterns.md`
 
 ---
 
@@ -486,6 +429,8 @@ This file contains **core rules only**. For detailed patterns and implementation
 
 - Complete database schema → `.github/reference/database-schema.md`
 - Business rules & workflows → `.github/reference/business-logic.md`
+- Component patterns & naming → `.github/reference/component-patterns.md`
+- Anti-patterns guide → `.github/reference/anti-patterns.md`
 - Content & style management → `docs/CONTENT_AND_STYLE_MANAGEMENT.md`
 - Testing patterns → `.github/skills/testing/SKILL.md`
 - Accessibility & performance → `.github/skills/accesibility-perfomance/SKILL.md`
