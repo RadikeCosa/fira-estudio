@@ -1,8 +1,8 @@
 ---
 name: "GitHub Copilot Instructions - Fira Estudio"
 description: "Development guidelines for textile e-commerce with Next.js 16 + Supabase"
-version: "3.0"
-lastUpdated: "2026-01-16"
+version: "3.1"
+lastUpdated: "2026-02-02"
 stack:
   - Next.js 16 (App Router)
   - TypeScript (strict mode)
@@ -283,38 +283,7 @@ export default function Loading() {
 - Design tokens: `UPPER_SNAKE_CASE` (TYPOGRAPHY, SPACING, COLORS)
 - Booleans: `is/has/should` prefix (isLoading, hasError, shouldDisplay)
 
-**Example**:
-
-```typescript
-// ✅ CORRECT: Centralized + tokens
-import { HOME_CONTENT } from "@/lib/content/home";
-import { TYPOGRAPHY, SPACING, ANIMATIONS } from "@/lib/design/tokens";
-import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
-
-export function HeroSection() {
-  const { title, subtitle, cta } = HOME_CONTENT.hero;
-
-  return (
-    <section className={SPACING.sectionPadding.md}>
-      <h1 className={cn(TYPOGRAPHY.heading.page, ANIMATIONS.fadeIn)}>
-        {title}
-      </h1>
-      <Button href="/productos">{cta.primary}</Button>
-    </section>
-  );
-}
-
-// ❌ INCORRECT: Hardcoded text and styles
-export function HeroSection() {
-  return (
-    <section className="px-4 py-20">
-      <h1 className="text-4xl font-bold">Fira Estudio</h1>
-      <button>Ver Productos</button>
-    </section>
-  );
-}
-```
+📋 **Complete patterns and examples**: `.github/reference/component-patterns.md`
 
 ---
 
@@ -401,72 +370,15 @@ GitHub Copilot will automatically activate these skills when relevant:
 
 ## ❌ What NOT to Do
 
-### Anti-Patterns to Avoid
+**Critical Anti-Patterns:**
 
-**TypeScript:**
+1. ❌ Never use `any` type
+2. ❌ Cannot order nested relations in Supabase (sort in JavaScript)
+3. ❌ Don't use `disponible` column (use `activo`)
+4. ❌ Don't use Client Component unnecessarily
+5. ❌ Don't hardcode text or styles (use centralized content/tokens)
 
-```typescript
-// ❌ Never use 'any'
-const data: any = await fetch();
-
-// ❌ Don't skip return types
-function getUser() {
-  return user;
-}
-
-// ❌ Don't use implicit types
-let value = getData();
-```
-
-**Supabase:**
-
-```typescript
-// ❌ Cannot order nested relations
-.order('variaciones(precio)') // Doesn't work!
-
-// ✅ Sort in JavaScript instead
-data.forEach(p => {
-  p.variaciones.sort((a, b) => a.precio - b.precio);
-});
-
-// ❌ Wrong column name
-.eq('disponible', true) // Column doesn't exist
-
-// ✅ Use correct column
-.eq('activo', true)
-```
-
-**Components:**
-
-```typescript
-// ❌ Don't use Client Component unnecessarily
-'use client';
-export default async function Page() {
-  const data = await fetch(); // Can be Server Component!
-}
-
-// ❌ Don't forget to handle loading states
-export default async function Page() {
-  const data = await getProductos();
-  return <List data={data} />; // Missing Suspense!
-}
-```
-
-**Styling:**
-
-```typescript
-// ❌ Don't use inline styles
-<div style={{ color: 'red' }}>
-
-// ✅ Use Tailwind classes
-<div className="text-red-500">
-
-// ❌ Don't hardcode breakpoints
-@media (min-width: 768px) { }
-
-// ✅ Use Tailwind breakpoints
-className="md:flex-row"
-```
+📋 **Complete anti-patterns guide**: `.github/reference/anti-patterns.md`
 
 ---
 
@@ -485,6 +397,8 @@ This file contains **core rules only**. For detailed patterns and implementation
 
 - Complete database schema → `.github/reference/database-schema.md`
 - Business rules & workflows → `.github/reference/business-logic.md`
+- Component patterns & naming → `.github/reference/component-patterns.md`
+- Anti-patterns guide → `.github/reference/anti-patterns.md`
 - Content & style management → `docs/CONTENT_AND_STYLE_MANAGEMENT.md`
 
 **Code Implementation:**
@@ -513,7 +427,12 @@ Before suggesting code, verify:
 
 ---
 
-## 🚀 V2 Features (Future)
+## 🚀 V2 Features Reference
+
+When working with V2 features, load these skills:
+
+- **Shopping Cart**: `.github/skills/carrito/SKILL.md` - Cart management, localStorage, Context API
+- **Analytics**: `.github/skills/analytics/SKILL.md` - GA4 tracking, ecommerce events
 
 **Do NOT implement these unless explicitly requested:**
 
@@ -523,6 +442,8 @@ Before suggesting code, verify:
 - Order management system
 - User accounts (Supabase Auth)
 - Admin panel
+
+📋 See `.github/reference/business-logic.md` for complete V2 workflows and business rules.
 
 ---
 
