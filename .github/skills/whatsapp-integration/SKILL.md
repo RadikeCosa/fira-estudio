@@ -1,15 +1,24 @@
 ---
 title: "WhatsApp Integration - Fira Estudio"
 description: "WhatsApp contact link generation with analytics tracking and rate limiting"
-version: "1.1"
-lastUpdated: "2026-01-29"
+version: "1.2"
+lastUpdated: "2026-02-02"
 activationTriggers:
+  # Spanish
   - "whatsapp"
-  - "contact"
-  - "consulta"
   - "mensaje"
+  - "consulta"
+  - "contacto"
+  
+  # English
+  - "contact"
+  - "message"
+  - "inquiry"
+  
+  # Technical
   - "rate-limit"
   - "rate limiting"
+  - "wa.me"
 ---
 
 # WhatsApp Integration Skill

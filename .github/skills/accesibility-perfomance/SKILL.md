@@ -1,16 +1,27 @@
 ---
 title: "Accessibility & Performance - Fira Estudio"
 description: "Best practices for accessible and high-performance e-commerce with Next.js"
-version: "1.1"
-lastUpdated: "2026-01-29"
+version: "1.2"
+lastUpdated: "2026-02-02"
 activationTriggers:
+  # Spanish
   - "accesibilidad"
+  - "rendimiento"
+  - "performance"
+  - "optimización"
+  
+  # English
   - "accessibility"
   - "a11y"
-  - "performance"
   - "lighthouse"
+  - "optimization"
+  
+  # Technical
   - "alt"
   - "aria"
+  - "wcag"
+  - "LCP"
+  - "CLS"
 ---
 
 # Accessibility & Performance Skill

@@ -1,16 +1,28 @@
 ---
 title: "Product Variations - Fira Estudio"
 description: "Handling product variations with size, color, price, and stock management"
-version: "1.0"
-lastUpdated: "2026-01-19"
+version: "1.1"
+lastUpdated: "2026-02-02"
 activationTriggers:
+  # Spanish
   - "variacion"
-  - "variation"
+  - "variación"
+  - "tamaño"
   - "tamaño"
   - "color"
   - "precio"
   - "stock"
   - "selector"
+  
+  # English
+  - "variation"
+  - "size"
+  - "color"
+  - "price"
+  - "stock"
+  
+  # Technical
+  - "VariationSelector"
 ---
 
 # Product Variations Skill
