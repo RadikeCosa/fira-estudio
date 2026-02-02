@@ -283,38 +283,7 @@ export default function Loading() {
 - Design tokens: `UPPER_SNAKE_CASE` (TYPOGRAPHY, SPACING, COLORS)
 - Booleans: `is/has/should` prefix (isLoading, hasError, shouldDisplay)
 
-**Example**:
-
-```typescript
-// ✅ CORRECT: Centralized + tokens
-import { HOME_CONTENT } from "@/lib/content/home";
-import { TYPOGRAPHY, SPACING, ANIMATIONS } from "@/lib/design/tokens";
-import { Button } from "@/components/ui/Button";
-import { cn } from "@/lib/utils";
-
-export function HeroSection() {
-  const { title, subtitle, cta } = HOME_CONTENT.hero;
-
-  return (
-    <section className={SPACING.sectionPadding.md}>
-      <h1 className={cn(TYPOGRAPHY.heading.page, ANIMATIONS.fadeIn)}>
-        {title}
-      </h1>
-      <Button href="/productos">{cta.primary}</Button>
-    </section>
-  );
-}
-
-// ❌ INCORRECT: Hardcoded text and styles
-export function HeroSection() {
-  return (
-    <section className="px-4 py-20">
-      <h1 className="text-4xl font-bold">Fira Estudio</h1>
-      <button>Ver Productos</button>
-    </section>
-  );
-}
-```
+📋 **Complete patterns and examples**: `.github/reference/component-patterns.md`
 
 ---
 
