@@ -1,16 +1,26 @@
 ---
 title: "Testing Patterns - Fira Estudio"
 description: "Best practices for unit, integration, and e2e testing in Next.js + Supabase projects"
-version: "1.1"
-lastUpdated: "2026-01-29"
+version: "1.2"
+lastUpdated: "2026-02-02"
 activationTriggers:
+  # Spanish
   - "test"
   - "testing"
-  - "vitest"
+  - "prueba"
   - "unitario"
+  - "integración"
+  
+  # English
+  - "unit test"
   - "integration"
   - "mock"
+  - "coverage"
+  
+  # Technical
+  - "vitest"
   - "node:test"
+  - "@testing-library"
 ---
 
 # Testing Skill

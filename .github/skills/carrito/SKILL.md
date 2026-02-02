@@ -1,14 +1,28 @@
 ---
 title: "Carrito de Compras - Fira Estudio"
 description: "Shopping cart patterns with localStorage, Context API, and hybrid drawer/page UX"
-version: "1.0"
-lastUpdated: "2026-01-28"
+version: "1.1"
+lastUpdated: "2026-02-02"
 activationTriggers:
+  # Spanish
   - "carrito"
-  - "cart"
+  - "carro"
   - "agregar"
+  - "añadir"
+  - "compra"
+  - "comprar"
+  
+  # English
+  - "cart"
+  - "basket"
+  - "add to"
   - "checkout"
+  - "shopping"
+  
+  # Technical
   - "localStorage"
+  - "Context API"
+  - "items"
 ---
 
 # Carrito de Compras Skill

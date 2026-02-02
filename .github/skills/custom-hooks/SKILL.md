@@ -1,15 +1,25 @@
 ---
 title: "Custom Hooks - Fira Estudio"
 description: "useScrollLock and useEscapeKey patterns for modals, drawers, and overlays"
-version: "1.0"
-lastUpdated: "2026-01-29"
+version: "1.1"
+lastUpdated: "2026-02-02"
 activationTriggers:
+  # Spanish
   - "hooks"
+  - "hook personalizado"
+  - "modal"
+  - "drawer"
+  - "scroll"
+  
+  # English
   - "custom hooks"
   - "useScrollLock"
   - "useEscapeKey"
-  - "modal"
-  - "drawer"
+  - "overlay"
+  
+  # Technical
+  - "ESC key"
+  - "scroll lock"
 ---
 
 # Custom Hooks Skill

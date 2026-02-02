@@ -1,15 +1,27 @@
 ---
 title: "Supabase Queries - Fira Estudio"
 description: "Query patterns for fetching products with relations and caching strategies"
-version: "1.0"
-lastUpdated: "2026-01-19"
+version: "1.1"
+lastUpdated: "2026-02-02"
 activationTriggers:
+  # Spanish
   - "supabase"
   - "query"
-  - "getProductos"
-  - "database"
+  - "consulta"
+  - "base de datos"
   - "filtrar"
+  - "ordenar"
+  
+  # English
+  - "database"
+  - "fetch"
+  - "filter"
+  - "sort"
+  
+  # Technical
+  - "getProductos"
   - "relaciones"
+  - "relations"
 ---
 
 # Supabase Queries Skill

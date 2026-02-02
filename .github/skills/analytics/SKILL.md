@@ -1,14 +1,25 @@
 ---
 title: "Analytics - Fira Estudio"
 description: "GA4 setup, event tracking, and debugging patterns"
-version: "2.0"
-lastUpdated: "2026-01-29"
+version: "2.1"
+lastUpdated: "2026-02-02"
 activationTriggers:
+  # Spanish
   - "analytics"
-  - "ga4"
-  - "gtag"
+  - "analítica"
+  - "evento"
+  - "rastreo"
+  - "seguimiento"
+  
+  # English
   - "tracking"
   - "event"
+  - "metrics"
+  
+  # Technical
+  - "ga4"
+  - "gtag"
+  - "google analytics"
   - "carrito"
   - "cart"
 ---
