@@ -1,8 +1,8 @@
 ---
 name: "GitHub Copilot Instructions - Fira Estudio"
 description: "Development guidelines for textile e-commerce with Next.js 16 + Supabase"
-version: "3.0"
-lastUpdated: "2026-01-16"
+version: "3.1"
+lastUpdated: "2026-02-02"
 stack:
   - Next.js 16 (App Router)
   - TypeScript (strict mode)
@@ -550,7 +550,12 @@ Before suggesting code, verify:
 
 ---
 
-## 🚀 V2 Features (Future)
+## 🚀 V2 Features Reference
+
+When working with V2 features, load these skills:
+
+- **Shopping Cart**: `.github/skills/carrito/SKILL.md` - Cart management, localStorage, Context API
+- **Analytics**: `.github/skills/analytics/SKILL.md` - GA4 tracking, ecommerce events
 
 **Do NOT implement these unless explicitly requested:**
 
@@ -560,6 +565,8 @@ Before suggesting code, verify:
 - Order management system
 - User accounts (Supabase Auth)
 - Admin panel
+
+📋 See `.github/reference/business-logic.md` for complete V2 workflows and business rules.
 
 ---
 
@@ -587,19 +594,3 @@ docs: Update README with setup instructions
 6. **Centralized constants** - import from `lib/constants`
 7. **Centralized content & styles** - import from `lib/content/` and `lib/design/tokens`
 8. **Reference skills** - detailed patterns in `.github/skills/`
-
----
-
-## **Shopping Cart (V2 Phase 1):**
-
-- 📋 `.github/skills/carrito/SKILL.md`
-- Use when: Building cart components, managing cart state, handling items
-- Triggers: "carrito", "cart", "agregar", "comprar", "item"
-
----
-
-## **Analytics & Tracking:**
-
-- 📋 `.github/skills/analytics/SKILL.md`
-- Use when: Setting up GA4 tracking, creating analytics events, debugging tracking
-- Triggers: "analytics", "ga4", "tracking", "gtag", "evento"
