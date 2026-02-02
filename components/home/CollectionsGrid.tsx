@@ -21,9 +21,9 @@ import { HOME_CONTENT } from "@/lib/content/home";
  */
 
 const PLACEHOLDER_IMAGE = "/images/placeholders/placeholder-image.jpeg";
-// BlurDataURL base64 para el placeholder (puedes reemplazarlo por uno generado real si tienes)
+// Minimal SVG blur placeholder
 const PLACEHOLDER_BLUR =
-  "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEASABIAAD...";
+  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGZpbHRlciBpZD0iYiI+PGZlR2F1c3NpYW5CbHVyIHN0ZERldmlhdGlvbj0iMiIvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjZTVlN2ViIiBmaWx0ZXI9InVybCgjYikiLz48L3N2Zz4=";
 
 interface CollectionCardProps {
   collection: Categoria;
@@ -35,8 +35,10 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
     <Link
       href={`/productos?categoria=${collection.slug}`}
       className={cn(
-        "group shine-effect overflow-hidden rounded-2xl border border-border/50 bg-white shadow-card transition-all duration-300 hover:shadow-card-hover hover:border-foreground/10 hover:-translate-y-2",
-        featured && "sm:col-span-2",
+        "group shine-effect overflow-hidden rounded-2xl border transition-all duration-300 hover:shadow-card-hover hover:-translate-y-2",
+        featured
+          ? "border-accent/50 shadow-card ring-2 ring-accent/20 hover:ring-accent/40 hover:scale-105"
+          : "border-border/50 bg-white shadow-card hover:border-foreground/10",
       )}
       aria-label={`Explorar colección ${collection.nombre}`}
     >
@@ -44,7 +46,7 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
       <div
         className={cn(
           "relative overflow-hidden bg-linear-to-br from-muted/50 to-muted",
-          featured ? "aspect-21/9" : "aspect-2/3",
+          featured ? "aspect-video" : "aspect-2/3",
         )}
       >
         {collection.imagen ? (
@@ -59,11 +61,10 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes={
               featured
-                ? "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 60vw"
-                : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                ? "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 45vw"
+                : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw"
             }
             priority={featured}
-            loading={featured ? "eager" : "lazy"}
           />
         ) : (
           <Image
@@ -77,18 +78,17 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
             className="object-cover transition-transform duration-500 group-hover:scale-110"
             sizes={
               featured
-                ? "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 60vw"
-                : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                ? "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 45vw"
+                : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw"
             }
             priority={featured}
             placeholder="blur"
             blurDataURL={PLACEHOLDER_BLUR}
-            loading={featured ? "eager" : "lazy"}
           />
         )}
         {/* Gradient Overlay: asegurar contraste */}
         <div
-          className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"
+          className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent"
           aria-hidden="true"
         />
 
@@ -131,13 +131,39 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
 
 export async function CollectionsGrid() {
   let categorias: Categoria[] | null = null;
+  let error: Error | null = null;
+
   try {
     categorias = await getCategorias();
-  } catch (error) {
-    // Opcional: console.error('Error al cargar categorías', error);
-    return null;
+  } catch (err) {
+    error = err as Error;
+    console.error("Error al cargar categorías:", error.message);
   }
-  if (!categorias || !Array.isArray(categorias) || categorias.length === 0) {
+
+  // Render error state with message
+  if (error && !categorias?.length) {
+    return (
+      <section
+        className={cn(SPACING.sectionPadding.sm, "bg-muted/30")}
+        role="region"
+        aria-labelledby="collections-section-title"
+      >
+        <div className={LAYOUT.container.maxW7xl}>
+          <h2 id="collections-section-title" className="sr-only">
+            {HOME_CONTENT.categories.title}
+          </h2>
+          <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-4 text-center">
+            <p className="text-sm text-destructive">
+              No pudimos cargar las colecciones. Intenta recargar la página.
+            </p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Return null if no categories
+  if (!categorias?.length) {
     return null;
   }
   return (
@@ -158,8 +184,8 @@ export async function CollectionsGrid() {
           description={HOME_CONTENT.categories.description}
         />
 
-        {/* Collections Grid */}
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:gap-8">
+        {/* Collections Grid - 3 columns desktop for 6 items (2 rows) */}
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
           {categorias.map((collection) => (
             <CollectionCard
               key={collection.slug}
