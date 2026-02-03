@@ -47,3 +47,6 @@ next-env.d.ts
 .env*.local
 
 credentials.json
+plan.md
+mcp.json
+/.vscode/mcp.json
