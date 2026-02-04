@@ -4,9 +4,9 @@
 
 Se identificaron y corrigieron **2 vulnerabilidades críticas** en el endpoint del webhook:
 
-| Vulnerabilidad | Riesgo | Solución |
-|---|---|---|
-| ❌ **No validaba firma/origen del webhook** | Ataques MITM, falsificación de webhooks | ✅ Implementar validación HMAC-SHA256 |
+| Vulnerabilidad                                  | Riesgo                                        | Solución                              |
+| ----------------------------------------------- | --------------------------------------------- | ------------------------------------- |
+| ❌ **No validaba firma/origen del webhook**     | Ataques MITM, falsificación de webhooks       | ✅ Implementar validación HMAC-SHA256 |
 | ❌ **Cualquiera podía enviar POST al endpoint** | Webhooks falsos, suplantación de Mercado Pago | ✅ Validar IP origen contra rangos MP |
 
 ---
@@ -14,10 +14,11 @@ Se identificaron y corrigieron **2 vulnerabilidades críticas** en el endpoint d
 ## 🛡️ Seguridad Implementada
 
 ### 1. Validación de Firma (HMAC-SHA256)
+
 **Archivo**: `lib/mercadopago/webhook-security.ts`
 
 ```typescript
-function validateWebhookSignature(headers, rawBody, paymentId, timestamp)
+function validateWebhookSignature(headers, rawBody, paymentId, timestamp);
 ```
 
 ✓ Extrae header `x-signature` con formato `ts=timestamp;v1=signature`
@@ -28,25 +29,29 @@ function validateWebhookSignature(headers, rawBody, paymentId, timestamp)
 ✓ Rechaza con **401 Unauthorized** si es inválida
 
 ### 2. Validación de IP Origen
+
 **Función**: `validateMercadoPagoIP(clientIP)`
 
 ✓ Valida contra rangos CIDR de Mercado Pago:
-  - `200.121.192.0/24` (Argentina)
-  - `201.217.242.0/24` (Argentina)
-  - `203.0.113.0/24` (Rango adicional)
-✓ Desarrollo: Permite `127.0.0.1` y `localhost`
-✓ Producción: Solo acepta IPs autorizadas
-✓ Rechaza con **403 Forbidden** si no está autorizada
+
+- `200.121.192.0/24` (Argentina)
+- `201.217.242.0/24` (Argentina)
+- `203.0.113.0/24` (Rango adicional)
+  ✓ Desarrollo: Permite `127.0.0.1` y `localhost`
+  ✓ Producción: Solo acepta IPs autorizadas
+  ✓ Rechaza con **403 Forbidden** si no está autorizada
 
 ### 3. Extracción de IP del Cliente
+
 **Función**: `extractClientIP(headers)`
 
 ✓ Soporta múltiples headers:
-  - `x-forwarded-for` (Vercel)
-  - `cf-connecting-ip` (Cloudflare)
-✓ Maneja múltiples IPs (toma la primera)
-✓ Trim de whitespace
-✓ Fallback a `null` si no encuentra IP
+
+- `x-forwarded-for` (Vercel)
+- `cf-connecting-ip` (Cloudflare)
+  ✓ Maneja múltiples IPs (toma la primera)
+  ✓ Trim de whitespace
+  ✓ Fallback a `null` si no encuentra IP
 
 ---
 
@@ -85,6 +90,7 @@ function validateWebhookSignature(headers, rawBody, paymentId, timestamp)
 ### Archivos Modificados
 
 **`app/api/checkout/webhook/route.ts`**
+
 - Agregada validación de IP al inicio
 - Agregada validación de firma después de parsear JSON
 - Mejorado JSDoc con detalles de seguridad
@@ -123,6 +129,7 @@ function validateWebhookSignature(headers, rawBody, paymentId, timestamp)
 ```
 
 ### Ejecutar Tests
+
 ```bash
 npx vitest run lib/mercadopago/webhook-security.test.ts
 # Test Files  1 passed
@@ -136,6 +143,7 @@ npx vitest run lib/mercadopago/webhook-security.test.ts
 ### Variables de Entorno
 
 **`.env.local` (Desarrollo)**
+
 ```env
 MERCADOPAGO_WEBHOOK_SECRET=your_webhook_secret_from_mp_dashboard
 MERCADOPAGO_ACCESS_TOKEN=your_existing_access_token
@@ -143,6 +151,7 @@ MERCADOPAGO_INTEGRATOR_ID=your_integrator_id  # Opcional
 ```
 
 **Vercel (Producción)**
+
 - Dashboard → Project Settings → Environment Variables
 - Agregar `MERCADOPAGO_WEBHOOK_SECRET=...`
 
@@ -186,6 +195,7 @@ Request POST /api/checkout/webhook
 ## 📈 Ejemplos de Respuestas
 
 ### ✓ Webhook Válido (200 OK)
+
 ```bash
 curl -X POST http://localhost:3000/api/checkout/webhook \
   -H "x-signature: ts=1645678900;v1=abc123..." \
@@ -197,6 +207,7 @@ curl -X POST http://localhost:3000/api/checkout/webhook \
 ```
 
 ### ✗ IP No Autorizada (403)
+
 ```bash
 curl -X POST http://localhost:3000/api/checkout/webhook \
   -H "x-signature: ts=1645678900;v1=abc123" \
@@ -208,6 +219,7 @@ curl -X POST http://localhost:3000/api/checkout/webhook \
 ```
 
 ### ✗ Firma Inválida (401)
+
 ```bash
 curl -X POST http://localhost:3000/api/checkout/webhook \
   -H "x-signature: ts=1645678900;v1=invalid" \
@@ -222,11 +234,11 @@ curl -X POST http://localhost:3000/api/checkout/webhook \
 
 ## 📚 Documentación
 
-| Documento | Contenido |
-|-----------|-----------|
-| [WEBHOOK_SECURITY.md](./WEBHOOK_SECURITY.md) | Guía completa de configuración y funcionamiento |
-| [SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md) | Checklist de implementación |
-| [WEBHOOK_SECURITY_VISUAL.md](./WEBHOOK_SECURITY_VISUAL.md) | Diagramas visuales y flujos |
+| Documento                                                  | Contenido                                       |
+| ---------------------------------------------------------- | ----------------------------------------------- |
+| [WEBHOOK_SECURITY.md](./WEBHOOK_SECURITY.md)               | Guía completa de configuración y funcionamiento |
+| [SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md) | Checklist de implementación                     |
+| [WEBHOOK_SECURITY_VISUAL.md](./WEBHOOK_SECURITY_VISUAL.md) | Diagramas visuales y flujos                     |
 
 ---
 
@@ -235,6 +247,7 @@ curl -X POST http://localhost:3000/api/checkout/webhook \
 ### Vercel
 
 1. **Agregar secret a Vercel:**
+
    ```
    MERCADOPAGO_WEBHOOK_SECRET=...
    ```
@@ -250,6 +263,7 @@ curl -X POST http://localhost:3000/api/checkout/webhook \
 ### Testing Sandbox
 
 Mercado Pago permite diferentes webhooks para:
+
 - **Sandbox** (pruebas): URL staging
 - **Production** (real): URL producción
 
@@ -258,6 +272,7 @@ Mercado Pago permite diferentes webhooks para:
 ## ⚠️ Notas Importantes
 
 ### 1. Timestamp en Producción
+
 **Mejora pendiente**: Actualmente usa `x-request-id` como fallback.
 Debería extraerse directamente del header `x-signature`.
 
@@ -267,10 +282,13 @@ const tsFromSignature = parsedSignature.ts;
 ```
 
 ### 2. IPs de Mercado Pago
+
 Los rangos CIDR pueden cambiar. **Verificar periódicamente:**
+
 - https://www.mercadopago.com.ar/developers/es/docs/webhooks
 
 ### 3. Monitoreo
+
 - Revisar logs por `[Webhook Security]` errors
 - Configurar alertas en Sentry si aplica
 - Revisar estadísticas de intentos fallidos
@@ -301,15 +319,15 @@ Stats:
 
 ## ✨ Beneficios
 
-| Beneficio | Descripción |
-|-----------|-------------|
-| 🔒 **Autenticación** | Solo Mercado Pago puede enviar webhooks válidos |
-| 🛡️ **Integridad** | Imposible falsificar o modificar webhooks en tránsito |
-| 🌐 **IP Whitelisting** | Solo IPs autorizadas pueden acceder |
-| ⏱️ **Anti-Replay** | Rechaza webhooks antiguos (>5 min) |
-| 🔐 **Timing Safe** | Protegido contra timing attacks |
-| 📝 **Auditoría** | Logs detallados de todos los eventos |
-| ✅ **Testeado** | 18 tests unitarios con 100% cobertura |
+| Beneficio              | Descripción                                           |
+| ---------------------- | ----------------------------------------------------- |
+| 🔒 **Autenticación**   | Solo Mercado Pago puede enviar webhooks válidos       |
+| 🛡️ **Integridad**      | Imposible falsificar o modificar webhooks en tránsito |
+| 🌐 **IP Whitelisting** | Solo IPs autorizadas pueden acceder                   |
+| ⏱️ **Anti-Replay**     | Rechaza webhooks antiguos (>5 min)                    |
+| 🔐 **Timing Safe**     | Protegido contra timing attacks                       |
+| 📝 **Auditoría**       | Logs detallados de todos los eventos                  |
+| ✅ **Testeado**        | 18 tests unitarios con 100% cobertura                 |
 
 ---
 
@@ -326,6 +344,7 @@ Stats:
 
 **Completado**: 4 de febrero de 2026
 **Commits**: 2
+
 - `8bb66ca` - Implementación completa
 - `12203de` - Documentación visual
 
@@ -335,4 +354,4 @@ Stats:
 
 ---
 
-*Seguridad del webhook garantizada mediante HMAC-SHA256 + IP whitelisting + timestamp validation.*
+_Seguridad del webhook garantizada mediante HMAC-SHA256 + IP whitelisting + timestamp validation._

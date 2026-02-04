@@ -114,7 +114,7 @@ IP Recibida: 200.121.192.50
          │
          ▼
     Validar contra rangos CIDR:
-    
+
     200.121.192.0/24    (200.121.192.0 - 200.121.192.255)
     201.217.242.0/24    (201.217.242.0 - 201.217.242.255)
     203.0.113.0/24      (203.0.113.0 - 203.0.113.255)
@@ -133,13 +133,13 @@ IP Recibida: 200.121.192.50
 
 ## 🛡️ Protecciones Implementadas
 
-| Tipo | Protección | Cómo funciona |
-|------|-----------|--------------|
-| **Tampering** | HMAC-SHA256 | Firma criptográfica valida que el payload no fue modificado |
-| **Forgery** | x-signature header | Mercado Pago firma cada webhook; imposible falsificar sin secret |
-| **Spoofing** | Validación IP | Solo acepta IPs de rangos autorizados de Mercado Pago |
-| **Replay** | Timestamp validation | Rechaza webhooks más antiguos de 5 minutos |
-| **Timing Attacks** | Comparación segura | Compara firmas bit-a-bit, sin branches condicionales |
+| Tipo               | Protección           | Cómo funciona                                                    |
+| ------------------ | -------------------- | ---------------------------------------------------------------- |
+| **Tampering**      | HMAC-SHA256          | Firma criptográfica valida que el payload no fue modificado      |
+| **Forgery**        | x-signature header   | Mercado Pago firma cada webhook; imposible falsificar sin secret |
+| **Spoofing**       | Validación IP        | Solo acepta IPs de rangos autorizados de Mercado Pago            |
+| **Replay**         | Timestamp validation | Rechaza webhooks más antiguos de 5 minutos                       |
+| **Timing Attacks** | Comparación segura   | Compara firmas bit-a-bit, sin branches condicionales             |
 
 ---
 
@@ -157,6 +157,7 @@ MERCADOPAGO_INTEGRATOR_ID=your-integrator-id
 ```
 
 **Dónde obtener MERCADOPAGO_WEBHOOK_SECRET:**
+
 1. Dashboard Mercado Pago → Settings → Webhooks
 2. Crear/editar webhook para `/api/checkout/webhook`
 3. Copiar "Signing Secret"
@@ -167,6 +168,7 @@ MERCADOPAGO_INTEGRATOR_ID=your-integrator-id
 ## ✅ Casos de Prueba
 
 ### Test 1: Request Válido ✓
+
 ```bash
 curl -X POST http://localhost:3000/api/checkout/webhook \
   -H "x-signature: ts=1645678900;v1=validSignature..." \
@@ -177,6 +179,7 @@ Resultado: 200 OK - Procesa el pago
 ```
 
 ### Test 2: IP No Autorizada ✗
+
 ```bash
 curl -X POST http://localhost:3000/api/checkout/webhook \
   -H "x-signature: ts=1645678900;v1=validSignature" \
@@ -187,6 +190,7 @@ Resultado: 403 Forbidden - Unauthorized IP
 ```
 
 ### Test 3: Firma Inválida ✗
+
 ```bash
 curl -X POST http://localhost:3000/api/checkout/webhook \
   -H "x-signature: ts=1645678900;v1=invalidSignature" \
@@ -197,6 +201,7 @@ Resultado: 401 Unauthorized - Invalid signature
 ```
 
 ### Test 4: Timestamp Antiguo ✗
+
 ```bash
 curl -X POST http://localhost:3000/api/checkout/webhook \
   -H "x-signature: ts=1645674800;v1=validSignature" \
@@ -233,13 +238,13 @@ Resultado: 401 Unauthorized - Timestamp too old
 
 ## 📚 Archivos de Referencia
 
-| Archivo | Propósito |
-|---------|-----------|
-| `lib/mercadopago/webhook-security.ts` | Funciones de validación |
-| `lib/mercadopago/webhook-security.test.ts` | Tests unitarios (18 casos) |
-| `app/api/checkout/webhook/route.ts` | Endpoint del webhook |
-| `docs/WEBHOOK_SECURITY.md` | Guía completa de configuración |
-| `docs/SECURITY_IMPLEMENTATION.md` | Checklist de implementación |
+| Archivo                                    | Propósito                      |
+| ------------------------------------------ | ------------------------------ |
+| `lib/mercadopago/webhook-security.ts`      | Funciones de validación        |
+| `lib/mercadopago/webhook-security.test.ts` | Tests unitarios (18 casos)     |
+| `app/api/checkout/webhook/route.ts`        | Endpoint del webhook           |
+| `docs/WEBHOOK_SECURITY.md`                 | Guía completa de configuración |
+| `docs/SECURITY_IMPLEMENTATION.md`          | Checklist de implementación    |
 
 ---
 
