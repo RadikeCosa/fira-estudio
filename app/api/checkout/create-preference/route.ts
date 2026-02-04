@@ -155,7 +155,7 @@ export async function POST(req: NextRequest) {
         failure: failureUrl,
         pending: pendingUrl,
       },
-      auto_return: "approved",
+      statement_descriptor: "FIRA ESTUDIO",
       external_reference: `${customerEmail}|${orderId}`,
       notification_url: webhookUrl,
       payment_methods: {
