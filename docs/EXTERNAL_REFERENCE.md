@@ -17,7 +17,7 @@ El campo `external_reference` es un identificador alfanumérico que permite vinc
 
 ### En create-preference/route.ts
 
-**Ubicación:** `app/api/checkout/create-preference/route.ts` (línea ~110)
+**Ubicación:** `app/api/checkout/create-preference/route.ts` (línea ~161)
 
 ```typescript
 const preference = {
@@ -31,31 +31,35 @@ const preference = {
     /* ... */
   },
   auto_return: "approved",
-  external_reference: orderId, // ← AQUÍ
-  notification_url: process.env.MERCADOPAGO_WEBHOOK_URL!,
+  external_reference: `${customerEmail}|${orderId}`, // ← AQUÍ: email|orderId
+  notification_url: webhookUrl,
   payment_methods: {
     /* ... */
   },
 };
 ```
 
-### Qué es `orderId`
+### Formato del External Reference
 
-```typescript
-// Se obtiene cuando se crea la orden en BD
-orderId = await CartRepository.createOrderWithItems(
-  cart.id,
-  customerEmail,
-  customerName,
-  total,
-  cart.items,
-  customerPhone,
-  shippingAddress,
-);
+**Estructura:** `{email}|{orderId}`
 
-// orderId es un UUID único v4 generado en la BD
-// Ejemplo: "550e8400-e29b-41d4-a716-446655440000"
+**Ejemplo:**
 ```
+ramirocosa@gmail.com|550e8400-e29b-41d4-a716-446655440000
+```
+
+### Componentes
+
+- **Email**: `ramirocosa@gmail.com` - Email del cliente (para identificación rápida)
+- **Pipe (`|`)**: Separador legible
+- **Order ID**: UUID único de la orden en la BD (Supabase)
+
+### Ventajas
+
+✅ **Identificable**: Contiene el email para correlacionar rápido
+✅ **Único**: Combinación email + order ID es única por transacción
+✅ **Legible**: Fácil de buscar en logs y dashboards
+✅ **Rastreable**: Vincula pagos a órdenes específicas
 
 ---
 
@@ -79,7 +83,7 @@ orderId = await CartRepository.createOrderWithItems(
 3. Se crea PREFERENCIA en Mercado Pago
    │
    ├─ preference_id: "12345678"
-   ├─ external_reference: "550e8400-e29b-41d4-a716-446655440000" ← VINCULACIÓN
+   ├─ external_reference: "ramirocosa@gmail.com|550e8400-e29b-41d4-a716-446655440000" ← VINCULACIÓN
    ├─ items: [...]
    ├─ payer: { email, name, phone }
    └─ back_urls: { success, failure, pending }
@@ -92,12 +96,14 @@ orderId = await CartRepository.createOrderWithItems(
    │
    ├─ payment_id: "123456789"
    ├─ status: "approved"
-   ├─ external_reference: "550e8400-e29b-41d4-a716-446655440000" ← IDENTIFICACIÓN
+   ├─ external_reference: "ramirocosa@gmail.com|550e8400-e29b-41d4-a716-446655440000" ← IDENTIFICACIÓN
    └─ amount: 15000.00
    │
 7. Tu servidor recibe webhook
    │
-   ├─ Extrae external_reference
+   ├─ Extrae external_reference: "ramirocosa@gmail.com|550e8400-e29b-41d4-a716-446655440000"
+   ├─ Divide por "|": [email, orderId]
+   ├─ Busca la orden por orderId
    ├─ Busca orden con ese ID en BD
    ├─ Actualiza status a "approved"
    └─ Responde 200 OK

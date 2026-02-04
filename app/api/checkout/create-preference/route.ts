@@ -156,7 +156,7 @@ export async function POST(req: NextRequest) {
         pending: pendingUrl,
       },
       auto_return: "approved",
-      external_reference: orderId,
+      external_reference: `${customerEmail}|${orderId}`,
       notification_url: webhookUrl,
       payment_methods: {
         excluded_payment_methods: [

@@ -7,11 +7,12 @@ He configurado un sistema centralizado de URLs que automáticamente detecta el e
 ## Archivos Creados/Modificados
 
 ### 1. **lib/config/urls.ts** (NUEVO)
+
 Archivo centralizado que exporta las URLs configuradas según el entorno:
 
 ```typescript
 export const CHECKOUT_URLS = {
-  success: "http://localhost:3000/checkout/success",  // o https://fira-estudio.vercel.app/...
+  success: "http://localhost:3000/checkout/success", // o https://fira-estudio.vercel.app/...
   failure: "http://localhost:3000/checkout/failure",
   pending: "http://localhost:3000/checkout/pending",
 };
@@ -21,11 +22,13 @@ export const SITE_URL = "http://localhost:3000";
 ```
 
 **Detección automática:**
+
 - Si está en Vercel → Usa `VERCEL_URL` automáticamente
 - Si está en local → Usa `http://localhost:3000`
 - Si tienes `NEXT_PUBLIC_SITE_URL` → Lo usa como override
 
 ### 2. **app/api/checkout/create-preference/route.ts** (MODIFICADO)
+
 Ahora usa la configuración centralizada:
 
 ```typescript
@@ -38,19 +41,24 @@ const webhookUrl = WEBHOOK_URL;
 ```
 
 ### 3. **.env.local** (MODIFICADO)
+
 - Configuración para desarrollo local (localhost:3000)
 - Instrucciones comentadas para Vercel
 - Variables de Mercado Pago centralizadas
 
 ### 4. **docs/ENVIRONMENT_CONFIGURATION.md** (NUEVO)
+
 Documentación técnica completa sobre:
+
 - Cómo funciona la detección de entorno
 - Variables necesarias en cada entorno
 - Orden de prioridad de detección
 - Troubleshooting
 
 ### 5. **docs/VERCEL_SETUP.md** (NUEVO)
+
 Guía paso a paso para configurar Vercel:
+
 - Cómo agregar variables en Vercel Dashboard
 - Qué variables configurar (solo las secretas)
 - Cómo verificar que funciona
@@ -59,6 +67,7 @@ Guía paso a paso para configurar Vercel:
 ## Cómo Funciona
 
 ### En Desarrollo Local
+
 ```bash
 npm run dev
 # Las URLs automáticamente son:
@@ -69,6 +78,7 @@ npm run dev
 ```
 
 ### En Producción (Vercel)
+
 ```
 El sistema automáticamente detecta https://fira-estudio.vercel.app
 y genera:
@@ -81,6 +91,7 @@ y genera:
 ## Variables de Entorno Requeridas
 
 ### En .env.local (desarrollo)
+
 ```dotenv
 MERCADOPAGO_ACCESS_TOKEN=APP_USR-...
 MERCADOPAGO_INTEGRATOR_ID=dev_...
@@ -88,6 +99,7 @@ MERCADOPAGO_INTEGRATOR_ID=dev_...
 ```
 
 ### En Vercel Dashboard (producción)
+
 1. Settings → Environment Variables
 2. Agrega:
    - `MERCADOPAGO_ACCESS_TOKEN` = tu token
@@ -98,6 +110,7 @@ MERCADOPAGO_INTEGRATOR_ID=dev_...
 ## Testing
 
 ### Local
+
 ```bash
 npm run dev
 # Ir a http://localhost:3000/productos
@@ -107,6 +120,7 @@ npm run dev
 ```
 
 ### Producción
+
 ```bash
 git push origin feat/fase2
 # Esperar que Vercel termine deployment
