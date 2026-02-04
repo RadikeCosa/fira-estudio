@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { ContactFormActions } from "@/components/contacto/ContactFormActions";
 import { ContactFormFields } from "@/components/contacto/ContactFormFields";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
-import { WHATSAPP } from "@/lib/constants";
+import { SOCIAL_LINKS } from "@/lib/constants/navigation";
 import { useRateLimit } from "@/hooks/useRateLimit";
 import {
   sanitizeText,
@@ -165,7 +165,7 @@ export function ContactForm() {
     // Set submitting state
     setIsSubmitting(true);
 
-    // Build WhatsApp message with sanitized data
+    // Build email body with sanitized data
     const message = `
 Hola! Mi nombre es ${data.nombre}
 
@@ -176,7 +176,12 @@ Consulta:
 ${data.mensaje}
     `.trim();
 
-    window.open(WHATSAPP.getUrl(message), "_blank");
+    const subject = "Consulta desde el sitio";
+    const mailtoUrl = `${SOCIAL_LINKS.email.href}?subject=${encodeURIComponent(
+      subject,
+    )}&body=${encodeURIComponent(message)}`;
+
+    window.open(mailtoUrl, "_blank");
 
     // Reset form after 1 second
     timeoutRef.current = setTimeout(() => {
@@ -190,7 +195,7 @@ ${data.mensaje}
   // Get button text based on state
   const getButtonText = (): string => {
     if (isSubmitting) {
-      return "Abriendo WhatsApp...";
+      return "Abriendo email...";
     }
     if (isRateLimited) {
       const seconds = Math.ceil(timeUntilReset / 1000);

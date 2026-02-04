@@ -1,8 +1,7 @@
-import { Mail, MessageCircle, Instagram } from "lucide-react";
+import { Mail, Instagram } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ContactInfoItem } from "@/components/ui/ContactInfoItem";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
-import { WHATSAPP } from "@/lib/constants";
 import { SOCIAL_LINKS } from "@/lib/constants/navigation";
 
 export function ContactInfo() {
@@ -25,14 +24,6 @@ export function ContactInfo() {
           />
 
           <ContactInfoItem
-            icon={MessageCircle}
-            title={info.items.whatsapp.title}
-            content={WHATSAPP.number}
-            href={WHATSAPP.getUrl(info.items.whatsapp.message)}
-            external
-          />
-
-          <ContactInfoItem
             icon={Instagram}
             title={info.items.instagram.title}
             content={info.items.instagram.handle}
@@ -47,16 +38,18 @@ export function ContactInfo() {
         <h2 className="mb-6 text-2xl font-bold text-foreground">
           {horarios.title}
         </h2>
-        
+
         <div className="space-y-3 text-muted-foreground">
           {horarios.items.map((item, index) => (
             <div key={index} className="flex items-center gap-3">
-              <div 
+              <div
                 className={`h-2 w-2 rounded-full ${
                   item.active ? "bg-foreground/50" : "bg-foreground/20"
-                }`} 
+                }`}
               />
-              <p>{item.label}: {item.hours}</p>
+              <p>
+                {item.label}: {item.hours}
+              </p>
             </div>
           ))}
         </div>

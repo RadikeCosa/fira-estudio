@@ -49,4 +49,6 @@ next-env.d.ts
 credentials.json
 plan.md
 mcp.json
+vscode/mcp.json
 /.vscode/mcp.json
+.vscode/mcp.json
