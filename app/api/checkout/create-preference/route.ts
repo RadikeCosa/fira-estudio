@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { client, Preference } from "@/lib/mercadopago/client";
 import { CartRepository } from "@/lib/repositories/cart.repository";
+import { CHECKOUT_URLS, WEBHOOK_URL } from "@/lib/config/urls";
 import type { Cart, CartItem } from "@/lib/types";
 
 /**
@@ -24,36 +25,23 @@ export async function POST(req: NextRequest) {
     const { customerEmail, customerName, customerPhone, shippingAddress } =
       await req.json();
 
-    // Determinar baseUrl válido
-    let baseUrl = "http://localhost:3000";
-    if (
-      process.env.NEXT_PUBLIC_SITE_URL &&
-      process.env.NEXT_PUBLIC_SITE_URL.length > 8 &&
-      process.env.NEXT_PUBLIC_SITE_URL !== "https://"
-    ) {
-      baseUrl = process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, "");
-    }
-
-    const successUrl =
-      process.env.NEXT_PUBLIC_CHECKOUT_SUCCESS_URL ||
-      `${baseUrl}/checkout/success`;
-    const failureUrl =
-      process.env.NEXT_PUBLIC_CHECKOUT_FAILURE_URL ||
-      `${baseUrl}/checkout/failure`;
-    const pendingUrl =
-      process.env.NEXT_PUBLIC_CHECKOUT_PENDING_URL ||
-      `${baseUrl}/checkout/pending`;
+    // Usar configuración centralizada de URLs
+    const successUrl = CHECKOUT_URLS.success;
+    const failureUrl = CHECKOUT_URLS.failure;
+    const pendingUrl = CHECKOUT_URLS.pending;
+    const webhookUrl = WEBHOOK_URL;
 
     // Validar que las URLs sean válidas
     console.log("[Checkout] Using URLs:", {
       successUrl,
       failureUrl,
       pendingUrl,
+      webhookUrl,
     });
 
     if (!successUrl || !successUrl.startsWith("http")) {
       throw new Error(
-        `Invalid success URL: ${successUrl}. Please configure NEXT_PUBLIC_CHECKOUT_SUCCESS_URL`,
+        `Invalid success URL: ${successUrl}. Please check your URL configuration.`,
       );
     }
 
@@ -61,18 +49,6 @@ export async function POST(req: NextRequest) {
     const missingEnv: string[] = [];
     if (!process.env.MERCADOPAGO_ACCESS_TOKEN) {
       missingEnv.push("MERCADOPAGO_ACCESS_TOKEN");
-    }
-    if (!process.env.NEXT_PUBLIC_CHECKOUT_SUCCESS_URL) {
-      missingEnv.push("NEXT_PUBLIC_CHECKOUT_SUCCESS_URL");
-    }
-    if (!process.env.NEXT_PUBLIC_CHECKOUT_FAILURE_URL) {
-      missingEnv.push("NEXT_PUBLIC_CHECKOUT_FAILURE_URL");
-    }
-    if (!process.env.NEXT_PUBLIC_CHECKOUT_PENDING_URL) {
-      missingEnv.push("NEXT_PUBLIC_CHECKOUT_PENDING_URL");
-    }
-    if (!process.env.MERCADOPAGO_WEBHOOK_URL) {
-      missingEnv.push("MERCADOPAGO_WEBHOOK_URL");
     }
     if (missingEnv.length > 0) {
       console.error("Create preference error: Missing env vars", missingEnv);
@@ -181,7 +157,7 @@ export async function POST(req: NextRequest) {
       },
       auto_return: "approved",
       external_reference: orderId,
-      notification_url: process.env.MERCADOPAGO_WEBHOOK_URL,
+      notification_url: webhookUrl,
       payment_methods: {
         excluded_payment_methods: [
           {
