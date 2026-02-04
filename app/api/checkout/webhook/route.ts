@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { client } from "@/lib/mercadopago/client";
 import { Payment } from "mercadopago";
 import { CartRepository } from "@/lib/repositories/cart.repository";
+import {
+  validateMercadoPagoIP,
+  validateWebhookSignature,
+  extractClientIP,
+} from "@/lib/mercadopago/webhook-security";
 
 /**
  * Webhook Endpoint for Mercado Pago Notifications
@@ -11,20 +16,54 @@ import { CartRepository } from "@/lib/repositories/cart.repository";
  * - payment.updated
  *
  * Features:
+ * - IP origin validation (Mercado Pago only)
+ * - HMAC-SHA256 signature verification (x-signature header)
  * - Idempotency via payment_logs table
  * - Detailed logging for debugging
  * - Graceful error handling
  * - State mapping (payment status → order status)
+ *
+ * Security:
+ * - Validates x-signature header with HMAC-SHA256
+ * - Validates IP origin against Mercado Pago ranges
+ * - Prevents timestamp replay attacks (5 min window)
  */
 export async function POST(req: NextRequest) {
   const startTime = Date.now();
   let paymentId: string | number | undefined;
 
   try {
+    // SEGURIDAD: Validar origen IP
+    const clientIP = extractClientIP(Object.fromEntries(req.headers.entries()));
+    if (!validateMercadoPagoIP(clientIP)) {
+      console.error(`[Webhook Security] Rejected request from IP: ${clientIP}`);
+      return NextResponse.json({ error: "Unauthorized IP" }, { status: 403 });
+    }
+
     const { id, type } = await req.json();
     paymentId = id;
 
     console.log(`[Webhook] Received event: type=${type}, id=${id}`);
+
+    // SEGURIDAD: Validar firma del webhook (x-signature header)
+    const xTimestamp = req.headers.get("x-request-id") || String(Date.now());
+    const headers = Object.fromEntries(req.headers.entries());
+
+    if (
+      !validateWebhookSignature(
+        headers,
+        JSON.stringify({ id, type }),
+        id,
+        xTimestamp,
+      )
+    ) {
+      console.error(
+        `[Webhook Security] Invalid signature for payment ${id} - rejecting request`,
+      );
+      return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+    }
+
+    console.log(`[Webhook] Signature validated for payment ${id}`);
 
     // Solo procesar eventos de tipo payment
     if (type !== "payment") {
