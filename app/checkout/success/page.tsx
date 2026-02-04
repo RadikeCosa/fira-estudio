@@ -7,7 +7,20 @@ export const metadata: Metadata = {
   description: "Tu pago ha sido procesado correctamente",
 };
 
-export default function SuccessPage() {
+interface SuccessPageProps {
+  searchParams: Promise<{
+    payment_id?: string;
+    collection_id?: string;
+    external_reference?: string;
+    status?: string;
+  }>;
+}
+
+export default async function SuccessPage({ searchParams }: SuccessPageProps) {
+  const params = await searchParams;
+  const paymentId = params.payment_id || params.collection_id;
+  const externalReference = params.external_reference;
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
       <div className="max-w-md w-full text-center space-y-6">
@@ -23,6 +36,29 @@ export default function SuccessPage() {
           Tu pago ha sido procesado correctamente. Recibirás un email de
           confirmación con los detalles de tu compra.
         </p>
+
+        {/* Información de Mercado Pago para certificación */}
+        {(paymentId || externalReference) && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 space-y-2 text-sm text-left">
+            <p className="font-semibold text-blue-900">Información del Pago:</p>
+            {paymentId && (
+              <div className="space-y-1">
+                <p className="text-blue-700 font-medium">Payment ID:</p>
+                <p className="font-mono text-xs bg-white px-3 py-2 rounded border border-blue-200 break-all">
+                  {paymentId}
+                </p>
+              </div>
+            )}
+            {externalReference && (
+              <div className="space-y-1">
+                <p className="text-blue-700 font-medium">External Reference:</p>
+                <p className="font-mono text-xs bg-white px-3 py-2 rounded border border-blue-200 break-all">
+                  {externalReference}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="bg-muted/30 border border-border rounded-lg p-6 space-y-2 text-sm">
           <p className="font-medium">¿Qué sigue?</p>
