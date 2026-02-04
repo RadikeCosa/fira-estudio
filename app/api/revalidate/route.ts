@@ -9,9 +9,11 @@ import {
  * Solo funciona en desarrollo o con token válido
  *
  * Uso:
+ * GET /api/revalidate?type=categorias
  * POST /api/revalidate?type=productos&secret=tu_secret
  */
-export async function POST(req: NextRequest) {
+
+async function handleRevalidate(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const secret = searchParams.get("secret");
   const type = searchParams.get("type") || "productos";
@@ -45,4 +47,12 @@ export async function POST(req: NextRequest) {
       { status: 500 },
     );
   }
+}
+
+export async function GET(req: NextRequest) {
+  return handleRevalidate(req);
+}
+
+export async function POST(req: NextRequest) {
+  return handleRevalidate(req);
 }
