@@ -36,6 +36,7 @@
     "@types/react-dom": "^19",
     "@vitejs/plugin-react": "^4.7.0",
     "@vitest/ui": "^2.1.9",
+    "baseline-browser-mapping": "^2.9.19",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
     "jsdom": "^25.0.1",

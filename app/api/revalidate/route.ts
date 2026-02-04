@@ -18,7 +18,6 @@ async function handleRevalidate(req: NextRequest) {
   const secret = searchParams.get("secret");
   const type = searchParams.get("type") || "productos";
 
-  // En desarrollo, permite sin secret
   // En producción, requiere token
   const isProduction = process.env.NODE_ENV === "production";
 
