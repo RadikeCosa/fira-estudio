@@ -105,11 +105,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             >
               <ProductInfo producto={producto} />
 
-              {/* Selector de variaciones y botón de WhatsApp */}
-              <ProductActions
-                producto={producto}
-                variaciones={producto.variaciones}
-              />
+              <ProductActions producto={producto} />
             </div>
           </div>
 

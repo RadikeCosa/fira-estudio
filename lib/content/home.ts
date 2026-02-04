@@ -47,6 +47,6 @@ export const HOME_CONTENT = {
     title: "¿Tenés alguna consulta?",
     description:
       "Estamos para ayudarte a encontrar el producto perfecto para tu hogar. Contactanos y te responderemos a la brevedad.",
-    ctaText: "Contactanos por WhatsApp",
+    ctaText: "Contactanos",
   },
 };

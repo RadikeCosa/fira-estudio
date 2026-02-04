@@ -1,8 +1,8 @@
 # Phase 2: Integración Checkout Pro de Mercado Pago
 
-**Versión:** 1.0  
-**Fecha:** 3 de febrero de 2026  
-**Estado:** 🔵 En Planificación  
+**Versión:** 2.0  
+**Fecha:** 4 de febrero de 2026  
+**Estado:** 🟠 En Desarrollo Activo  
 **Objetivo:** Implementar carrito de compras y pagos con Mercado Pago Checkout Pro
 
 ---
@@ -20,7 +20,78 @@ Fira Estudio pasa de **V1 (Catálogo + WhatsApp)** a **V2 (Carrito + Pagos)**.
 
 ---
 
-## 🏗️ Fases de Implementación
+## 🚀 Plan Estratégico - Perspectiva Senior Fullstack
+
+### **PRIORIDAD 1: Backend Crítico (3-4 días)** ← **AHORA**
+
+Asegurar que el backend sea rock-solid antes de meter frontend:
+
+**1.1 Mejorar endpoint create-preference:**
+
+- [ ] Crear orden + preferencia EN TRANSACCIÓN (todo o nada)
+- [ ] Si falla Mercado Pago, rollback automático
+- [ ] Guardar preference_id en la orden
+- [ ] Validar stock antes de crear orden (evitar overselling)
+- [ ] Archivo: `app/api/checkout/create-preference/route.ts`
+
+**1.2 Validaciones de seguridad:**
+
+- [ ] Verificar que session_id sea válida (no spoofed)
+- [ ] Validar totales calculados en backend (cliente puede mentir)
+- [ ] Rate limiting en endpoints críticos
+- [ ] Sanitizar inputs de user
+
+**1.3 Mejorar webhook:**
+
+- [ ] Implementar idempotencia (mismo webhook 2x = una sola orden)
+- [ ] Manejo de errores con retry logic
+- [ ] Logging detallado para debugging
+- [ ] Archivo: `app/api/checkout/webhook/route.ts`
+
+### **PRIORIDAD 2: Testing (1-2 días)**
+
+Validar todo antes de frontend:
+
+- [ ] **Tests CartRepository:** CRUD, totales, órdenes
+- [ ] **Tests create-preference:** Happy path + edge cases
+- [ ] **Mock Mercado Pago:** No requests reales en tests
+- [ ] **Tests webhook:** Simulación de eventos
+- [ ] Coverage mínimo: 80% en repositorio + endpoints
+
+### **PRIORIDAD 3: Frontend Checkout (4-5 días)** ← **✅ COMPLETADO**
+
+Una vez backend seguro:
+
+- [x] **Carrito visual** - Listar items, actualizar cantidades, eliminar
+- [x] **Checkout form** - Email, nombre, teléfono, validaciones
+- [x] **Integración Mercado Pago JS** - Botón para ir al checkout
+- [x] **Páginas de retorno** - Success/failure/pending
+- [x] **Agregar al carrito** - Componente en detalle de producto
+- [x] **Indicador de carrito** - Badge en header con cantidad
+
+**📄 Ver detalles:** [FRONTEND_CHECKOUT_COMPLETE.md](./FRONTEND_CHECKOUT_COMPLETE.md)
+
+### **PRIORIDAD 4: UX & Polish (2-3 días)**
+
+Experiencia fluida:
+
+- [ ] Error handling - Mensajes claros
+- [ ] Loading states - Spinners, disabled buttons
+- [ ] Session management - Mantener carrito entre sesiones
+- [ ] Analytics - Tracking de eventos críticos
+
+### **PRIORIDAD 5: Deployment & Monitoring (1-2 días)**
+
+Lanzar con confianza:
+
+- [ ] Variables de env en Vercel
+- [ ] Webhook URL configurada en Mercado Pago
+- [ ] Logging & monitoring - Sentry, LogRocket
+- [ ] Runbooks - Cómo debuggear en producción
+
+---
+
+## 🏗️ Fases de Implementación Detalladas
 
 ### FASE 1️⃣: Infraestructura Base (Semana 1)
 
@@ -623,6 +694,55 @@ export interface MercadoPagoPreference {
 
 ---
 
-**Última actualización:** 3 de febrero de 2026  
+**Última actualización:** 4 de febrero de 2026  
 **Responsable:** Equipo/Copilot  
-**Próxima revisión:** Cuando finalice FASE 1
+**Status Actual:**
+
+- ✅ BD Schema: Tablas, triggers, RLS completos
+- ✅ SDK Mercado Pago: Instalado y configurado con integrator_id
+- ✅ Repositorio: CartRepository con CRUD + validación de stock + órdenes transaccionales
+- ✅ Endpoints: create-preference (transaccional + validaciones + datos completos) + webhook (idempotente + logging)
+- ✅ **PRIORIDAD 1 COMPLETADA**: Backend crítico production-ready
+  - Transacciones: orden + items en operación atómica con rollback
+  - Validaciones: stock en tiempo real antes de crear orden
+  - Idempotencia: webhook maneja reintentos sin duplicar procesamiento
+  - Logging: detallado para debugging en producción
+  - Datos completos: title, description, picture_url para MP
+- ✅ **PRIORIDAD 3 COMPLETADA**: Frontend checkout production-ready
+  - Carrito visual: CRUD completo, validaciones, estados de carga
+  - Formulario checkout: validaciones en tiempo real, integración con MP
+  - Páginas de retorno: success/failure/pending con diseño centrado
+  - Agregar al carrito: componente en detalle de producto con selección de variaciones
+  - Indicador de carrito: badge en header con cantidad total
+  - 📄 **Documentación:** [FRONTEND_CHECKOUT_COMPLETE.md](./FRONTEND_CHECKOUT_COMPLETE.md)
+
+- ✅ **Métodos de Pago Configurados**:
+  - Máximo 6 cuotas con tarjetas de crédito
+  - Exclusión de pagos con tarjeta Visa
+  - 📄 **Documentación:** [PAYMENT_RETURN_URLS.md](./PAYMENT_RETURN_URLS.md)
+
+- ✅ **URLs de Retorno Configuradas**:
+  - Success: `/checkout/success`
+  - Failure: `/checkout/failure`
+  - Pending: `/checkout/pending`
+  - Auto-return para pagos aprobados
+  - 📄 **Documentación:** [PAYMENT_RETURN_URLS.md](./PAYMENT_RETURN_URLS.md)
+
+- ✅ **Notificaciones Webhook Implementadas**:
+  - Endpoint: `/api/checkout/webhook`
+  - Idempotencia con `payment_logs`
+  - Logging detallado
+  - Mapeo de estados automático
+  - 📄 **Documentación:** [WEBHOOK_NOTIFICATIONS.md](./WEBHOOK_NOTIFICATIONS.md)
+  - 📄 **Guía Setup:** [WEBHOOK_SETUP_GUIDE.md](./WEBHOOK_SETUP_GUIDE.md)
+
+- ✅ **External Reference Implementado**:
+  - Identificador único: order_id (UUID)
+  - Vincula pagos con órdenes automáticamente
+  - Reconciliación y auditoría
+  - 📄 **Documentación:** [EXTERNAL_REFERENCE.md](./EXTERNAL_REFERENCE.md)
+  - 📄 **Verificación:** [EXTERNAL_REFERENCE_VERIFY.md](./EXTERNAL_REFERENCE_VERIFY.md)
+  - 📄 **Resumen:** [EXTERNAL_REFERENCE_SUMMARY.md](./EXTERNAL_REFERENCE_SUMMARY.md)
+
+- 📝 **NOTA Testing (PRIORIDAD 2)**: Tests unitarios requieren refactor para DI o BD test (no bloqueante para avanzar)
+- ⏳ **PRÓXIMO: PRIORIDAD 4** - UX & Polish (toast notifications, animaciones, analytics, session management avanzado)

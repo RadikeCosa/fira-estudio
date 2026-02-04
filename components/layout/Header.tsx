@@ -4,6 +4,7 @@ import { NAV_LINKS } from "@/lib/constants/navigation";
 import { COMPONENTS, COLORS } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./MobileNav";
+import { CartIndicator } from "./CartIndicator";
 
 /**
  * Header - Navegación principal con diseño minimalista
@@ -43,13 +44,17 @@ export function Header() {
             ))}
           </div>
 
-          {/* Mobile Navigation */}
-          <div className="md:hidden">
-            <MobileNav
-              links={NAV_LINKS}
-              logo={SITE_CONFIG.name}
-              decorativeText="Creaciones Textiles"
-            />
+          {/* Cart Indicator & Mobile Navigation */}
+          <div className="flex items-center gap-2">
+            <CartIndicator />
+
+            <div className="md:hidden">
+              <MobileNav
+                links={NAV_LINKS}
+                logo={SITE_CONFIG.name}
+                decorativeText="Creaciones Textiles"
+              />
+            </div>
           </div>
         </div>
       </nav>

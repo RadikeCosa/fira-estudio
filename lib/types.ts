@@ -41,6 +41,7 @@ export interface Variacion {
   stock: number;
   sku: string | null;
   activo: boolean;
+  producto?: Producto & { imagenes?: ImagenProducto[] }; // opcional, para populación
 }
 
 /** Imagen asociada a un producto */
@@ -59,3 +60,77 @@ export type ProductoCompleto = Producto & {
   variaciones: Variacion[];
   imagenes: ImagenProducto[];
 };
+
+// --- Carrito y Checkout ---
+
+export interface CartItem {
+  id: string;
+  cart_id: string;
+  variacion_id: string;
+  quantity: number;
+  price_at_addition: number;
+  created_at: string;
+  updated_at: string;
+  variacion?: Variacion; // opcional, para populación
+}
+
+export interface Cart {
+  id: string;
+  user_id: string | null;
+  session_id?: string;
+  total_amount: number;
+  created_at: string;
+  updated_at: string;
+  expires_at: string;
+  items?: CartItem[]; // opcional, para populación
+}
+
+export interface Order {
+  id: string;
+  order_number: string;
+  cart_id: string;
+  customer_email: string;
+  customer_phone?: string;
+  customer_name: string;
+  total_amount: number;
+  status:
+    | "pending"
+    | "approved"
+    | "paid"
+    | "shipped"
+    | "cancelled"
+    | "rejected";
+  mercadopago_preference_id: string;
+  mercadopago_payment_id?: string;
+  payment_method?: string;
+  shipping_address?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface OrderItem {
+  id: string;
+  order_id: string;
+  variacion_id: string;
+  product_name: string;
+  quantity: number;
+  unit_price: number;
+  subtotal: number;
+  variacion_size: string;
+  variacion_color: string;
+  sku?: string;
+  created_at: string;
+}
+
+export interface PaymentLog {
+  id: string;
+  order_id: string;
+  mercadopago_payment_id: string;
+  status: string;
+  status_detail: string;
+  merchant_order_id?: string;
+  event_type: string;
+  response_body: Record<string, unknown>;
+  created_at: string;
+}
