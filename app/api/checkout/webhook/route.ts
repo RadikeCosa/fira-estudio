@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
   console.log(`[Webhook DEBUG] Raw Body: ${bodyText}`);
   
   // Parsear el body manualmente ya que lo leímos como texto
-  let body: { id?: string | number; type?: string };
+  let body: Record<string, unknown>;
   try {
     body = JSON.parse(bodyText);
     console.log(`[Webhook DEBUG] Parsed Body:`, JSON.stringify(body, null, 2));
@@ -58,6 +58,48 @@ export async function POST(req: NextRequest) {
   // Extraer IP y loguearla
   const clientIP = extractClientIP(headers);
   console.log(`[Webhook DEBUG] Client IP: ${clientIP}`);
+
+  // NORMALIZAR: MP envía en 2 formatos diferentes
+  // Formato 1 (antiguo): { "resource": "123456", "topic": "payment" }
+  // Formato 2 (nuevo): { "id": "123456", "type": "payment" }
+  let eventType: string | undefined;
+
+  if (body.id && body.type) {
+    // Formato nuevo
+    paymentId = body.id as string | number;
+    eventType = body.type as string;
+  } else if (body.resource && body.topic) {
+    // Formato antiguo - extraer ID del resource
+    const resource = body.resource as string;
+    // resource puede ser "144231899227" o "https://api.mercadolibre.com/merchant_orders/123"
+    if (resource.includes('/')) {
+      // Es una URL, extraer el último segmento
+      paymentId = resource.split('/').pop();
+    } else {
+      // Es directamente el ID
+      paymentId = resource;
+    }
+    eventType = body.topic as string;
+    console.log(`[Webhook] Normalized from legacy format: resource=${resource}, topic=${body.topic} -> id=${paymentId}, type=${eventType}`);
+  } else {
+    console.error(`[Webhook DEBUG] Unknown webhook format:`, JSON.stringify(body));
+    return NextResponse.json({ 
+      received: true, 
+      status: "unknown_format",
+      body: body 
+    }, { status: 200 });
+  }
+
+  // Validar que tengamos los campos necesarios
+  if (!paymentId || !eventType) {
+    console.error(`[Webhook DEBUG] Missing required fields after normalization: id=${paymentId}, type=${eventType}`);
+    return NextResponse.json({ 
+      received: true, 
+      status: "missing_fields" 
+    }, { status: 200 });
+  }
+
+  console.log(`[Webhook] Received event: type=${eventType}, payment_id=${paymentId}`);
 
   try {
     // STEP 1: SECURITY - Validate IP origin (con bypass si está habilitado)
@@ -73,22 +115,7 @@ export async function POST(req: NextRequest) {
       console.warn(`[Webhook DEBUG] IP validation SKIPPED (debug mode)`);
     }
 
-    // STEP 2: Parse webhook body (ya lo parseamos arriba)
-    const { id, type } = body;
-    paymentId = id;
-
-    // Validate required fields
-    if (!id || !type) {
-      console.error(`[Webhook DEBUG] Missing required fields: id=${id}, type=${type}`);
-      return NextResponse.json(
-        { error: "Missing required fields (id or type)" },
-        { status: 200 },
-      );
-    }
-
-    console.log(`[Webhook] Received event: type=${type}, payment_id=${id}`);
-
-    // STEP 3: SECURITY - Validate webhook signature (con bypass si está habilitado)
+    // STEP 2: SECURITY - Validate webhook signature (con bypass si está habilitado)
     if (process.env.WEBHOOK_SKIP_SIGNATURE_VALIDATION !== "true") {
       const xTimestamp = headers["x-request-id"] || String(Date.now());
       
@@ -96,68 +123,68 @@ export async function POST(req: NextRequest) {
         !validateWebhookSignature(
           headers,
           bodyText,
-          id,
+          paymentId,
           xTimestamp,
         )
       ) {
         console.error(
-          `[Webhook] Invalid signature for payment ${id} - rejecting request`,
+          `[Webhook] Invalid signature for payment ${paymentId} - rejecting request`,
         );
         throw new ValidationError(
-          `Invalid signature for payment ${id}`,
+          `Invalid signature for payment ${paymentId}`,
           "Firma inválida",
         );
       }
-      console.log(`[Webhook] Signature validated for payment ${id}`);
+      console.log(`[Webhook] Signature validated for payment ${paymentId}`);
     } else {
       console.warn(`[Webhook DEBUG] Signature validation SKIPPED (debug mode)`);
     }
 
-    // STEP 4: Only process payment events
-    if (type !== "payment") {
-      console.log(`[Webhook] Ignoring non-payment event: ${type}`);
+    // STEP 3: Only process payment events
+    if (eventType !== "payment") {
+      console.log(`[Webhook] Ignoring non-payment event: ${eventType}`);
       return NextResponse.json(
-        { received: true, status: "ignored", event_type: type },
+        { received: true, status: "ignored", event_type: eventType },
         { status: 200 },
       );
     }
 
-    // STEP 5: Fetch payment data from Mercado Pago (for validation and event context)
+    // STEP 4: Fetch payment data from Mercado Pago (for validation and event context)
     const paymentClient = new Payment(client);
     let paymentData;
 
     try {
-      paymentData = await paymentClient.get({ id });
+      paymentData = await paymentClient.get({ id: paymentId });
     } catch (mpError) {
-      console.error(`[Webhook] Error fetching payment ${id} from MP:`, mpError);
+      console.error(`[Webhook] Error fetching payment ${paymentId} from MP:`, mpError);
       throw new PaymentError(
-        `Error fetching payment ${id} from Mercado Pago: ${mpError instanceof Error ? mpError.message : String(mpError)}`,
+        `Error fetching payment ${paymentId} from Mercado Pago: ${mpError instanceof Error ? mpError.message : String(mpError)}`,
         "Error al obtener pago de Mercado Pago",
       );
     }
 
     if (!paymentData || !paymentData.id) {
-      console.error(`[Webhook] Invalid payment data for id=${id}`);
+      console.error(`[Webhook] Invalid payment data for id=${paymentId}`);
       throw new PaymentError(
-        `Invalid payment data received for id=${id}`,
+        `Invalid payment data received for id=${paymentId}`,
         "No se pudo obtener el pago",
       );
     }
 
     // Validate external_reference (order_id)
     if (!paymentData.external_reference) {
-      console.error(`[Webhook] No external_reference in payment ${id}`);
+      console.error(`[Webhook] No external_reference in payment ${paymentId}`);
       throw new ValidationError(
-        `No external_reference found in payment ${id}`,
+        `No external_reference found in payment ${paymentId}`,
         "Orden no encontrada",
       );
     }
 
-    // STEP 6: Enqueue event for async processing
+    // STEP 5: Enqueue event for async processing
     const processor = getWebhookQueueProcessor();
     const queueId = await processor.enqueueEvent(
       String(paymentData.id),
-      type,
+      eventType,
       paymentData as unknown as Record<string, unknown>,
     );
 
@@ -166,7 +193,7 @@ export async function POST(req: NextRequest) {
       const queueEvent = {
         id: queueId,
         payment_id: String(paymentData.id),
-        event_type: type,
+        event_type: eventType,
         webhook_data: paymentData as unknown as Record<string, unknown>,
         status: "pending" as const,
         retry_count: 0,
