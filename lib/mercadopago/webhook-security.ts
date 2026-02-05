@@ -82,9 +82,9 @@ export function validateMercadoPagoIP(clientIP: string | null): boolean {
  */
 export function validateWebhookSignature(
   headers: Record<string, string | string[] | undefined>,
-  rawBody: string,
+  _rawBody: string,
   paymentId: string | number,
-  timestamp: string,
+  _timestamp: string,
 ): boolean {
   const signature = headers["x-signature"];
   const webhookSecret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
