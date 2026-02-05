@@ -303,15 +303,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         failure: failureUrl,
         pending: pendingUrl,
       },
+      auto_return: "approved",
       statement_descriptor: "FIRA ESTUDIO",
       external_reference: `${customerEmail}|${orderId}`,
       notification_url: webhookUrl,
       payment_methods: {
-        excluded_payment_methods: [
-          {
-            id: "visa",
-          },
-        ],
         installments: 6,
       },
     };

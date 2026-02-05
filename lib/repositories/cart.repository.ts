@@ -251,6 +251,19 @@ export class CartRepository {
     return order;
   }
 
+  async getOrderWithItems(order_id: string) {
+    const { data: order, error } = await this.supabase
+      .from("orders")
+      .select(`
+        *,
+        order_items(*)
+      `)
+      .eq("id", order_id)
+      .single();
+    if (error) throw error;
+    return order;
+  }
+
   async savePreferenceId(
     order_id: string,
     preference_id: string,
