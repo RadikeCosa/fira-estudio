@@ -38,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body
-        className={`${playfair.variable} ${inter.variable} antialiased flex flex-col min-h-screen`}
+        className={`${playfair.variable} ${inter.variable} antialiased flex flex-col min-h-screen pt-[52px]`}
       >
         <MaintenanceBanner />
         <Header />
