@@ -331,13 +331,13 @@ export class CartRepository {
     const orderItems = cart_items.map((item) => ({
       order_id: order.id,
       variacion_id: item.variacion_id,
-      product_name: item.variacao?.sku || "Producto",
+      product_name: item.variacion?.sku || "Producto",
       quantity: item.quantity,
       unit_price: item.price_at_addition,
       subtotal: item.quantity * item.price_at_addition,
-      variacion_size: item.variacao?.tamanio || "",
-      variacion_color: item.variacao?.color || "",
-      sku: item.variacao?.sku || null,
+      variacion_size: item.variacion?.tamanio || "",
+      variacion_color: item.variacion?.color || "",
+      sku: item.variacion?.sku || null,
       created_at: now,
     }));
 
