@@ -15,6 +15,8 @@
 
 import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { CartRepository } from "@/lib/repositories/cart.repository";
+import { client } from "@/lib/mercadopago/client";
+import { Payment } from "mercadopago";
 
 export interface WebhookQueueEvent {
   id?: number;
@@ -50,6 +52,35 @@ export class WebhookQueueProcessor {
         process.env.SUPABASE_SERVICE_ROLE_KEY!,
       );
     this.cartRepository = new CartRepository(this.supabase);
+  }
+
+  /**
+   * Fetch payment data from Mercado Pago API
+   */
+  private async fetchPaymentFromMP(paymentId: string): Promise<{
+    external_reference: string;
+    status: string;
+    status_detail: string;
+  }> {
+    const paymentClient = new Payment(client);
+    
+    try {
+      const paymentData = await paymentClient.get({ id: paymentId });
+      
+      if (!paymentData || !paymentData.external_reference) {
+        throw new Error(`Payment ${paymentId} has no external_reference`);
+      }
+      
+      return {
+        external_reference: paymentData.external_reference,
+        status: paymentData.status || 'unknown',
+        status_detail: paymentData.status_detail || '',
+      };
+    } catch (error) {
+      const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+      console.error(`[WebhookQueue] Error fetching payment ${paymentId} from MP:`, errorMsg);
+      throw new Error(`Failed to fetch payment ${paymentId}: ${errorMsg}`);
+    }
   }
 
   /**
@@ -102,19 +133,32 @@ export class WebhookQueueProcessor {
 
       const { webhook_data: webhookData } = queueEvent;
       const paymentId = queueEvent.payment_id;
-      const externalReference = webhookData.external_reference as string;
-      const status = webhookData.status as string;
-      const statusDetail = webhookData.status_detail as string;
+      
+      // Intentar obtener datos del webhook_data primero
+      let externalReference = webhookData.external_reference as string | undefined;
+      let status = webhookData.status as string | undefined;
+      let statusDetail = webhookData.status_detail as string | undefined;
+      
+      // Si no hay external_reference en webhook_data, fetch desde MP API
+      if (!externalReference) {
+        console.log(`[WebhookQueue] No external_reference in webhook_data, fetching from MP API for payment ${paymentId}...`);
+        const paymentData = await this.fetchPaymentFromMP(paymentId);
+        externalReference = paymentData.external_reference;
+        status = paymentData.status;
+        statusDetail = paymentData.status_detail;
+        console.log(`[WebhookQueue] Got payment data from MP: external_reference=${externalReference}, status=${status}`);
+      }
 
       // Validate external reference
       if (!externalReference) {
-        throw new Error(`No external_reference found in payment ${paymentId}`);
+        throw new Error(`No external_reference found for payment ${paymentId}`);
       }
 
       // Check idempotency
       const existingLog =
         await this.cartRepository.getPaymentLogByPaymentId(paymentId);
-      if (existingLog && existingLog.status === status) {
+      const paymentStatus = status || "unknown";
+      if (existingLog && existingLog.status === paymentStatus) {
         console.log(
           `[WebhookQueue] Event already processed (idempotent): payment_id=${paymentId}`,
         );
@@ -123,7 +167,7 @@ export class WebhookQueueProcessor {
         await this.cartRepository.savePaymentLog(
           externalReference,
           paymentId,
-          status || "unknown",
+          paymentStatus,
           statusDetail || "",
           null,
           "payment",
@@ -131,7 +175,7 @@ export class WebhookQueueProcessor {
         );
 
         // Update order status
-        const orderStatus = this.mapPaymentStatusToOrderStatus(status);
+        const orderStatus = this.mapPaymentStatusToOrderStatus(paymentStatus);
         await this.cartRepository.updateOrderStatus(
           externalReference,
           orderStatus,
@@ -144,7 +188,7 @@ export class WebhookQueueProcessor {
       }
 
       // AGREGAR: Si el pago fue aprobado, limpiar carrito y decrementar stock
-      const orderStatus = this.mapPaymentStatusToOrderStatus(status);
+      const orderStatus = this.mapPaymentStatusToOrderStatus(paymentStatus);
       if (orderStatus === "approved") {
         try {
           // Decrementar stock
@@ -179,7 +223,16 @@ export class WebhookQueueProcessor {
 
       return true;
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
+      // Serializar el error correctamente
+      let errorMsg: string;
+      if (error instanceof Error) {
+        errorMsg = error.message;
+      } else if (typeof error === 'object') {
+        errorMsg = JSON.stringify(error);
+      } else {
+        errorMsg = String(error);
+      }
+      
       console.error(`[WebhookQueue] Error processing event:`, {
         queueId: queueEvent.id,
         paymentId: queueEvent.payment_id,
