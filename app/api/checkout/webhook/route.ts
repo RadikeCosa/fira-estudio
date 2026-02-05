@@ -62,7 +62,6 @@ export async function POST(req: NextRequest) {
   // NORMALIZAR: MP envía en 2 formatos diferentes
   // Formato 1 (antiguo): { "resource": "123456", "topic": "payment" }
   // Formato 2 (nuevo): { "id": "123456", "type": "payment" }
-  let paymentId: string | number | undefined;
   let eventType: string | undefined;
 
   if (body.id && body.type) {
