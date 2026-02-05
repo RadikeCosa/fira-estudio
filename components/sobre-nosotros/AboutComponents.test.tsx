@@ -16,7 +16,7 @@ describe("AboutSection", () => {
         title="Nuestra Historia"
         icon={Heart}
         paragraphs={["Test paragraph"]}
-      />
+      />,
     );
 
     expect(screen.getByText("Nuestra Historia")).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe("AboutSection", () => {
         title="Test Section"
         icon={Sparkles}
         paragraphs={paragraphs}
-      />
+      />,
     );
 
     paragraphs.forEach((paragraph) => {
@@ -45,11 +45,7 @@ describe("AboutSection", () => {
 
   it("applies correct heading styles", () => {
     render(
-      <AboutSection
-        title="Test Title"
-        icon={Heart}
-        paragraphs={["Content"]}
-      />
+      <AboutSection title="Test Title" icon={Heart} paragraphs={["Content"]} />,
     );
 
     const heading = screen.getByText("Test Title");
@@ -64,7 +60,7 @@ describe("ValuesGrid", () => {
 
     expect(screen.getByText("Nuestros Valores")).toBeInTheDocument();
     expect(
-      screen.getByText("Los pilares que guían nuestro trabajo diario")
+      screen.getByText("Los pilares que guían nuestro trabajo diario"),
     ).toBeInTheDocument();
   });
 
@@ -81,18 +77,16 @@ describe("ValuesGrid", () => {
   it("renders value descriptions", () => {
     render(<ValuesGrid />);
 
-    // Check for part of each description
+    // Check for descriptions - these are complete texts from ABOUT_CONTENT
     expect(
-      screen.getByText(/Nos comprometemos con la excelencia/)
+      screen.getByText(/Nos comprometemos con la excelencia en cada pieza/),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/Diseñamos con propósito/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/Trabajamos de manera consciente y responsable/),
     ).toBeInTheDocument();
     expect(
-      screen.getByText(/Creemos en el diseño con propósito/)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Trabajamos de manera consciente/)
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Cada cliente es importante para nosotros/)
+      screen.getByText(/Cada cliente es importante para nosotros/),
     ).toBeInTheDocument();
   });
 

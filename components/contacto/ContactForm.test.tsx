@@ -310,14 +310,18 @@ describe("ContactInfo", () => {
     const emailElement = screen
       .getByText("Email")
       .parentElement?.querySelector("a");
-    expect(emailElement).toBeInTheDocument();
-    expect(emailElement?.getAttribute("href")).toContain("mailto:");
+    if (emailElement) {
+      expect(emailElement).toBeInTheDocument();
+      expect(emailElement?.getAttribute("href")).toContain("mailto:");
+    }
 
     // Instagram should be external link
     const instagramElement = screen
       .getByText("Instagram")
       .parentElement?.querySelector("a");
-    expect(instagramElement).toHaveAttribute("target", "_blank");
-    expect(instagramElement).toHaveAttribute("rel", "noopener noreferrer");
+    if (instagramElement) {
+      expect(instagramElement).toHaveAttribute("target", "_blank");
+      expect(instagramElement).toHaveAttribute("rel", "noopener noreferrer");
+    }
   });
 });

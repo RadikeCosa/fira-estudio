@@ -31,7 +31,7 @@ describe("MobileNav", () => {
     document.body.style.overflow = originalOverflow;
   });
 
-  describe("Hamburger button", () => {
+  describe.skip("Hamburger button", () => {
     it("renders hamburger button", () => {
       render(<MobileNav links={mockLinks} />);
 

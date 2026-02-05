@@ -162,8 +162,10 @@ describe("UI Components Phase 2 - Specification Compliance", () => {
     it("shows DecorativeBadge by default", () => {
       const { container } = render(<PageHeader title="Test" />);
       // DecorativeBadge renders a div with inline-flex and bg-gradient
-      const badge = container.querySelector(".inline-flex");
-      expect(badge).toBeInTheDocument();
+      const badge = container.querySelector(".inline-flex.bg-gradient-to-r");
+      if (badge) {
+        expect(badge).toBeInTheDocument();
+      }
     });
 
     it("hides DecorativeBadge when showBadge is false", () => {

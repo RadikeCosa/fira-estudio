@@ -71,7 +71,10 @@ describe("WhatsAppButton", () => {
 
     it("includes variation details when provided", () => {
       const { container } = render(
-        <WhatsAppButton producto={mockProducto} variacion={mockVariacionEnStock} />
+        <WhatsAppButton
+          producto={mockProducto}
+          variacion={mockVariacionEnStock}
+        />,
       );
       const link = container.querySelector("a");
       const href = link?.getAttribute("href") || "";
@@ -86,26 +89,32 @@ describe("WhatsAppButton", () => {
   describe("Stock-aware messaging", () => {
     it("asks about immediate shipping when stock > 0", () => {
       const { container } = render(
-        <WhatsAppButton producto={mockProducto} variacion={mockVariacionEnStock} />
+        <WhatsAppButton
+          producto={mockProducto}
+          variacion={mockVariacionEnStock}
+        />,
       );
       const link = container.querySelector("a");
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("¿Está disponible para envío inmediato?");
-      expect(decodedMessage).not.toContain("tiempo de fabricación");
+      expect(decodedMessage).toContain("disponible en stock");
+      expect(decodedMessage).not.toContain("a pedido");
     });
 
     it("asks about production time when stock = 0", () => {
       const { container } = render(
-        <WhatsAppButton producto={mockProducto} variacion={mockVariacionAPedido} />
+        <WhatsAppButton
+          producto={mockProducto}
+          variacion={mockVariacionAPedido}
+        />,
       );
       const link = container.querySelector("a");
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("¿Cuál es el tiempo de fabricación?");
-      expect(decodedMessage).not.toContain("envío inmediato");
+      expect(decodedMessage).toContain("a pedido");
+      expect(decodedMessage).not.toContain("disponible en stock");
     });
 
     it("asks for general information when no variation selected", () => {
@@ -114,9 +123,8 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("¿Podrías darme más información?");
-      expect(decodedMessage).not.toContain("tiempo de fabricación");
-      expect(decodedMessage).not.toContain("envío inmediato");
+      expect(decodedMessage).toContain("¿Cómo hago para comprarlo?");
+      expect(decodedMessage).toContain("Mantel Floral");
     });
   });
 
