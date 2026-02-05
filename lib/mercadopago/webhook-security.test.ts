@@ -156,6 +156,23 @@ describe("Mercado Pago Webhook Security", () => {
       expect(validateMercadoPagoIP("201.217.242.50")).toBe(true);
     });
 
+    it("should accept AWS IP ranges (MP uses AWS)", () => {
+      process.env.NODE_ENV = "production";
+
+      // AWS ranges: 18.0.0.0/8, 52.0.0.0/8, 54.0.0.0/8
+      expect(validateMercadoPagoIP("18.1.2.3")).toBe(true);
+      expect(validateMercadoPagoIP("52.100.50.25")).toBe(true);
+      expect(validateMercadoPagoIP("54.200.100.50")).toBe(true);
+    });
+
+    it("should accept Google Cloud IP ranges (MP uses GCP)", () => {
+      process.env.NODE_ENV = "production";
+
+      // Google Cloud ranges: 34.0.0.0/8, 35.0.0.0/8
+      expect(validateMercadoPagoIP("34.100.50.25")).toBe(true);
+      expect(validateMercadoPagoIP("35.200.100.50")).toBe(true);
+    });
+
     it("should reject non-Mercado Pago IPs in production", () => {
       process.env.NODE_ENV = "production";
 

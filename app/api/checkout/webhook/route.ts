@@ -33,45 +33,85 @@ export async function POST(req: NextRequest) {
   const startTime = Date.now();
   let paymentId: string | number | undefined;
 
+  // ============================================
+  // DEBUG LOGGING - Ver exactamente qué llega
+  // ============================================
+  const headers = Object.fromEntries(req.headers.entries());
+  console.log(`[Webhook DEBUG] ========== NUEVO WEBHOOK ==========`);
+  console.log(`[Webhook DEBUG] Timestamp: ${new Date().toISOString()}`);
+  console.log(`[Webhook DEBUG] Headers:`, JSON.stringify(headers, null, 2));
+  
+  // Clonar el request para leer el body sin consumirlo
+  const bodyText = await req.text();
+  console.log(`[Webhook DEBUG] Raw Body: ${bodyText}`);
+  
+  // Parsear el body manualmente ya que lo leímos como texto
+  let body: { id?: string | number; type?: string };
   try {
-    // STEP 1: SECURITY - Validate IP origin
-    const clientIP = extractClientIP(Object.fromEntries(req.headers.entries()));
-    if (!validateMercadoPagoIP(clientIP)) {
-      console.error(`[Webhook] Rejected request from IP: ${clientIP}`);
-      throw new ValidationError(
-        `Rejected request from unauthorized IP: ${clientIP}`,
-        "Origen no autorizado",
-      );
+    body = JSON.parse(bodyText);
+    console.log(`[Webhook DEBUG] Parsed Body:`, JSON.stringify(body, null, 2));
+  } catch (parseError) {
+    console.error(`[Webhook DEBUG] Error parsing body:`, parseError);
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 200 });
+  }
+
+  // Extraer IP y loguearla
+  const clientIP = extractClientIP(headers);
+  console.log(`[Webhook DEBUG] Client IP: ${clientIP}`);
+
+  try {
+    // STEP 1: SECURITY - Validate IP origin (con bypass si está habilitado)
+    if (process.env.WEBHOOK_SKIP_IP_VALIDATION !== "true") {
+      if (!validateMercadoPagoIP(clientIP)) {
+        console.error(`[Webhook] Rejected request from IP: ${clientIP}`);
+        throw new ValidationError(
+          `Rejected request from unauthorized IP: ${clientIP}`,
+          "Origen no autorizado",
+        );
+      }
+    } else {
+      console.warn(`[Webhook DEBUG] IP validation SKIPPED (debug mode)`);
     }
 
-    // STEP 2: Parse webhook body
-    const { id, type } = await req.json();
+    // STEP 2: Parse webhook body (ya lo parseamos arriba)
+    const { id, type } = body;
     paymentId = id;
+
+    // Validate required fields
+    if (!id || !type) {
+      console.error(`[Webhook DEBUG] Missing required fields: id=${id}, type=${type}`);
+      return NextResponse.json(
+        { error: "Missing required fields (id or type)" },
+        { status: 200 },
+      );
+    }
 
     console.log(`[Webhook] Received event: type=${type}, payment_id=${id}`);
 
-    // STEP 3: SECURITY - Validate webhook signature (HMAC-SHA256)
-    const xTimestamp = req.headers.get("x-request-id") || String(Date.now());
-    const headers = Object.fromEntries(req.headers.entries());
-
-    if (
-      !validateWebhookSignature(
-        headers,
-        JSON.stringify({ id, type }),
-        id,
-        xTimestamp,
-      )
-    ) {
-      console.error(
-        `[Webhook] Invalid signature for payment ${id} - rejecting request`,
-      );
-      throw new ValidationError(
-        `Invalid signature for payment ${id}`,
-        "Firma inválida",
-      );
+    // STEP 3: SECURITY - Validate webhook signature (con bypass si está habilitado)
+    if (process.env.WEBHOOK_SKIP_SIGNATURE_VALIDATION !== "true") {
+      const xTimestamp = headers["x-request-id"] || String(Date.now());
+      
+      if (
+        !validateWebhookSignature(
+          headers,
+          bodyText,
+          id,
+          xTimestamp,
+        )
+      ) {
+        console.error(
+          `[Webhook] Invalid signature for payment ${id} - rejecting request`,
+        );
+        throw new ValidationError(
+          `Invalid signature for payment ${id}`,
+          "Firma inválida",
+        );
+      }
+      console.log(`[Webhook] Signature validated for payment ${id}`);
+    } else {
+      console.warn(`[Webhook DEBUG] Signature validation SKIPPED (debug mode)`);
     }
-
-    console.log(`[Webhook] Signature validated for payment ${id}`);
 
     // STEP 4: Only process payment events
     if (type !== "payment") {
