@@ -45,12 +45,14 @@ async function getSessionId(): Promise<string> {
 
 export async function createOrGetCart(): Promise<Cart> {
   const session_id = await getSessionId();
-  return await CartRepository.getOrCreateCart(session_id);
+  const repo = new CartRepository();
+  return await repo.getOrCreateCart(session_id);
 }
 
 export async function getCart(): Promise<Cart & { items: CartItem[] }> {
   const session_id = await getSessionId();
-  return await CartRepository.getCartWithItems(session_id);
+  const repo = new CartRepository();
+  return await repo.getCartWithItems(session_id);
 }
 
 export async function addToCart(
@@ -59,19 +61,16 @@ export async function addToCart(
   price: number,
 ): Promise<CartItem> {
   const session_id = await getSessionId();
-  const cart = await CartRepository.getOrCreateCart(session_id);
-  const item = await CartRepository.addItem(
-    cart.id,
-    variacion_id,
-    quantity,
-    price,
-  );
-  await CartRepository.updateCartTotal(cart.id);
+  const repo = new CartRepository();
+  const cart = await repo.getOrCreateCart(session_id);
+  const item = await repo.addItem(cart.id, variacion_id, quantity, price);
+  await repo.updateCartTotal(cart.id);
   return item;
 }
 
 export async function removeFromCart(item_id: string): Promise<void> {
-  await CartRepository.removeItem(item_id);
+  const repo = new CartRepository();
+  await repo.removeItem(item_id);
   // Opcional: recalcular total si lo necesitas
 }
 
@@ -79,14 +78,16 @@ export async function updateCartQuantity(
   item_id: string,
   quantity: number,
 ): Promise<CartItem> {
-  const item = await CartRepository.updateItemQuantity(item_id, quantity);
+  const repo = new CartRepository();
+  const item = await repo.updateItemQuantity(item_id, quantity);
   // Opcional: recalcular total si lo necesitas
   return item;
 }
 
 export async function clearCart(): Promise<void> {
   const session_id = await getSessionId();
-  const cart = await CartRepository.getOrCreateCart(session_id);
-  await CartRepository.clearCart(cart.id);
-  await CartRepository.updateCartTotal(cart.id);
+  const repo = new CartRepository();
+  const cart = await repo.getOrCreateCart(session_id);
+  await repo.clearCart(cart.id);
+  await repo.updateCartTotal(cart.id);
 }
