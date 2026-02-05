@@ -7,6 +7,11 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { logSecurityEvent } from "@/lib/utils/security-logger";
+import {
+  AppError,
+  ValidationError,
+  RateLimitError,
+} from "@/lib/errors/AppError";
 
 /** Rate limit configuration for different action types */
 const RATE_LIMITS = {
@@ -73,9 +78,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     // Validate action
     if (!action || !(action in RATE_LIMITS)) {
-      return NextResponse.json(
-        { error: "Invalid action. Must be 'whatsapp' or 'contact'" },
-        { status: 400 },
+      throw new ValidationError(
+        "Invalid action. Must be 'whatsapp' or 'contact'",
+        "Acción inválida. Intenta de nuevo.",
       );
     }
 
@@ -103,13 +108,10 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
           resetIn,
         });
 
-        return NextResponse.json(
-          {
-            allowed: false,
-            resetIn,
-            message: `Rate limit exceeded. Try again in ${Math.ceil(resetIn / 1000)} seconds.`,
-          },
-          { status: 429 },
+        throw new RateLimitError(
+          `Rate limit exceeded for action: ${action}`,
+          `Demasiadas solicitudes. Intenta de nuevo en ${Math.ceil(resetIn / 1000)} segundos.`,
+          { resetIn, maxRequests: config.maxRequests },
         );
       }
 
@@ -156,7 +158,19 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     console.error("Rate limit check error:", error);
 
-    // Fail open - allow the action
+    // If AppError, return structured response
+    if (error instanceof AppError) {
+      return NextResponse.json(
+        {
+          error: error.userMessage,
+          code: error.code,
+          details: error.details,
+        },
+        { status: error.statusCode },
+      );
+    }
+
+    // Otherwise fail open - allow the action
     return NextResponse.json({ allowed: true });
   }
 }

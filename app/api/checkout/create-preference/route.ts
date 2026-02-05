@@ -3,6 +3,134 @@ import { client, Preference } from "@/lib/mercadopago/client";
 import { CartRepository } from "@/lib/repositories/cart.repository";
 import { CHECKOUT_URLS, WEBHOOK_URL } from "@/lib/config/urls";
 import type { Cart, CartItem } from "@/lib/types";
+import { logSecurityEvent } from "@/lib/utils/security-logger";
+import {
+  AppError,
+  ConfigurationError,
+  OrderError,
+  PaymentError,
+  ValidationError,
+} from "@/lib/errors/AppError";
+
+/** Rate limit configuration for checkout endpoint */
+const CHECKOUT_RATE_LIMIT = {
+  maxRequests: 5,
+  windowMs: 900000, // 15 minutes
+} as const;
+
+/** In-memory store for checkout rate limit records */
+const checkoutRateLimitStore = new Map<
+  string,
+  { count: number; resetAt: number }
+>();
+
+interface CheckoutRequestBody {
+  customerEmail?: string;
+  customerName?: string;
+  customerPhone?: string;
+  shippingAddress?: string;
+}
+
+interface AppErrorResponse {
+  error: string;
+  code: string;
+  details?: unknown;
+}
+
+function buildAppErrorResponse(error: AppError): NextResponse {
+  const body: AppErrorResponse = {
+    error: error.userMessage,
+    code: error.code,
+  };
+
+  if (error.details !== undefined) {
+    body.details = error.details;
+  }
+
+  return NextResponse.json(body, { status: error.statusCode });
+}
+
+/**
+ * Extracts client IP address from request headers
+ * Priority: x-forwarded-for > x-real-ip > fallback to "unknown"
+ */
+function getClientIP(req: NextRequest): string {
+  const forwardedFor = req.headers.get("x-forwarded-for");
+  if (forwardedFor) {
+    return forwardedFor.split(",")[0].trim();
+  }
+
+  const realIp = req.headers.get("x-real-ip");
+  if (realIp) {
+    return realIp.trim();
+  }
+
+  return "unknown";
+}
+
+/**
+ * Checks rate limit for checkout endpoint
+ * Limits: 5 requests per 15 minutes per IP
+ *
+ * @returns { allowed: boolean, resetIn?: number }
+ */
+function checkCheckoutRateLimit(ip: string): {
+  allowed: boolean;
+  resetIn?: number;
+} {
+  const now = Date.now();
+  const key = `checkout:${ip}`;
+  const record = checkoutRateLimitStore.get(key);
+
+  // Check if record exists and has not expired
+  if (record && now < record.resetAt) {
+    // Check if limit exceeded
+    if (record.count >= CHECKOUT_RATE_LIMIT.maxRequests) {
+      const resetIn = record.resetAt - now;
+
+      logSecurityEvent("rate_limit_exceeded", {
+        endpoint: "checkout",
+        ip,
+        count: record.count,
+        maxRequests: CHECKOUT_RATE_LIMIT.maxRequests,
+        resetIn,
+      });
+
+      return { allowed: false, resetIn };
+    }
+
+    // Increment count
+    record.count += 1;
+    checkoutRateLimitStore.set(key, record);
+
+    logSecurityEvent("rate_limit_check", {
+      endpoint: "checkout",
+      ip,
+      count: record.count,
+      maxRequests: CHECKOUT_RATE_LIMIT.maxRequests,
+      allowed: true,
+    });
+
+    return { allowed: true };
+  }
+
+  // Create new record (no existing record or expired)
+  const newRecord = {
+    count: 1,
+    resetAt: now + CHECKOUT_RATE_LIMIT.windowMs,
+  };
+  checkoutRateLimitStore.set(key, newRecord);
+
+  logSecurityEvent("rate_limit_check", {
+    endpoint: "checkout",
+    ip,
+    count: 1,
+    maxRequests: CHECKOUT_RATE_LIMIT.maxRequests,
+    allowed: true,
+  });
+
+  return { allowed: true };
+}
 
 /**
  * Obtiene session_id desde cookies del request
@@ -13,17 +141,38 @@ import type { Cart, CartItem } from "@/lib/types";
 function getSessionId(req: NextRequest): string {
   const sessionId = req.cookies.get("session_id")?.value;
   if (!sessionId) {
-    throw new Error(
+    throw new ValidationError(
       "No session_id found in cookies. El carrito debe ser creado primero desde el cliente.",
+      "El carrito no está disponible. Por favor, intenta de nuevo.",
     );
   }
   return sessionId;
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
+    // RATE LIMIT CHECK - First thing to do
+    const clientIP = getClientIP(req);
+    const rateLimitCheck = checkCheckoutRateLimit(clientIP);
+
+    if (!rateLimitCheck.allowed) {
+      const resetInSeconds = Math.ceil((rateLimitCheck.resetIn || 0) / 1000);
+      console.warn(
+        `[Checkout] Rate limit exceeded for IP: ${clientIP}. Reset in ${resetInSeconds}s`,
+      );
+
+      return NextResponse.json(
+        {
+          error: "Demasiadas solicitudes de pago",
+          message: `Por favor, intenta de nuevo en ${resetInSeconds} segundos.`,
+          resetIn: rateLimitCheck.resetIn,
+        },
+        { status: 429 },
+      );
+    }
+
     const { customerEmail, customerName, customerPhone, shippingAddress } =
-      await req.json();
+      (await req.json()) as CheckoutRequestBody;
 
     // Usar configuración centralizada de URLs
     const successUrl = CHECKOUT_URLS.success;
@@ -52,44 +201,41 @@ export async function POST(req: NextRequest) {
     }
     if (missingEnv.length > 0) {
       console.error("Create preference error: Missing env vars", missingEnv);
-      return NextResponse.json(
-        {
-          error: "Faltan variables de entorno requeridas",
-          details: missingEnv,
-        },
-        { status: 500 },
+      throw new ConfigurationError(
+        "Missing required environment variables",
+        "Faltan variables de entorno requeridas",
+        { missingEnv },
       );
     }
 
     // Validaciones de input
     if (!customerEmail || !customerName) {
-      return NextResponse.json(
-        { error: "customerEmail y customerName son requeridos" },
-        { status: 400 },
+      throw new ValidationError(
+        "customerEmail y customerName son requeridos",
+        "El email y el nombre son requeridos para continuar.",
       );
     }
 
     // Obtener session_id y carrito
     const session_id = getSessionId(req);
+    const repo = new CartRepository();
     const cart: Cart & { items: CartItem[] } =
-      await CartRepository.getCartWithItems(session_id);
+      await repo.getCartWithItems(session_id);
 
     if (!cart || !cart.items || cart.items.length === 0) {
-      return NextResponse.json(
-        { error: "El carrito está vacío o no existe" },
-        { status: 400 },
+      throw new ValidationError(
+        "El carrito está vacío o no existe",
+        "Tu carrito está vacío. Agrega productos para continuar.",
       );
     }
 
     // PASO 1: Validar stock ANTES de crear orden
-    const insufficientStock = await CartRepository.validateStock(cart.items);
+    const insufficientStock = await repo.validateStock(cart.items);
     if (insufficientStock.length > 0) {
-      return NextResponse.json(
-        {
-          error: "Stock insuficiente",
-          details: insufficientStock,
-        },
-        { status: 400 },
+      throw new ValidationError(
+        "Stock insuficiente",
+        "Algunos productos no tienen stock suficiente.",
+        { insufficientStock },
       );
     }
 
@@ -102,7 +248,7 @@ export async function POST(req: NextRequest) {
     // PASO 3: Crear orden en Supabase con items (transacción implícita)
     let orderId: string;
     try {
-      orderId = await CartRepository.createOrderWithItems(
+      orderId = await repo.createOrderWithItems(
         cart.id,
         customerEmail,
         customerName,
@@ -112,9 +258,11 @@ export async function POST(req: NextRequest) {
         shippingAddress,
       );
     } catch (error) {
-      return NextResponse.json(
-        { error: "Error al crear la orden", details: (error as Error).message },
-        { status: 500 },
+      const details = error instanceof Error ? error.message : "Unknown error";
+      throw new OrderError(
+        "Error al crear la orden",
+        "No pudimos crear la orden. Intenta nuevamente.",
+        { details },
       );
     }
 
@@ -181,26 +329,26 @@ export async function POST(req: NextRequest) {
     } catch (mpError) {
       console.error("Mercado Pago preference error:", mpError);
       // ROLLBACK: Si falla Mercado Pago, marcar orden como cancelada
-      await CartRepository.updateOrderStatus(orderId, "cancelled");
-      return NextResponse.json(
-        {
-          error: "Error al crear preferencia de pago",
-          details: (mpError as Error).message,
-        },
-        { status: 500 },
+      await repo.updateOrderStatus(orderId, "cancelled");
+      const details =
+        mpError instanceof Error ? mpError.message : "Unknown error";
+      throw new PaymentError(
+        "Error al crear preferencia de pago",
+        "No pudimos iniciar el pago. Intenta nuevamente.",
+        { details },
       );
     }
 
     if (!mpRes || !mpRes.id || !mpRes.init_point) {
-      await CartRepository.updateOrderStatus(orderId, "cancelled");
-      return NextResponse.json(
-        { error: "Respuesta inválida de Mercado Pago" },
-        { status: 500 },
+      await repo.updateOrderStatus(orderId, "cancelled");
+      throw new PaymentError(
+        "Respuesta inválida de Mercado Pago",
+        "No pudimos iniciar el pago. Intenta nuevamente.",
       );
     }
 
     // PASO 5: Guardar preference_id en la orden
-    await CartRepository.savePreferenceId(orderId, mpRes.id);
+    await repo.savePreferenceId(orderId, mpRes.id);
 
     return NextResponse.json({
       preference_id: mpRes.id,
@@ -209,9 +357,15 @@ export async function POST(req: NextRequest) {
       cart_id: cart.id,
     });
   } catch (error) {
+    if (error instanceof AppError) {
+      return buildAppErrorResponse(error);
+    }
+
     console.error("Create preference error:", error);
     return NextResponse.json(
-      { error: (error as Error).message },
+      {
+        error: "Ocurrió un error inesperado. Por favor, intenta nuevamente.",
+      },
       { status: 500 },
     );
   }
