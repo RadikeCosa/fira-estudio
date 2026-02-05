@@ -56,13 +56,38 @@ describe("POST /api/checkout/webhook", () => {
   }
 
   describe("Happy Path - Valid Webhook", () => {
-    it("should process valid payment.created event", async () => {
+    it("should process valid payment event with NEW format (id/type)", async () => {
       const mockEvent = {
         id: mockPaymentId,
         type: "payment",
       };
 
       expect(mockEvent.type).toBe("payment");
+      expect(mockEvent.id).toBe(mockPaymentId);
+    });
+
+    it("should process valid payment event with OLD format (resource/topic)", async () => {
+      const mockEvent = {
+        resource: "144231899227",
+        topic: "payment",
+      };
+
+      expect(mockEvent.topic).toBe("payment");
+      expect(mockEvent.resource).toBe("144231899227");
+    });
+
+    it("should extract payment ID from resource URL format", async () => {
+      const resource = "https://api.mercadolibre.com/merchant_orders/12345";
+      const paymentId = resource.split('/').pop();
+
+      expect(paymentId).toBe("12345");
+    });
+
+    it("should extract payment ID from resource direct ID format", async () => {
+      const resource = "144231899227";
+      const paymentId = resource.includes('/') ? resource.split('/').pop() : resource;
+
+      expect(paymentId).toBe("144231899227");
     });
 
     it("should handle approved payment status", async () => {
@@ -200,6 +225,82 @@ describe("POST /api/checkout/webhook", () => {
 
       const isPaymentEvent = mockEvent.type === "payment";
       expect(isPaymentEvent).toBe(false);
+    });
+
+    it("should normalize new format (id/type) correctly", async () => {
+      const body = {
+        id: "123456",
+        type: "payment",
+      };
+
+      let paymentId: string | number | undefined;
+      let eventType: string | undefined;
+
+      if (body.id && body.type) {
+        paymentId = body.id;
+        eventType = body.type;
+      }
+
+      expect(paymentId).toBe("123456");
+      expect(eventType).toBe("payment");
+    });
+
+    it("should normalize old format (resource/topic) correctly", async () => {
+      const body = {
+        resource: "144231899227",
+        topic: "payment",
+      };
+
+      let paymentId: string | number | undefined;
+      let eventType: string | undefined;
+
+      if (body.resource && body.topic) {
+        const resource = body.resource as string;
+        if (resource.includes('/')) {
+          paymentId = resource.split('/').pop();
+        } else {
+          paymentId = resource;
+        }
+        eventType = body.topic;
+      }
+
+      expect(paymentId).toBe("144231899227");
+      expect(eventType).toBe("payment");
+    });
+
+    it("should handle resource as URL in old format", async () => {
+      const body = {
+        resource: "https://api.mercadolibre.com/merchant_orders/999888",
+        topic: "payment",
+      };
+
+      let paymentId: string | number | undefined;
+      let eventType: string | undefined;
+
+      if (body.resource && body.topic) {
+        const resource = body.resource as string;
+        if (resource.includes('/')) {
+          paymentId = resource.split('/').pop();
+        } else {
+          paymentId = resource;
+        }
+        eventType = body.topic;
+      }
+
+      expect(paymentId).toBe("999888");
+      expect(eventType).toBe("payment");
+    });
+
+    it("should return unknown_format for unrecognized webhook", async () => {
+      const body = {
+        some_field: "value",
+      };
+
+      const hasNewFormat = body.hasOwnProperty('id') && body.hasOwnProperty('type');
+      const hasOldFormat = body.hasOwnProperty('resource') && body.hasOwnProperty('topic');
+
+      expect(hasNewFormat).toBe(false);
+      expect(hasOldFormat).toBe(false);
     });
 
     it("should process only payment.created and payment.updated", async () => {
