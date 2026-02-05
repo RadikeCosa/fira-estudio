@@ -227,7 +227,32 @@ describe("POST /api/checkout/webhook", () => {
       expect(isPaymentEvent).toBe(false);
     });
 
-    it("should normalize new format (id/type) correctly", async () => {
+    it("should normalize new v2 format (data.id/type) correctly", async () => {
+      const body = {
+        type: "payment",
+        data: { id: "144234199607" },
+        id: 128828458722, // This is the event ID, not payment ID
+      };
+
+      let paymentId: string | number | undefined;
+      let eventType: string | undefined;
+
+      // Priority 1: Check for new v2 format with data.id
+      if (body.type && body.data && typeof body.data === 'object' && 'id' in body.data) {
+        paymentId = (body.data as { id: string | number }).id;
+        eventType = body.type;
+      }
+      // Priority 2: Check for old format
+      else if (body.id && body.type) {
+        paymentId = body.id;
+        eventType = body.type;
+      }
+
+      expect(paymentId).toBe("144234199607");
+      expect(eventType).toBe("payment");
+    });
+
+    it("should normalize new format (id/type) correctly when data.id is not present", async () => {
       const body = {
         id: "123456",
         type: "payment",
@@ -288,6 +313,30 @@ describe("POST /api/checkout/webhook", () => {
       }
 
       expect(paymentId).toBe("999888");
+      expect(eventType).toBe("payment");
+    });
+
+    it("should prioritize data.id over id in new v2 format", async () => {
+      const body = {
+        type: "payment",
+        data: { id: "144234199607" }, // Real payment ID
+        id: 128828458722, // Event ID - should be ignored
+      };
+
+      let paymentId: string | number | undefined;
+      let eventType: string | undefined;
+
+      // This should extract data.id, not id
+      if (body.type && body.data && typeof body.data === 'object' && 'id' in body.data) {
+        paymentId = (body.data as { id: string | number }).id;
+        eventType = body.type;
+      } else if (body.id && body.type) {
+        paymentId = body.id;
+        eventType = body.type;
+      }
+
+      expect(paymentId).toBe("144234199607");
+      expect(paymentId).not.toBe(128828458722);
       expect(eventType).toBe("payment");
     });
 

@@ -59,17 +59,18 @@ export async function POST(req: NextRequest) {
   const clientIP = extractClientIP(headers);
   console.log(`[Webhook DEBUG] Client IP: ${clientIP}`);
 
-  // NORMALIZAR: MP envía en 2 formatos diferentes
-  // Formato 1 (antiguo): { "resource": "123456", "topic": "payment" }
-  // Formato 2 (nuevo): { "id": "123456", "type": "payment" }
+  // NORMALIZAR: MP envía en varios formatos
   let eventType: string | undefined;
 
-  if (body.id && body.type) {
-    // Formato nuevo
-    paymentId = body.id as string | number;
+  // Formato nuevo v2: { "type": "payment", "data": { "id": "144234199607" }, "id": 128828458722 }
+  // El ID real del pago está en data.id, NO en id (que es el ID del evento)
+  if (body.type && body.data && typeof body.data === 'object' && 'id' in body.data) {
+    paymentId = (body.data as { id: string | number }).id;
     eventType = body.type as string;
-  } else if (body.resource && body.topic) {
-    // Formato antiguo - extraer ID del resource
+    console.log(`[Webhook] Extracted from data.id format: payment_id=${paymentId}, type=${eventType}`);
+  }
+  // Formato legacy: { "resource": "144234199607", "topic": "payment" }
+  else if (body.resource && body.topic) {
     const resource = body.resource as string;
     // resource puede ser "144231899227" o "https://api.mercadolibre.com/merchant_orders/123"
     if (resource.includes('/')) {
@@ -81,7 +82,14 @@ export async function POST(req: NextRequest) {
     }
     eventType = body.topic as string;
     console.log(`[Webhook] Normalized from legacy format: resource=${resource}, topic=${body.topic} -> id=${paymentId}, type=${eventType}`);
-  } else {
+  }
+  // Fallback: usar id directamente (para otros tipos de eventos)
+  else if (body.id && body.type) {
+    paymentId = body.id as string | number;
+    eventType = body.type as string;
+    console.log(`[Webhook] Using direct id/type format: payment_id=${paymentId}, type=${eventType}`);
+  }
+  else {
     console.error(`[Webhook DEBUG] Unknown webhook format:`, JSON.stringify(body));
     return NextResponse.json({ 
       received: true, 
@@ -156,9 +164,12 @@ export async function POST(req: NextRequest) {
     try {
       paymentData = await paymentClient.get({ id: paymentId });
     } catch (mpError) {
-      console.error(`[Webhook] Error fetching payment ${paymentId} from MP:`, mpError);
+      const errorMessage = mpError instanceof Error 
+        ? mpError.message 
+        : JSON.stringify(mpError);
+      console.error(`[Webhook] Error fetching payment ${paymentId} from MP:`, errorMessage);
       throw new PaymentError(
-        `Error fetching payment ${paymentId} from Mercado Pago: ${mpError instanceof Error ? mpError.message : String(mpError)}`,
+        `Error fetching payment ${paymentId} from Mercado Pago: ${errorMessage}`,
         "Error al obtener pago de Mercado Pago",
       );
     }
