@@ -175,4 +175,334 @@ describe("WebhookQueueProcessor - UUID Extraction", () => {
       expect(orderId).toBe("");
     });
   });
+
+  describe("Idempotency Logic", () => {
+    let mockSupabase: Partial<SupabaseClient>;
+    let processor: WebhookQueueProcessor;
+
+    beforeEach(() => {
+      // Create a more detailed mock for testing processEvent
+      mockSupabase = {
+        from: vi.fn((table: string) => {
+          if (table === "webhook_queue") {
+            return {
+              update: vi.fn(() => ({
+                eq: vi.fn(() => Promise.resolve({ data: null, error: null })),
+              })),
+            };
+          }
+          return {
+            select: vi.fn(() => ({
+              eq: vi.fn(() => ({
+                single: vi.fn(() =>
+                  Promise.resolve({ data: null, error: null }),
+                ),
+              })),
+            })),
+          };
+        }),
+      };
+
+      processor = new WebhookQueueProcessor(mockSupabase as SupabaseClient);
+    });
+
+    it("should update order when payment_log exists but order status is wrong", async () => {
+      const orderId = "order-123";
+      const paymentId = "payment-456";
+      const correctStatus = "approved";
+
+      // Mock: payment_log exists with correct status
+      const getPaymentLogByPaymentId = vi
+        .fn()
+        .mockResolvedValue({ order_id: orderId, status: correctStatus });
+
+      // Mock: order exists but has wrong status
+      const getOrderById = vi.fn().mockResolvedValue({
+        id: orderId,
+        status: "pending", // Wrong status!
+        mercadopago_payment_id: null,
+      });
+
+      // Mock: updateOrderStatus should be called
+      const updateOrderStatus = vi.fn().mockResolvedValue(undefined);
+
+      // Mock: savePaymentLog should NOT be called (already exists)
+      const savePaymentLog = vi.fn().mockResolvedValue(undefined);
+
+      // Mock: other methods
+      const decrementStockForOrder = vi.fn().mockResolvedValue(undefined);
+      const getCartIdByOrderId = vi.fn().mockResolvedValue("cart-123");
+      const clearCart = vi.fn().mockResolvedValue(undefined);
+      const updateCartTotal = vi.fn().mockResolvedValue(undefined);
+
+      // Inject mocked CartRepository
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (processor as any).cartRepository = {
+        getPaymentLogByPaymentId,
+        getOrderById,
+        updateOrderStatus,
+        savePaymentLog,
+        decrementStockForOrder,
+        getCartIdByOrderId,
+        clearCart,
+        updateCartTotal,
+      };
+
+      // Process event
+      const queueEvent = {
+        id: 1,
+        payment_id: paymentId,
+        event_type: "payment",
+        webhook_data: {
+          external_reference: orderId,
+          status: correctStatus,
+          status_detail: "accredited",
+        },
+        status: "pending" as const,
+        retry_count: 0,
+        max_retries: 5,
+      };
+
+      await processor.processEvent(queueEvent);
+
+      // Assertions
+      expect(getOrderById).toHaveBeenCalledWith(orderId);
+      expect(getPaymentLogByPaymentId).toHaveBeenCalledWith(paymentId);
+
+      // Should NOT create new payment_log (already exists)
+      expect(savePaymentLog).not.toHaveBeenCalled();
+
+      // Should UPDATE order (wrong status)
+      expect(updateOrderStatus).toHaveBeenCalledWith(
+        orderId,
+        correctStatus,
+        paymentId,
+      );
+
+      // Should execute post-approval actions
+      expect(decrementStockForOrder).toHaveBeenCalledWith(orderId);
+      expect(clearCart).toHaveBeenCalledWith("cart-123");
+    });
+
+    it("should skip processing when both payment_log and order are already correct", async () => {
+      const orderId = "order-123";
+      const paymentId = "payment-456";
+      const correctStatus = "approved";
+
+      // Mock: payment_log exists with correct status
+      const getPaymentLogByPaymentId = vi
+        .fn()
+        .mockResolvedValue({ order_id: orderId, status: correctStatus });
+
+      // Mock: order exists with CORRECT status
+      const getOrderById = vi.fn().mockResolvedValue({
+        id: orderId,
+        status: correctStatus, // Correct status!
+        mercadopago_payment_id: paymentId, // Already set!
+      });
+
+      // Mock: updateOrderStatus should NOT be called
+      const updateOrderStatus = vi.fn().mockResolvedValue(undefined);
+
+      // Mock: savePaymentLog should NOT be called
+      const savePaymentLog = vi.fn().mockResolvedValue(undefined);
+
+      // Mock: post-approval actions should still execute (they have internal idempotency)
+      const decrementStockForOrder = vi.fn().mockResolvedValue(undefined);
+      const getCartIdByOrderId = vi.fn().mockResolvedValue("cart-123");
+      const clearCart = vi.fn().mockResolvedValue(undefined);
+      const updateCartTotal = vi.fn().mockResolvedValue(undefined);
+
+      // Inject mocked CartRepository
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (processor as any).cartRepository = {
+        getPaymentLogByPaymentId,
+        getOrderById,
+        updateOrderStatus,
+        savePaymentLog,
+        decrementStockForOrder,
+        getCartIdByOrderId,
+        clearCart,
+        updateCartTotal,
+      };
+
+      // Process event
+      const queueEvent = {
+        id: 1,
+        payment_id: paymentId,
+        event_type: "payment",
+        webhook_data: {
+          external_reference: orderId,
+          status: correctStatus,
+          status_detail: "accredited",
+        },
+        status: "pending" as const,
+        retry_count: 0,
+        max_retries: 5,
+      };
+
+      await processor.processEvent(queueEvent);
+
+      // Assertions
+      expect(getOrderById).toHaveBeenCalledWith(orderId);
+      expect(getPaymentLogByPaymentId).toHaveBeenCalledWith(paymentId);
+
+      // Should NOT create payment_log (already exists)
+      expect(savePaymentLog).not.toHaveBeenCalled();
+
+      // Should NOT update order (already correct)
+      expect(updateOrderStatus).not.toHaveBeenCalled();
+
+      // Should still execute post-approval actions (they decide internally)
+      expect(decrementStockForOrder).toHaveBeenCalledWith(orderId);
+    });
+
+    it("should create payment_log and update order when neither exists", async () => {
+      const orderId = "order-123";
+      const paymentId = "payment-456";
+      const correctStatus = "approved";
+
+      // Mock: no existing payment_log
+      const getPaymentLogByPaymentId = vi.fn().mockResolvedValue(null);
+
+      // Mock: order exists with pending status
+      const getOrderById = vi.fn().mockResolvedValue({
+        id: orderId,
+        status: "pending",
+        mercadopago_payment_id: null,
+      });
+
+      // Mock: updateOrderStatus should be called
+      const updateOrderStatus = vi.fn().mockResolvedValue(undefined);
+
+      // Mock: savePaymentLog should be called
+      const savePaymentLog = vi.fn().mockResolvedValue(undefined);
+
+      // Mock: other methods
+      const decrementStockForOrder = vi.fn().mockResolvedValue(undefined);
+      const getCartIdByOrderId = vi.fn().mockResolvedValue("cart-123");
+      const clearCart = vi.fn().mockResolvedValue(undefined);
+      const updateCartTotal = vi.fn().mockResolvedValue(undefined);
+
+      // Inject mocked CartRepository
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (processor as any).cartRepository = {
+        getPaymentLogByPaymentId,
+        getOrderById,
+        updateOrderStatus,
+        savePaymentLog,
+        decrementStockForOrder,
+        getCartIdByOrderId,
+        clearCart,
+        updateCartTotal,
+      };
+
+      // Process event
+      const queueEvent = {
+        id: 1,
+        payment_id: paymentId,
+        event_type: "payment",
+        webhook_data: {
+          external_reference: orderId,
+          status: correctStatus,
+          status_detail: "accredited",
+        },
+        status: "pending" as const,
+        retry_count: 0,
+        max_retries: 5,
+      };
+
+      await processor.processEvent(queueEvent);
+
+      // Assertions
+      expect(getOrderById).toHaveBeenCalledWith(orderId);
+      expect(getPaymentLogByPaymentId).toHaveBeenCalledWith(paymentId);
+
+      // Should create payment_log
+      expect(savePaymentLog).toHaveBeenCalledWith(
+        orderId,
+        paymentId,
+        correctStatus,
+        "accredited",
+        null,
+        "payment",
+        expect.any(Object),
+      );
+
+      // Should update order
+      expect(updateOrderStatus).toHaveBeenCalledWith(
+        orderId,
+        correctStatus,
+        paymentId,
+      );
+
+      // Should execute post-approval actions
+      expect(decrementStockForOrder).toHaveBeenCalledWith(orderId);
+    });
+
+    it("should handle case where order payment_id differs from webhook payment_id", async () => {
+      const orderId = "order-123";
+      const webhookPaymentId = "payment-456";
+      const oldPaymentId = "payment-789";
+      const correctStatus = "approved";
+
+      // Mock: payment_log exists with correct status
+      const getPaymentLogByPaymentId = vi
+        .fn()
+        .mockResolvedValue({ order_id: orderId, status: correctStatus });
+
+      // Mock: order has different payment_id
+      const getOrderById = vi.fn().mockResolvedValue({
+        id: orderId,
+        status: correctStatus,
+        mercadopago_payment_id: oldPaymentId, // Different!
+      });
+
+      // Mock: updateOrderStatus should be called to update payment_id
+      const updateOrderStatus = vi.fn().mockResolvedValue(undefined);
+
+      const savePaymentLog = vi.fn().mockResolvedValue(undefined);
+      const decrementStockForOrder = vi.fn().mockResolvedValue(undefined);
+      const getCartIdByOrderId = vi.fn().mockResolvedValue("cart-123");
+      const clearCart = vi.fn().mockResolvedValue(undefined);
+      const updateCartTotal = vi.fn().mockResolvedValue(undefined);
+
+      // Inject mocked CartRepository
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (processor as any).cartRepository = {
+        getPaymentLogByPaymentId,
+        getOrderById,
+        updateOrderStatus,
+        savePaymentLog,
+        decrementStockForOrder,
+        getCartIdByOrderId,
+        clearCart,
+        updateCartTotal,
+      };
+
+      // Process event
+      const queueEvent = {
+        id: 1,
+        payment_id: webhookPaymentId,
+        event_type: "payment",
+        webhook_data: {
+          external_reference: orderId,
+          status: correctStatus,
+          status_detail: "accredited",
+        },
+        status: "pending" as const,
+        retry_count: 0,
+        max_retries: 5,
+      };
+
+      await processor.processEvent(queueEvent);
+
+      // Should update order (payment_id mismatch)
+      expect(updateOrderStatus).toHaveBeenCalledWith(
+        orderId,
+        correctStatus,
+        webhookPaymentId,
+      );
+    });
+  });
 });
