@@ -260,7 +260,9 @@ export class CartRepository {
       `)
       .eq("id", order_id)
       .single();
-    if (error) throw error;
+    if (error) {
+      throw new Error(`Failed to fetch order ${order_id}: ${error.message}`);
+    }
     return order;
   }
 
