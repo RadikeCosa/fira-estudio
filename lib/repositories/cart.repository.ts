@@ -352,4 +352,83 @@ export class CartRepository {
 
     return order.id;
   }
+
+  /**
+   * Decrementa el stock de las variaciones de una orden
+   * Se llama cuando el pago es aprobado
+   */
+  async decrementStockForOrder(order_id: string): Promise<void> {
+    // Obtener items de la orden
+    const { data: orderItems, error: fetchError } = await this.supabase
+      .from("order_items")
+      .select("variacion_id, quantity")
+      .eq("order_id", order_id);
+
+    if (fetchError) {
+      console.error(`[CartRepository] Error fetching order items:`, fetchError);
+      throw fetchError;
+    }
+
+    if (!orderItems || orderItems.length === 0) {
+      console.log(`[CartRepository] No order items found for order ${order_id}`);
+      return;
+    }
+
+    // Decrementar stock de cada variación
+    for (const item of orderItems) {
+      const { data: variacion, error: getError } = await this.supabase
+        .from("variaciones")
+        .select("stock")
+        .eq("id", item.variacion_id)
+        .single();
+
+      if (getError || !variacion) {
+        console.error(
+          `[CartRepository] Error getting variacion ${item.variacion_id}:`,
+          getError,
+        );
+        continue;
+      }
+
+      const newStock = Math.max(variacion.stock - item.quantity, 0);
+
+      const { error: updateError } = await this.supabase
+        .from("variaciones")
+        .update({ stock: newStock })
+        .eq("id", item.variacion_id);
+
+      if (updateError) {
+        console.error(
+          `[CartRepository] Error decrementing stock for variacion ${item.variacion_id}:`,
+          updateError,
+        );
+        // No lanzar error, el pago ya fue aprobado - solo log
+      } else {
+        console.log(
+          `[CartRepository] Stock decremented: variacion=${item.variacion_id}, old=${variacion.stock}, new=${newStock}`,
+        );
+      }
+    }
+  }
+
+  /**
+   * Obtiene el cart_id asociado a una orden
+   */
+  async getCartIdByOrderId(order_id: string): Promise<string | null> {
+    const { data: order, error } = await this.supabase
+      .from("orders")
+      .select("cart_id")
+      .eq("id", order_id)
+      .single();
+
+    if (error || !order) {
+      console.error(
+        `[CartRepository] Error getting cart_id for order ${order_id}:`,
+        error,
+      );
+      return null;
+    }
+
+    return order.cart_id;
+  }
 }
