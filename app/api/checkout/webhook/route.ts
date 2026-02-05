@@ -37,19 +37,25 @@ export async function POST(req: NextRequest) {
   // DEBUG LOGGING - Ver exactamente qué llega
   // ============================================
   const headers = Object.fromEntries(req.headers.entries());
-  console.log(`[Webhook DEBUG] ========== NUEVO WEBHOOK ==========`);
-  console.log(`[Webhook DEBUG] Timestamp: ${new Date().toISOString()}`);
-  console.log(`[Webhook DEBUG] Headers:`, JSON.stringify(headers, null, 2));
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Webhook DEBUG] ========== NUEVO WEBHOOK ==========`);
+    console.log(`[Webhook DEBUG] Timestamp: ${new Date().toISOString()}`);
+    console.log(`[Webhook DEBUG] Headers:`, JSON.stringify(headers, null, 2));
+  }
   
   // Clonar el request para leer el body sin consumirlo
   const bodyText = await req.text();
-  console.log(`[Webhook DEBUG] Raw Body: ${bodyText}`);
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Webhook DEBUG] Raw Body: ${bodyText}`);
+  }
   
   // Parsear el body manualmente ya que lo leímos como texto
   let body: Record<string, unknown>;
   try {
     body = JSON.parse(bodyText);
-    console.log(`[Webhook DEBUG] Parsed Body:`, JSON.stringify(body, null, 2));
+    if (process.env.NODE_ENV === "development") {
+      console.log(`[Webhook DEBUG] Parsed Body:`, JSON.stringify(body, null, 2));
+    }
   } catch (parseError) {
     console.error(`[Webhook DEBUG] Error parsing body:`, parseError);
     return NextResponse.json({ error: "Invalid JSON body" }, { status: 200 });
@@ -57,7 +63,9 @@ export async function POST(req: NextRequest) {
 
   // Extraer IP y loguearla
   const clientIP = extractClientIP(headers);
-  console.log(`[Webhook DEBUG] Client IP: ${clientIP}`);
+  if (process.env.NODE_ENV === "development") {
+    console.log(`[Webhook DEBUG] Client IP: ${clientIP}`);
+  }
 
   // NORMALIZAR: MP envía en varios formatos
   let eventType: string | undefined;
