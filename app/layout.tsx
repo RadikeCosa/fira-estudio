@@ -4,6 +4,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { MaintenanceBanner } from "@/components/maintenance-banner";
 import { SITE_CONFIG } from "@/lib/constants";
 import "./globals.css";
 
@@ -39,6 +40,7 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${inter.variable} antialiased flex flex-col min-h-screen`}
       >
+        <MaintenanceBanner />
         <Header />
         <main className="grow pt-16">{children}</main>
         <Footer />

@@ -6,6 +6,10 @@ import { ProductoCompleto } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 import { addToCart } from "@/app/api/cart/actions";
 import { ShoppingCart } from "lucide-react";
+import {
+  IS_MAINTENANCE_MODE,
+  IS_CHECKOUT_ENABLED,
+} from "@/lib/config/features";
 
 interface AddToCartButtonProps {
   producto: ProductoCompleto;
@@ -49,7 +53,15 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
   const maxStock = variation?.stock ?? 0;
   const hasEnoughStock = variation ? maxStock >= quantity : false;
 
+  // Verificar si el checkout está habilitado
+  const isCheckoutDisabled = IS_MAINTENANCE_MODE || !IS_CHECKOUT_ENABLED;
+
   const handleAddToCart = async () => {
+    if (isCheckoutDisabled) {
+      setError("El checkout está temporalmente deshabilitado");
+      return;
+    }
+
     if (!variation) {
       setError("Por favor selecciona tamaño y color");
       return;
@@ -199,7 +211,7 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
       <div className="flex gap-3">
         <button
           onClick={handleAddToCart}
-          disabled={!variation || !hasEnoughStock || loading}
+          disabled={!variation || !hasEnoughStock || loading || isCheckoutDisabled}
           className="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2"
         >
           <ShoppingCart className="w-5 h-5" />
