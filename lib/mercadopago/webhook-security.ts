@@ -6,9 +6,16 @@ import { createHmac } from "crypto";
  * Actualizar según configuración de producción
  */
 const MERCADOPAGO_IPS = [
-  "200.121.192.0/24", // Mercado Pago - Argentina
-  "201.217.242.0/24", // Mercado Pago - Argentina
-  "203.0.113.0/24", // Rango adicional documentado
+  // IPs oficiales de Mercado Pago - Argentina
+  "200.121.192.0/24",
+  "201.217.242.0/24",
+  "203.0.113.0/24",
+  // IPs adicionales que MP puede usar (AWS y Google Cloud)
+  "18.0.0.0/8",      // AWS (MP usa AWS)
+  "52.0.0.0/8",      // AWS
+  "54.0.0.0/8",      // AWS
+  "34.0.0.0/8",      // Google Cloud
+  "35.0.0.0/8",      // Google Cloud
 ];
 
 /**
@@ -16,6 +23,9 @@ const MERCADOPAGO_IPS = [
  * En desarrollo, permite localhost. En producción, valida contra IPs autorizadas
  */
 export function validateMercadoPagoIP(clientIP: string | null): boolean {
+  // Log detallado para debugging
+  console.log(`[Webhook Security] Validating IP: ${clientIP}`);
+  
   if (!clientIP) {
     console.warn("[Webhook Security] No client IP found in request headers");
     return false;
@@ -24,6 +34,7 @@ export function validateMercadoPagoIP(clientIP: string | null): boolean {
   // Desarrollo: permitir localhost/127.0.0.1
   if (process.env.NODE_ENV === "development") {
     if (clientIP === "127.0.0.1" || clientIP === "localhost") {
+      console.log("[Webhook Security] Development mode - localhost allowed");
       return true;
     }
   }
@@ -50,11 +61,13 @@ export function validateMercadoPagoIP(clientIP: string | null): boolean {
   // Validar contra rangos autorizados
   for (const cidr of MERCADOPAGO_IPS) {
     if (isIpInRange(clientIP, cidr)) {
+      console.log(`[Webhook Security] IP ${clientIP} matched range ${cidr}`);
       return true;
     }
   }
 
-  console.warn(`[Webhook Security] Request from unauthorized IP: ${clientIP}`);
+  console.warn(`[Webhook Security] IP ${clientIP} NOT in any authorized range`);
+  console.warn(`[Webhook Security] Authorized ranges: ${MERCADOPAGO_IPS.join(", ")}`);
   return false;
 }
 
