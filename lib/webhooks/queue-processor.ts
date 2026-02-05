@@ -106,6 +106,23 @@ export class WebhookQueueProcessor {
       .single();
 
     if (error) {
+      // Si es error de duplicado, buscar el evento existente
+      if (error.code === '23505') {
+        console.log(`[WebhookQueue] Event already exists (idempotent): payment_id=${paymentId}`);
+        
+        // Buscar el evento existente
+        const { data: existing } = await this.supabase
+          .from("webhook_queue")
+          .select("id")
+          .eq("payment_id", paymentId)
+          .eq("event_type", eventType)
+          .single();
+        
+        if (existing) {
+          return existing.id;
+        }
+      }
+      
       console.error(`[WebhookQueue] Error enqueuing event:`, error);
       throw error;
     }
@@ -154,6 +171,20 @@ export class WebhookQueueProcessor {
         throw new Error(`No external_reference found for payment ${paymentId}`);
       }
 
+      // Extract order_id from external_reference
+      // Format: "email|uuid" -> extract only the uuid (last part)
+      let orderId = externalReference;
+      if (externalReference && externalReference.includes('|')) {
+        const parts = externalReference.split('|');
+        orderId = parts[parts.length - 1]; // Take the last part (the UUID)
+        console.log(`[WebhookQueue] Extracted order_id from external_reference: ${externalReference} -> ${orderId}`);
+      }
+
+      // Validate order_id
+      if (!orderId) {
+        throw new Error(`No order_id found in external_reference: ${externalReference}`);
+      }
+
       // Check idempotency
       const existingLog =
         await this.cartRepository.getPaymentLogByPaymentId(paymentId);
@@ -165,7 +196,7 @@ export class WebhookQueueProcessor {
       } else {
         // Save payment log
         await this.cartRepository.savePaymentLog(
-          externalReference,
+          orderId,
           paymentId,
           paymentStatus,
           statusDetail || "",
@@ -177,13 +208,13 @@ export class WebhookQueueProcessor {
         // Update order status
         const orderStatus = this.mapPaymentStatusToOrderStatus(paymentStatus);
         await this.cartRepository.updateOrderStatus(
-          externalReference,
+          orderId,
           orderStatus,
           paymentId,
         );
 
         console.log(
-          `[WebhookQueue] Event processed successfully: payment_id=${paymentId}, order_id=${externalReference}, status=${orderStatus}`,
+          `[WebhookQueue] Event processed successfully: payment_id=${paymentId}, order_id=${orderId}, status=${orderStatus}`,
         );
       }
 
@@ -192,14 +223,14 @@ export class WebhookQueueProcessor {
       if (orderStatus === "approved") {
         try {
           // Decrementar stock
-          await this.cartRepository.decrementStockForOrder(externalReference);
+          await this.cartRepository.decrementStockForOrder(orderId);
           console.log(
-            `[WebhookQueue] Stock decremented for order: ${externalReference}`,
+            `[WebhookQueue] Stock decremented for order: ${orderId}`,
           );
 
           // Limpiar el carrito
           const cartId =
-            await this.cartRepository.getCartIdByOrderId(externalReference);
+            await this.cartRepository.getCartIdByOrderId(orderId);
           if (cartId) {
             await this.cartRepository.clearCart(cartId);
             await this.cartRepository.updateCartTotal(cartId);
