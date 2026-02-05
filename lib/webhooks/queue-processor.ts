@@ -106,11 +106,11 @@ export class WebhookQueueProcessor {
       .single();
 
     if (error) {
-      // Si es error de duplicado, buscar el evento existente
+      // If duplicate error, search for existing event
       if (error.code === '23505') {
         console.log(`[WebhookQueue] Event already exists (idempotent): payment_id=${paymentId}`);
         
-        // Buscar el evento existente
+        // Search for existing event
         const { data: existing } = await this.supabase
           .from("webhook_queue")
           .select("id")
@@ -218,17 +218,17 @@ export class WebhookQueueProcessor {
         );
       }
 
-      // AGREGAR: Si el pago fue aprobado, limpiar carrito y decrementar stock
+      // If payment approved, clear cart and decrement stock
       const orderStatus = this.mapPaymentStatusToOrderStatus(paymentStatus);
       if (orderStatus === "approved") {
         try {
-          // Decrementar stock
+          // Decrement stock
           await this.cartRepository.decrementStockForOrder(orderId);
           console.log(
             `[WebhookQueue] Stock decremented for order: ${orderId}`,
           );
 
-          // Limpiar el carrito
+          // Clear the cart
           const cartId =
             await this.cartRepository.getCartIdByOrderId(orderId);
           if (cartId) {
@@ -237,7 +237,7 @@ export class WebhookQueueProcessor {
             console.log(`[WebhookQueue] Cart cleared: cart_id=${cartId}`);
           }
         } catch (postApprovalError) {
-          // No fallar el webhook si esto falla - el pago ya está confirmado
+          // Don't fail webhook if this fails - payment already confirmed
           console.error(
             `[WebhookQueue] Post-approval actions failed:`,
             postApprovalError,
