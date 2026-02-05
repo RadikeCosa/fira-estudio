@@ -185,41 +185,57 @@ export class WebhookQueueProcessor {
         throw new Error(`No order_id found in external_reference: ${externalReference}`);
       }
 
-      // Check idempotency
+      // Fetch current order status
+      const currentOrder = await this.cartRepository.getOrderById(orderId);
+      const paymentStatus = status || "unknown";
+      const orderStatus = this.mapPaymentStatusToOrderStatus(paymentStatus);
+      
+      // Check if order needs update (status or payment_id mismatch)
+      const orderNeedsUpdate = 
+        currentOrder.status !== orderStatus || 
+        currentOrder.mercadopago_payment_id !== paymentId;
+
+      // Check if payment_log already exists
       const existingLog =
         await this.cartRepository.getPaymentLogByPaymentId(paymentId);
-      const paymentStatus = status || "unknown";
-      if (existingLog && existingLog.status === paymentStatus) {
+      const logExists = existingLog && existingLog.status === paymentStatus;
+
+      if (logExists && !orderNeedsUpdate) {
+        // True idempotency: both log and order are already correct
         console.log(
-          `[WebhookQueue] Event already processed (idempotent): payment_id=${paymentId}`,
+          `[WebhookQueue] Event already fully processed (idempotent): payment_id=${paymentId}`,
         );
       } else {
-        // Save payment log
-        await this.cartRepository.savePaymentLog(
-          orderId,
-          paymentId,
-          paymentStatus,
-          statusDetail || "",
-          null,
-          "payment",
-          webhookData,
-        );
+        // Create payment_log if it doesn't exist
+        if (!logExists) {
+          await this.cartRepository.savePaymentLog(
+            orderId,
+            paymentId,
+            paymentStatus,
+            statusDetail || "",
+            null,
+            "payment",
+            webhookData,
+          );
+          console.log(
+            `[WebhookQueue] Payment log saved: payment_id=${paymentId}, status=${paymentStatus}`,
+          );
+        }
 
-        // Update order status
-        const orderStatus = this.mapPaymentStatusToOrderStatus(paymentStatus);
-        await this.cartRepository.updateOrderStatus(
-          orderId,
-          orderStatus,
-          paymentId,
-        );
-
-        console.log(
-          `[WebhookQueue] Event processed successfully: payment_id=${paymentId}, order_id=${orderId}, status=${orderStatus}`,
-        );
+        // Update order if needed
+        if (orderNeedsUpdate) {
+          await this.cartRepository.updateOrderStatus(
+            orderId,
+            orderStatus,
+            paymentId,
+          );
+          console.log(
+            `[WebhookQueue] Order updated: order_id=${orderId}, status=${orderStatus}`,
+          );
+        }
       }
 
       // If payment approved, clear cart and decrement stock
-      const orderStatus = this.mapPaymentStatusToOrderStatus(paymentStatus);
       if (orderStatus === "approved") {
         try {
           // Decrement stock
