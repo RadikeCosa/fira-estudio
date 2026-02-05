@@ -139,8 +139,35 @@ export class WebhookQueueProcessor {
         );
 
         console.log(
-          `[WebhookQueue] Event processed successfully: payment_id=${paymentId}, order_id=${externalReference}`,
+          `[WebhookQueue] Event processed successfully: payment_id=${paymentId}, order_id=${externalReference}, status=${orderStatus}`,
         );
+      }
+
+      // AGREGAR: Si el pago fue aprobado, limpiar carrito y decrementar stock
+      const orderStatus = this.mapPaymentStatusToOrderStatus(status);
+      if (orderStatus === "approved") {
+        try {
+          // Decrementar stock
+          await this.cartRepository.decrementStockForOrder(externalReference);
+          console.log(
+            `[WebhookQueue] Stock decremented for order: ${externalReference}`,
+          );
+
+          // Limpiar el carrito
+          const cartId =
+            await this.cartRepository.getCartIdByOrderId(externalReference);
+          if (cartId) {
+            await this.cartRepository.clearCart(cartId);
+            await this.cartRepository.updateCartTotal(cartId);
+            console.log(`[WebhookQueue] Cart cleared: cart_id=${cartId}`);
+          }
+        } catch (postApprovalError) {
+          // No fallar el webhook si esto falla - el pago ya está confirmado
+          console.error(
+            `[WebhookQueue] Post-approval actions failed:`,
+            postApprovalError,
+          );
+        }
       }
 
       // Mark as completed

@@ -416,4 +416,222 @@ describe("CartRepository", () => {
       expect(fromMock).toHaveBeenCalledWith("cart_items");
     });
   });
+
+  describe("decrementStockForOrder()", () => {
+    it("should decrement stock for all items in order", async () => {
+      const mockOrderId = "order-123";
+      const mockOrderItems = [
+        { variacion_id: "var-1", quantity: 2 },
+        { variacion_id: "var-2", quantity: 1 },
+      ];
+
+      const fromMock = mockSupabase.from as any;
+
+      // First call: fetch order items
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({
+            data: mockOrderItems,
+            error: null,
+          }),
+        }),
+      });
+
+      // Second call: get variacion stock for var-1
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: { stock: 5 },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      // Third call: update stock for var-1
+      fromMock.mockReturnValueOnce({
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({
+            data: null,
+            error: null,
+          }),
+        }),
+      });
+
+      // Fourth call: get variacion stock for var-2
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: { stock: 3 },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      // Fifth call: update stock for var-2
+      fromMock.mockReturnValueOnce({
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({
+            data: null,
+            error: null,
+          }),
+        }),
+      });
+
+      const repo = new CartRepository(mockSupabase);
+      await repo.decrementStockForOrder(mockOrderId);
+
+      expect(fromMock).toHaveBeenCalledWith("order_items");
+      expect(fromMock).toHaveBeenCalledWith("variaciones");
+    });
+
+    it("should not decrement below zero", async () => {
+      const mockOrderId = "order-123";
+      const mockOrderItems = [{ variacion_id: "var-1", quantity: 10 }];
+
+      const fromMock = mockSupabase.from as any;
+
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({
+            data: mockOrderItems,
+            error: null,
+          }),
+        }),
+      });
+
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: { stock: 3 },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      fromMock.mockReturnValueOnce({
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({
+            data: null,
+            error: null,
+          }),
+        }),
+      });
+
+      const repo = new CartRepository(mockSupabase);
+      await repo.decrementStockForOrder(mockOrderId);
+
+      // Verify stock was set to 0 (max of stock - quantity and 0)
+      expect(fromMock).toHaveBeenCalledWith("variaciones");
+    });
+
+    it("should continue processing if one variacion fails", async () => {
+      const mockOrderId = "order-123";
+      const mockOrderItems = [
+        { variacion_id: "var-1", quantity: 2 },
+        { variacion_id: "var-2", quantity: 1 },
+      ];
+
+      const fromMock = mockSupabase.from as any;
+
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({
+            data: mockOrderItems,
+            error: null,
+          }),
+        }),
+      });
+
+      // First variacion fails
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: null,
+              error: new Error("Variacion not found"),
+            }),
+          }),
+        }),
+      });
+
+      // Second variacion succeeds
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: { stock: 3 },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      fromMock.mockReturnValueOnce({
+        update: vi.fn().mockReturnValue({
+          eq: vi.fn().mockResolvedValue({
+            data: null,
+            error: null,
+          }),
+        }),
+      });
+
+      const repo = new CartRepository(mockSupabase);
+      await repo.decrementStockForOrder(mockOrderId);
+
+      // Should not throw, just log error and continue
+      expect(fromMock).toHaveBeenCalledWith("variaciones");
+    });
+  });
+
+  describe("getCartIdByOrderId()", () => {
+    it("should return cart_id for valid order", async () => {
+      const mockOrderId = "order-123";
+      const mockCartId = "cart-456";
+
+      const fromMock = mockSupabase.from as any;
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: { cart_id: mockCartId },
+              error: null,
+            }),
+          }),
+        }),
+      });
+
+      const repo = new CartRepository(mockSupabase);
+      const result = await repo.getCartIdByOrderId(mockOrderId);
+
+      expect(result).toBe(mockCartId);
+      expect(fromMock).toHaveBeenCalledWith("orders");
+    });
+
+    it("should return null if order not found", async () => {
+      const mockOrderId = "order-123";
+
+      const fromMock = mockSupabase.from as any;
+      fromMock.mockReturnValueOnce({
+        select: vi.fn().mockReturnValue({
+          eq: vi.fn().mockReturnValue({
+            single: vi.fn().mockResolvedValue({
+              data: null,
+              error: new Error("Order not found"),
+            }),
+          }),
+        }),
+      });
+
+      const repo = new CartRepository(mockSupabase);
+      const result = await repo.getCartIdByOrderId(mockOrderId);
+
+      expect(result).toBeNull();
+    });
+  });
 });

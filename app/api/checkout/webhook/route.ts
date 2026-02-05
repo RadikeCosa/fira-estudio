@@ -121,6 +121,29 @@ export async function POST(req: NextRequest) {
       paymentData as unknown as Record<string, unknown>,
     );
 
+    // AGREGAR: Procesar el evento inmediatamente (no esperar a un job)
+    try {
+      const queueEvent = {
+        id: queueId,
+        payment_id: String(paymentData.id),
+        event_type: type,
+        webhook_data: paymentData as unknown as Record<string, unknown>,
+        status: "pending" as const,
+        retry_count: 0,
+        max_retries: 5,
+      };
+      await processor.processEvent(queueEvent);
+      console.log(
+        `[Webhook] Event processed immediately: payment_id=${paymentData.id}`,
+      );
+    } catch (processError) {
+      // Si falla el procesamiento inmediato, el evento queda encolado para retry
+      console.error(
+        `[Webhook] Immediate processing failed, event queued for retry:`,
+        processError,
+      );
+    }
+
     const duration = Date.now() - startTime;
     console.log(
       `[Webhook] Event enqueued for async processing in ${duration}ms: payment_id=${paymentData.id}, queue_id=${queueId}`,
