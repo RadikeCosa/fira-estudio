@@ -6,6 +6,8 @@ import { formatPrice, getImageUrl } from "@/lib/utils";
 import Image from "next/image";
 import type { Cart, CartItem } from "@/lib/types";
 import { getCart } from "@/app/api/cart/actions";
+import { CARRITO_CONTENT } from "@/lib/content/carrito";
+import { BUTTONS, COMPONENTS } from "@/lib/design/tokens";
 
 interface CheckoutFormData {
   email: string;
@@ -58,24 +60,24 @@ export function CheckoutForm() {
     // Validar email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) {
-      errors.email = "El email es requerido";
+      errors.email = CARRITO_CONTENT.checkout.errors.requiredEmail;
     } else if (!emailRegex.test(formData.email)) {
-      errors.email = "Email inválido";
+      errors.email = CARRITO_CONTENT.checkout.errors.invalidEmail;
     }
 
     // Validar nombre
     if (!formData.nombre.trim()) {
-      errors.nombre = "El nombre es requerido";
+      errors.nombre = CARRITO_CONTENT.checkout.errors.requiredNombre;
     } else if (formData.nombre.trim().length < 3) {
-      errors.nombre = "El nombre debe tener al menos 3 caracteres";
+      errors.nombre = CARRITO_CONTENT.checkout.errors.shortNombre;
     }
 
     // Validar teléfono
     const telefonoRegex = /^[0-9\s\-\+\(\)]{8,20}$/;
     if (!formData.telefono.trim()) {
-      errors.telefono = "El teléfono es requerido";
+      errors.telefono = CARRITO_CONTENT.checkout.errors.requiredTelefono;
     } else if (!telefonoRegex.test(formData.telefono)) {
-      errors.telefono = "Teléfono inválido";
+      errors.telefono = CARRITO_CONTENT.checkout.errors.invalidTelefono;
     }
 
     setFormErrors(errors);
@@ -104,14 +106,14 @@ export function CheckoutForm() {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Error al crear la preferencia de pago");
+        throw new Error(data.error || CARRITO_CONTENT.checkout.errors.general);
       }
 
       // Redirigir a Mercado Pago
       if (data.init_point) {
         window.location.href = data.init_point;
       } else {
-        throw new Error("No se recibió el link de pago");
+        throw new Error(CARRITO_CONTENT.checkout.errors.noLink);
       }
     } catch (err) {
       setError((err as Error).message);
@@ -143,11 +145,15 @@ export function CheckoutForm() {
     <div className="grid lg:grid-cols-2 gap-8">
       {/* Formulario */}
       <div>
-        <h2 className="text-2xl font-bold mb-6">Datos de contacto</h2>
+        <h2 className="text-2xl font-bold mb-6">
+          {CARRITO_CONTENT.checkout.title}
+        </h2>
 
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800 mb-6">
-            <p className="font-medium">Error</p>
+            <p className="font-medium">
+              {CARRITO_CONTENT.checkout.errors.general}
+            </p>
             <p className="text-sm">{error}</p>
           </div>
         )}
@@ -156,42 +162,52 @@ export function CheckoutForm() {
           {/* Email */}
           <div>
             <label htmlFor="email" className="block text-sm font-medium mb-2">
-              Email <span className="text-red-500">*</span>
+              {CARRITO_CONTENT.checkout.email}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
               id="email"
               value={formData.email}
               onChange={(e) => handleChange("email", e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                formErrors.email ? "border-red-500" : "border-border"
-              }`}
-              placeholder="tu@email.com"
+              className={
+                COMPONENTS.input.base +
+                " " +
+                (formErrors.email ? COMPONENTS.error.border : "border-border")
+              }
+              placeholder={CARRITO_CONTENT.checkout.placeholders.email}
               disabled={submitting}
             />
             {formErrors.email && (
-              <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>
+              <p className={COMPONENTS.error.text + " text-sm mt-1"}>
+                {formErrors.email}
+              </p>
             )}
           </div>
 
           {/* Nombre */}
           <div>
             <label htmlFor="nombre" className="block text-sm font-medium mb-2">
-              Nombre completo <span className="text-red-500">*</span>
+              {CARRITO_CONTENT.checkout.nombre}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
               id="nombre"
               value={formData.nombre}
               onChange={(e) => handleChange("nombre", e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                formErrors.nombre ? "border-red-500" : "border-border"
-              }`}
-              placeholder="Juan Pérez"
+              className={
+                COMPONENTS.input.base +
+                " " +
+                (formErrors.nombre ? COMPONENTS.error.border : "border-border")
+              }
+              placeholder={CARRITO_CONTENT.checkout.placeholders.nombre}
               disabled={submitting}
             />
             {formErrors.nombre && (
-              <p className="text-red-500 text-sm mt-1">{formErrors.nombre}</p>
+              <p className={COMPONENTS.error.text + " text-sm mt-1"}>
+                {formErrors.nombre}
+              </p>
             )}
           </div>
 
@@ -201,21 +217,28 @@ export function CheckoutForm() {
               htmlFor="telefono"
               className="block text-sm font-medium mb-2"
             >
-              Teléfono <span className="text-red-500">*</span>
+              {CARRITO_CONTENT.checkout.telefono}{" "}
+              <span className="text-red-500">*</span>
             </label>
             <input
               type="tel"
               id="telefono"
               value={formData.telefono}
               onChange={(e) => handleChange("telefono", e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary ${
-                formErrors.telefono ? "border-red-500" : "border-border"
-              }`}
-              placeholder="+54 9 11 1234-5678"
+              className={
+                COMPONENTS.input.base +
+                " " +
+                (formErrors.telefono
+                  ? COMPONENTS.error.border
+                  : "border-border")
+              }
+              placeholder={CARRITO_CONTENT.checkout.placeholders.telefono}
               disabled={submitting}
             />
             {formErrors.telefono && (
-              <p className="text-red-500 text-sm mt-1">{formErrors.telefono}</p>
+              <p className={COMPONENTS.error.text + " text-sm mt-1"}>
+                {formErrors.telefono}
+              </p>
             )}
           </div>
 
@@ -223,21 +246,24 @@ export function CheckoutForm() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className={BUTTONS.primary + " w-full"}
           >
-            {submitting ? "Procesando..." : "Ir a pagar con Mercado Pago"}
+            {submitting
+              ? CARRITO_CONTENT.checkout.processing
+              : CARRITO_CONTENT.checkout.submit}
           </button>
 
           <p className="text-sm text-muted-foreground text-center">
-            Serás redirigido a Mercado Pago para completar el pago de forma
-            segura
+            {CARRITO_CONTENT.checkout.instrucciones}
           </p>
         </form>
       </div>
 
       {/* Resumen del pedido */}
       <div>
-        <h2 className="text-2xl font-bold mb-6">Resumen del pedido</h2>
+        <h2 className="text-2xl font-bold mb-6">
+          {CARRITO_CONTENT.checkout.summary}
+        </h2>
 
         <div className="bg-muted/30 border border-border rounded-lg p-6 space-y-4">
           {/* Items */}
@@ -284,7 +310,9 @@ export function CheckoutForm() {
           {/* Total */}
           <div className="border-t border-border pt-4">
             <div className="flex justify-between items-center">
-              <span className="text-lg font-medium">Total</span>
+              <span className="text-lg font-medium">
+                {CARRITO_CONTENT.labels.total}
+              </span>
               <span className="text-2xl font-bold">
                 {formatPrice(cart.total_amount)}
               </span>
@@ -294,7 +322,7 @@ export function CheckoutForm() {
           {/* Link para volver */}
           <div className="pt-2">
             <a href="/carrito" className="text-sm text-primary hover:underline">
-              ← Volver al carrito
+              {CARRITO_CONTENT.checkout.volver}
             </a>
           </div>
         </div>

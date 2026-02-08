@@ -1,17 +1,23 @@
 import { Metadata } from "next";
 import { CheckoutForm } from "@/components/carrito/CheckoutForm";
+import { CHECKOUT_CONTENT } from "@/lib/content/checkout";
+import { LAYOUT, SPACING, TYPOGRAPHY } from "@/lib/design/tokens";
+import { combine } from "@/lib/design/tokens";
 
 export const metadata: Metadata = {
-  title: "Checkout - Finalizar Compra",
-  description:
-    "Completa tus datos para finalizar la compra de forma segura con Mercado Pago",
+  title: CHECKOUT_CONTENT.page.title,
+  description: CHECKOUT_CONTENT.page.description,
 };
 
 export default function CheckoutPage() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container max-w-6xl mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8">Finalizar Compra</h1>
+    <div className={combine("min-h-screen", "bg-background")}>
+      {" "}
+      {/* bg-background: token, min-h-screen: layout */}
+      <div className={combine(LAYOUT.container.maxW7xl, SPACING.page)}>
+        <h1 className={combine(TYPOGRAPHY.heading.section, SPACING.section)}>
+          {CHECKOUT_CONTENT.form.title}
+        </h1>
         <CheckoutForm />
       </div>
     </div>

@@ -19,6 +19,11 @@ import {
   logXSSAttempt,
 } from "@/lib/utils/security-logger";
 
+// TODO: Integrar envío de emails con Resend en vez de mailto
+// TODO: Reemplazar window.open(mailtoUrl) por llamada a una API interna (server action o route handler)
+// TODO: Manejar loading, éxito y error en el submit según respuesta de la API
+// TODO: Validar y sanitizar datos en el backend antes de enviar el email
+// TODO: (Opcional) Agregar feedback visual de éxito/error al usuario
 export function ContactForm() {
   const { form } = CONTACTO_CONTENT;
 

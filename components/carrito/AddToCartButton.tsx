@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { ProductoCompleto } from "@/lib/types";
+
 import { formatPrice } from "@/lib/utils";
 import { addToCart } from "@/app/api/cart/actions";
 import { ShoppingCart } from "lucide-react";
@@ -10,6 +11,8 @@ import {
   IS_MAINTENANCE_MODE,
   IS_CHECKOUT_ENABLED,
 } from "@/lib/config/features";
+import { CARRITO_CONTENT } from "@/lib/content/carrito";
+import { BUTTONS, CART, CART_LAYOUT } from "@/lib/design/tokens";
 
 interface AddToCartButtonProps {
   producto: ProductoCompleto;
@@ -24,10 +27,19 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  // Obtener variaciones únicas por tamaño y color
-  const variations = producto.variaciones || [];
-  const sizes = [...new Set(variations.map((v) => v.tamanio))];
-  const colors = [...new Set(variations.map((v) => v.color))];
+  // Obtener variaciones únicas por tamaño y color (memoizados)
+  const variations = useMemo(
+    () => producto.variaciones || [],
+    [producto.variaciones],
+  );
+  const sizes = useMemo(
+    () => [...new Set(variations.map((v) => v.tamanio))],
+    [variations],
+  );
+  const colors = useMemo(
+    () => [...new Set(variations.map((v) => v.color))],
+    [variations],
+  );
 
   useEffect(() => {
     if (sizes.length === 1 && !selectedSize) {
@@ -58,17 +70,17 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
 
   const handleAddToCart = async () => {
     if (isCheckoutDisabled) {
-      setError("El checkout está temporalmente deshabilitado");
+      setError(CARRITO_CONTENT.error.checkoutDisabled);
       return;
     }
 
     if (!variation) {
-      setError("Por favor selecciona tamaño y color");
+      setError(CARRITO_CONTENT.error.selectVariation);
       return;
     }
 
     if (!hasEnoughStock) {
-      setError("No hay stock suficiente");
+      setError(CARRITO_CONTENT.error.noStock);
       return;
     }
 
@@ -92,11 +104,18 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
   };
 
   return (
-    <div className="space-y-6 bg-muted/30 border border-border rounded-lg p-6">
+    <div
+      className={
+        CART_LAYOUT.container +
+        " bg-muted/30 border border-border rounded-lg p-6"
+      }
+    >
       {/* Precio */}
       {variation && (
         <div className="space-y-1">
-          <p className="text-sm text-muted-foreground">Precio</p>
+          <p className="text-sm text-muted-foreground">
+            {CARRITO_CONTENT.labels.total}
+          </p>
           <p className="text-3xl font-bold">{formatPrice(variation.precio)}</p>
         </div>
       )}
@@ -106,21 +125,17 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
         {/* Tamaños */}
         {sizes.length > 0 && (
           <div className="space-y-2">
-            <label className="text-sm font-medium">Tamaño</label>
+            <label className="text-sm font-medium">
+              {CARRITO_CONTENT.labels.size}
+            </label>
             <div className="flex flex-wrap gap-2">
               {sizes.map((size) => {
                 const isSelected = selectedSize === size;
                 return (
                   <button
                     key={size}
-                    onClick={() => {
-                      setSelectedSize(size);
-                    }}
-                    className={`px-4 py-2 border rounded-lg transition ${
-                      isSelected
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border hover:border-primary"
-                    }`}
+                    onClick={() => setSelectedSize(size)}
+                    className={isSelected ? BUTTONS.primary : BUTTONS.secondary}
                   >
                     {size}
                   </button>
@@ -133,21 +148,17 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
         {/* Colores */}
         {colors.length > 0 && (
           <div className="space-y-2">
-            <label className="text-sm font-medium">Color</label>
+            <label className="text-sm font-medium">
+              {CARRITO_CONTENT.labels.color}
+            </label>
             <div className="flex flex-wrap gap-2">
               {colors.map((color) => {
                 const isSelected = selectedColor === color;
                 return (
                   <button
                     key={color}
-                    onClick={() => {
-                      setSelectedColor(color);
-                    }}
-                    className={`px-4 py-2 border rounded-lg transition ${
-                      isSelected
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-border hover:border-primary"
-                    }`}
+                    onClick={() => setSelectedColor(color)}
+                    className={isSelected ? BUTTONS.primary : BUTTONS.secondary}
                   >
                     {color}
                   </button>
@@ -162,7 +173,8 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
       {variation && (
         <div>
           <p className="text-sm text-muted-foreground">
-            Stock disponible: <span className="font-medium">{maxStock}</span>
+            {CARRITO_CONTENT.labels.stock}:{" "}
+            <span className="font-medium">{maxStock}</span>
           </p>
         </div>
       )}
@@ -170,22 +182,22 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
       {/* Cantidad */}
       {variation && (
         <div className="space-y-2">
-          <label className="text-sm font-medium">Cantidad</label>
-          <div className="flex items-center border border-border rounded-lg w-fit">
+          <label className="text-sm font-medium">
+            {CARRITO_CONTENT.labels.quantity}
+          </label>
+          <div className={CART.itemQtyBox + " w-fit"}>
             <button
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
               disabled={quantity <= 1}
-              className="px-4 py-2 hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+              className={CART.itemQtyBtn}
             >
               -
             </button>
-            <span className="px-6 py-2 border-x border-border min-w-16 text-center">
-              {quantity}
-            </span>
+            <span className={CART.itemQtyValue + " min-w-16"}>{quantity}</span>
             <button
               onClick={() => setQuantity((q) => Math.min(maxStock, q + 1))}
               disabled={quantity >= maxStock}
-              className="px-4 py-2 hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+              className={CART.itemQtyBtn}
             >
               +
             </button>
@@ -203,7 +215,7 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
       {/* Success */}
       {success && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-3 text-green-800 text-sm">
-          ¡Producto agregado al carrito!
+          {CARRITO_CONTENT.success.added}
         </div>
       )}
 
@@ -211,19 +223,20 @@ export function AddToCartButton({ producto }: AddToCartButtonProps) {
       <div className="flex gap-3">
         <button
           onClick={handleAddToCart}
-          disabled={!variation || !hasEnoughStock || loading || isCheckoutDisabled}
-          className="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed font-medium flex items-center justify-center gap-2"
+          disabled={
+            !variation || !hasEnoughStock || loading || isCheckoutDisabled
+          }
+          className={
+            BUTTONS.primary + " flex-1 flex items-center justify-center gap-2"
+          }
         >
           <ShoppingCart className="w-5 h-5" />
-          {loading ? "Agregando..." : "Agregar al carrito"}
+          {loading ? CARRITO_CONTENT.labels.adding : CARRITO_CONTENT.labels.add}
         </button>
 
         {success && (
-          <button
-            onClick={handleGoToCart}
-            className="border border-border px-6 py-3 rounded-lg hover:bg-muted transition font-medium"
-          >
-            Ver carrito
+          <button onClick={handleGoToCart} className={BUTTONS.secondary}>
+            {CARRITO_CONTENT.labels.viewCart}
           </button>
         )}
       </div>

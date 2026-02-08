@@ -31,7 +31,7 @@ export async function generateMetadata({
   const categoriaSlug = params.categoria;
 
   // Si hay categoría, fetch para obtener nombre
-  let categoriaName = "Productos";
+  let categoriaName = PRODUCTOS_CONTENT.page.defaultTitle;
   let categoriaDescription: string = SITE_CONFIG.description;
 
   if (categoriaSlug) {

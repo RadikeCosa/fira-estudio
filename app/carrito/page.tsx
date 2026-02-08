@@ -1,13 +1,13 @@
 import { Metadata } from "next";
 import { ShoppingCart } from "@/components/carrito/ShoppingCart";
+
 import { LAYOUT, SPACING, TYPOGRAPHY } from "@/lib/design/tokens";
 import { combine } from "@/lib/design/tokens";
 import { CARRITO_CONTENT } from "@/lib/content/carrito";
 
 export const metadata: Metadata = {
-  title: "Carrito de Compras",
-  description:
-    "Revisa y gestiona los productos de tu carrito antes de finalizar la compra",
+  title: CARRITO_CONTENT.page.title,
+  description: CARRITO_CONTENT.page.description,
 };
 
 export default function CarritoPage() {
