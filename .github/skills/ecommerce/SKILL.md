@@ -1,8 +1,10 @@
 ---
-title: "E-commerce - Fira Estudio"
-description: "Shopping cart, analytics tracking, and e-commerce patterns"
-version: "2.0"
-lastUpdated: "2026-02-02"
+name: "E-commerce Skills"
+description: "Best practices and patterns for e-commerce features"
+compatibility: "Next.js, Supabase"
+license: "MIT"
+# lastUpdated: "2026-02-08"  ← Remove or comment out this line
+---
 activationTriggers:
   # Shopping Cart
   - "carrito"
@@ -12,7 +14,7 @@ activationTriggers:
   - "localStorage"
   - "item"
   - "comprar"
-  
+
   # Analytics
   - "analytics"
   - "ga4"
@@ -29,6 +31,7 @@ activationTriggers:
 This skill covers **shopping cart** and **analytics tracking** - essential for e-commerce conversion tracking.
 
 **Key Principles:**
+
 - Cart uses Context API + localStorage (14-day TTL, anonymous)
 - Analytics tracks key e-commerce events (add_to_cart, view_cart, remove_from_cart)
 - Drawer for quick add, full page for checkout flow
@@ -66,12 +69,12 @@ This skill covers **shopping cart** and **analytics tracking** - essential for e
 
 \`\`\`typescript
 interface CarritoItem {
-  id: string; // UUID cliente (crypto.randomUUID())
-  producto_id: string;
-  variacion_id: string;
-  cantidad: number;
-  precio_unitario: number; // Snapshot al agregar
-  agregado_at: string; // ISO timestamp
+id: string; // UUID cliente (crypto.randomUUID())
+producto_id: string;
+variacion_id: string;
+cantidad: number;
+precio_unitario: number; // Snapshot al agregar
+agregado_at: string; // ISO timestamp
 }
 \`\`\`
 
@@ -79,10 +82,10 @@ interface CarritoItem {
 
 \`\`\`typescript
 interface Carrito {
-  items: CarritoItem[];
-  subtotal: number; // Calculado: sum(item.precio_unitario * item.cantidad)
-  created_at: string;
-  updated_at: string;
+items: CarritoItem[];
+subtotal: number; // Calculado: sum(item.precio_unitario \* item.cantidad)
+created_at: string;
+updated_at: string;
 }
 \`\`\`
 
@@ -90,10 +93,10 @@ interface Carrito {
 
 \`\`\`typescript
 interface CarritoWithDetails extends Carrito {
-  items: (CarritoItem & {
-    producto: ProductoCompleto;
-    variacion: Variacion;
-  })[];
+items: (CarritoItem & {
+producto: ProductoCompleto;
+variacion: Variacion;
+})[];
 }
 \`\`\`
 
@@ -107,7 +110,7 @@ interface CarritoWithDetails extends Carrito {
 
 \`\`\`typescript
 const CARRITO_KEY = "fira_carrito";
-const CARRITO_TTL = 14 * 24 * 60 * 60 * 1000; // 14 días
+const CARRITO_TTL = 14 _ 24 _ 60 _ 60 _ 1000; // 14 días
 
 // CRUD Operations
 export function getCarrito(): Carrito;
@@ -121,8 +124,8 @@ export function clearCarrito(): void;
 export function calculateSubtotal(items: CarritoItem[]): number;
 export function isExpired(carrito: Carrito): boolean;
 export function mergeItems(
-  existing: CarritoItem,
-  nuevo: CarritoItem,
+existing: CarritoItem,
+nuevo: CarritoItem,
 ): CarritoItem;
 \`\`\`
 
@@ -130,12 +133,12 @@ export function mergeItems(
 
 \`\`\`typescript
 try {
-  localStorage.setItem(CARRITO_KEY, JSON.stringify(carrito));
+localStorage.setItem(CARRITO_KEY, JSON.stringify(carrito));
 } catch (error) {
-  // QuotaExceededError, Safari private mode
-  console.error("localStorage error:", error);
-  // Fallback: usar estado en memoria (se pierde al recargar)
-  return getInMemoryCarrito();
+// QuotaExceededError, Safari private mode
+console.error("localStorage error:", error);
+// Fallback: usar estado en memoria (se pierde al recargar)
+return getInMemoryCarrito();
 }
 \`\`\`
 
@@ -149,24 +152,24 @@ try {
 
 \`\`\`typescript
 interface CarritoContextValue {
-  carrito: Carrito;
-  carritoWithDetails: CarritoWithDetails | null;
-  itemCount: number;
-  isLoading: boolean;
+carrito: Carrito;
+carritoWithDetails: CarritoWithDetails | null;
+itemCount: number;
+isLoading: boolean;
 
-  addItem: (
-    producto: ProductoCompleto,
-    variacion: Variacion,
-    cantidad: number,
-  ) => void;
-  updateQuantity: (itemId: string, cantidad: number) => void;
-  removeItem: (itemId: string) => void;
-  clearCarrito: () => void;
+addItem: (
+producto: ProductoCompleto,
+variacion: Variacion,
+cantidad: number,
+) => void;
+updateQuantity: (itemId: string, cantidad: number) => void;
+removeItem: (itemId: string) => void;
+clearCarrito: () => void;
 
-  // Drawer control
-  isDrawerOpen: boolean;
-  openDrawer: () => void;
-  closeDrawer: () => void;
+// Drawer control
+isDrawerOpen: boolean;
+openDrawer: () => void;
+closeDrawer: () => void;
 }
 \`\`\`
 
@@ -177,17 +180,17 @@ interface CarritoContextValue {
 import { CarritoProvider } from '@/lib/context/CarritoContext';
 
 export default function RootLayout({ children }) {
-  return (
-    <html>
-      <body>
-        <CarritoProvider>
-          <Header />
-          {children}
-          <Footer />
-        </CarritoProvider>
-      </body>
-    </html>
-  );
+return (
+<html>
+<body>
+<CarritoProvider>
+<Header />
+{children}
+<Footer />
+</CarritoProvider>
+</body>
+</html>
+);
 }
 \`\`\`
 
@@ -198,12 +201,12 @@ export default function RootLayout({ children }) {
 import { useCarrito } from "@/lib/context/CarritoContext";
 
 export function AddToCartButton() {
-  const { addItem, openDrawer } = useCarrito();
+const { addItem, openDrawer } = useCarrito();
 
-  const handleAdd = () => {
-    addItem(producto, variacion, 1);
-    openDrawer(); // Abre drawer automáticamente
-  };
+const handleAdd = () => {
+addItem(producto, variacion, 1);
+openDrawer(); // Abre drawer automáticamente
+};
 }
 \`\`\`
 
@@ -220,18 +223,18 @@ export function AddToCartButton() {
 import { useCarrito } from '@/lib/context/CarritoContext';
 
 export function CartBadge() {
-  const { itemCount, openDrawer } = useCarrito();
+const { itemCount, openDrawer } = useCarrito();
 
-  return (
-    <button onClick={openDrawer} className="relative">
-      🛒
-      {itemCount > 0 && (
-        <span className={COMPONENTS.carrito.badge}>
-          {itemCount}
-        </span>
-      )}
-    </button>
-  );
+return (
+<button onClick={openDrawer} className="relative">
+🛒
+{itemCount > 0 && (
+<span className={COMPONENTS.carrito.badge}>
+{itemCount}
+</span>
+)}
+</button>
+);
 }
 \`\`\`
 
@@ -245,17 +248,17 @@ export function CartBadge() {
 'use client';
 
 interface AddToCartButtonProps {
-  producto: ProductoCompleto;
-  variacion: Variacion | null;
-  cantidad?: number;
+producto: ProductoCompleto;
+variacion: Variacion | null;
+cantidad?: number;
 }
 
 export function AddToCartButton({ producto, variacion, cantidad = 1 }) {
-  const { addItem, openDrawer } = useCarrito();
-  const [isAdding, setIsAdding] = useState(false);
+const { addItem, openDrawer } = useCarrito();
+const [isAdding, setIsAdding] = useState(false);
 
-  const handleClick = async () => {
-    if (!variacion) return;
+const handleClick = async () => {
+if (!variacion) return;
 
     setIsAdding(true);
     trackAddToCart(producto, variacion, cantidad);
@@ -263,16 +266,16 @@ export function AddToCartButton({ producto, variacion, cantidad = 1 }) {
     openDrawer();
 
     setTimeout(() => setIsAdding(false), 1000);
-  };
 
-  return (
-    <Button
-      onClick={handleClick}
-      disabled={!variacion || isAdding}
-    >
-      {isAdding ? '✓ Agregado' : 'Agregar al carrito'}
-    </Button>
-  );
+};
+
+return (
+<Button
+onClick={handleClick}
+disabled={!variacion || isAdding} >
+{isAdding ? '✓ Agregado' : 'Agregar al carrito'}
+</Button>
+);
 }
 \`\`\`
 
@@ -284,25 +287,25 @@ export function AddToCartButton({ producto, variacion, cantidad = 1 }) {
 
 \`\`\`typescript
 interface CartItemCardProps {
-  item: CarritoItem & {
-    producto: ProductoCompleto;
-    variacion: Variacion;
-  };
-  onUpdateQuantity: (itemId: string, cantidad: number) => void;
-  onRemove: (itemId: string) => void;
-  compact?: boolean; // true para drawer, false para página
+item: CarritoItem & {
+producto: ProductoCompleto;
+variacion: Variacion;
+};
+onUpdateQuantity: (itemId: string, cantidad: number) => void;
+onRemove: (itemId: string) => void;
+compact?: boolean; // true para drawer, false para página
 }
 
 export function CartItemCard({ item, onUpdateQuantity, onRemove, compact }) {
-  const imagenPrincipal = item.producto.imagenes.find(i => i.es_principal);
-  const priceChanged = item.precio_unitario !== item.variacion.precio;
+const imagenPrincipal = item.producto.imagenes.find(i => i.es_principal);
+const priceChanged = item.precio_unitario !== item.variacion.precio;
 
-  return (
-    <div className={compact ? COMPONENTS.carrito.item.cardCompact : COMPONENTS.carrito.item.card}>
-      <Image
-        src={imagenPrincipal?.url}
-        className={compact ? COMPONENTS.carrito.item.imageCompact : COMPONENTS.carrito.item.image}
-      />
+return (
+<div className={compact ? COMPONENTS.carrito.item.cardCompact : COMPONENTS.carrito.item.card}>
+<Image
+src={imagenPrincipal?.url}
+className={compact ? COMPONENTS.carrito.item.imageCompact : COMPONENTS.carrito.item.image}
+/>
 
       <div className={COMPONENTS.carrito.item.content}>
         <h3>{item.producto.nombre}</h3>
@@ -328,7 +331,8 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove, compact }) {
         🗑️
       </button>
     </div>
-  );
+
+);
 }
 \`\`\`
 
@@ -342,17 +346,17 @@ export function CartItemCard({ item, onUpdateQuantity, onRemove, compact }) {
 'use client';
 
 export function CartDrawer() {
-  const { carritoWithDetails, isDrawerOpen, closeDrawer, itemCount } = useCarrito();
+const { carritoWithDetails, isDrawerOpen, closeDrawer, itemCount } = useCarrito();
 
-  useScrollLock(isDrawerOpen);
-  useEscapeKey(closeDrawer, isDrawerOpen);
+useScrollLock(isDrawerOpen);
+useEscapeKey(closeDrawer, isDrawerOpen);
 
-  if (!isDrawerOpen) return null;
+if (!isDrawerOpen) return null;
 
-  return (
-    <>
-      {/* Overlay */}
-      <div className={COMPONENTS.carrito.drawer.overlay} onClick={closeDrawer} />
+return (
+<>
+{/_ Overlay _/}
+<div className={COMPONENTS.carrito.drawer.overlay} onClick={closeDrawer} />
 
       {/* Drawer */}
       <div className={COMPONENTS.carrito.drawer.base}>
@@ -382,7 +386,8 @@ export function CartDrawer() {
         </div>
       </div>
     </>
-  );
+
+);
 }
 \`\`\`
 
@@ -394,15 +399,15 @@ export function CartDrawer() {
 
 \`\`\`typescript
 function validateAddToCart(variacion: Variacion | null): string | null {
-  if (!variacion) {
-    return "Seleccioná una variación";
-  }
+if (!variacion) {
+return "Seleccioná una variación";
+}
 
-  if (!variacion.activo) {
-    return "Esta variación no está disponible";
-  }
+if (!variacion.activo) {
+return "Esta variación no está disponible";
+}
 
-  return null; // Valid
+return null; // Valid
 }
 \`\`\`
 
@@ -410,31 +415,31 @@ function validateAddToCart(variacion: Variacion | null): string | null {
 
 \`\`\`typescript
 function validateCartItem(
-  item: CarritoItem,
-  producto: ProductoCompleto,
-  variacion: Variacion,
+item: CarritoItem,
+producto: ProductoCompleto,
+variacion: Variacion,
 ): {
-  isValid: boolean;
-  warnings: string[];
+isValid: boolean;
+warnings: string[];
 } {
-  const warnings: string[] = [];
+const warnings: string[] = [];
 
-  if (!producto.activo) {
-    warnings.push(CARRITO_CONTENT.page.validation.productInactive);
-  }
+if (!producto.activo) {
+warnings.push(CARRITO_CONTENT.page.validation.productInactive);
+}
 
-  if (!variacion.activo) {
-    warnings.push(CARRITO_CONTENT.page.validation.variationInactive);
-  }
+if (!variacion.activo) {
+warnings.push(CARRITO_CONTENT.page.validation.variationInactive);
+}
 
-  if (item.precio_unitario !== variacion.precio) {
-    warnings.push(CARRITO_CONTENT.page.validation.priceChanged);
-  }
+if (item.precio_unitario !== variacion.precio) {
+warnings.push(CARRITO_CONTENT.page.validation.priceChanged);
+}
 
-  return {
-    isValid: warnings.length === 0,
-    warnings,
-  };
+return {
+isValid: warnings.length === 0,
+warnings,
+};
 }
 \`\`\`
 
@@ -446,12 +451,12 @@ Si usuario agrega mismo producto+variación 2 veces:
 
 \`\`\`typescript
 function mergeItems(existing: CarritoItem, nuevo: CarritoItem): CarritoItem {
-  // Sumar cantidades
-  return {
-    ...existing,
-    cantidad: existing.cantidad + nuevo.cantidad,
-    updated_at: new Date().toISOString(),
-  };
+// Sumar cantidades
+return {
+...existing,
+cantidad: existing.cantidad + nuevo.cantidad,
+updated_at: new Date().toISOString(),
+};
 }
 \`\`\`
 
@@ -471,16 +476,16 @@ NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
 \`\`\`
 app/layout.tsx
-  └─ <GoogleAnalytics /> (@next/third-parties/google)
+└─ <GoogleAnalytics /> (@next/third-parties/google)
 
 lib/analytics/gtag.ts
-  ├─ trackWhatsAppClick()
-  ├─ trackProductView()
-  ├─ trackCategoryFilter()
-  ├─ trackVariationSelect()
-  ├─ trackAddToCart()          ← Cart Event
-  ├─ trackViewCart()           ← Cart Event
-  └─ trackRemoveFromCart()     ← Cart Event
+├─ trackWhatsAppClick()
+├─ trackProductView()
+├─ trackCategoryFilter()
+├─ trackVariationSelect()
+├─ trackAddToCart() ← Cart Event
+├─ trackViewCart() ← Cart Event
+└─ trackRemoveFromCart() ← Cart Event
 \`\`\`
 
 ---
@@ -518,39 +523,40 @@ Se dispara cuando el usuario agrega un ítem al carrito.
 - \`variacion_color\`: Color seleccionado
 - \`cantidad\`: Items agregados
 - \`precio_unitario\`: Precio snapshot al momento de agregar
-- \`value\`: precio_unitario * cantidad
+- \`value\`: precio_unitario \* cantidad
 
 **Implementation**:
 
 \`\`\`typescript
-/**
- * Track add to cart event
- * @param producto - Product being added
- * @param variacion - Selected variation
- * @param cantidad - Quantity added
- * @param precio_unitario - Price snapshot at time of add
- */
-export function trackAddToCart(
+/\*\*
+
+- Track add to cart event
+- @param producto - Product being added
+- @param variacion - Selected variation
+- @param cantidad - Quantity added
+- @param precio_unitario - Price snapshot at time of add
+  \*/
+  export function trackAddToCart(
   producto: Producto,
   variacion: Variacion,
   cantidad: number,
   precio_unitario: number,
-): void {
+  ): void {
   if (!canTrack()) return;
 
-  const value = precio_unitario * cantidad;
+const value = precio_unitario \* cantidad;
 
-  window.gtag!("event", "add_to_cart", {
-    event_category: "ecommerce",
-    producto_id: producto.id,
-    producto_nombre: producto.nombre,
-    variacion_id: variacion.id,
-    variacion_tamanio: variacion.tamanio,
-    variacion_color: variacion.color,
-    cantidad,
-    precio_unitario,
-    value,
-  });
+window.gtag!("event", "add_to_cart", {
+event_category: "ecommerce",
+producto_id: producto.id,
+producto_nombre: producto.nombre,
+variacion_id: variacion.id,
+variacion_tamanio: variacion.tamanio,
+variacion_color: variacion.color,
+cantidad,
+precio_unitario,
+value,
+});
 }
 \`\`\`
 
@@ -570,20 +576,21 @@ Se dispara al abrir la página de carrito o el drawer.
 **Implementation**:
 
 \`\`\`typescript
-/**
- * Track view cart event
- * @param item_count - Number of items in cart
- * @param subtotal - Total cart value
- */
-export function trackViewCart(item_count: number, subtotal: number): void {
+/\*\*
+
+- Track view cart event
+- @param item_count - Number of items in cart
+- @param subtotal - Total cart value
+  \*/
+  export function trackViewCart(item_count: number, subtotal: number): void {
   if (!canTrack()) return;
 
-  window.gtag!("event", "view_cart", {
-    event_category: "ecommerce",
-    item_count,
-    subtotal,
-    value: subtotal,
-  });
+window.gtag!("event", "view_cart", {
+event_category: "ecommerce",
+item_count,
+subtotal,
+value: subtotal,
+});
 }
 \`\`\`
 
@@ -604,28 +611,29 @@ Se dispara cuando se elimina un ítem del carrito.
 **Implementation**:
 
 \`\`\`typescript
-/**
- * Track remove from cart event
- * @param producto - Product being removed
- * @param variacion - Removed variation
- * @param cantidad - Quantity removed
- * @param value - Total value of removed item
- */
-export function trackRemoveFromCart(
+/\*\*
+
+- Track remove from cart event
+- @param producto - Product being removed
+- @param variacion - Removed variation
+- @param cantidad - Quantity removed
+- @param value - Total value of removed item
+  \*/
+  export function trackRemoveFromCart(
   producto: Producto,
   variacion: Variacion,
   cantidad: number,
   value: number,
-): void {
+  ): void {
   if (!canTrack()) return;
 
-  window.gtag!("event", "remove_from_cart", {
-    event_category: "ecommerce",
-    producto_id: producto.id,
-    variacion_id: variacion.id,
-    cantidad,
-    value,
-  });
+window.gtag!("event", "remove_from_cart", {
+event_category: "ecommerce",
+producto_id: producto.id,
+variacion_id: variacion.id,
+cantidad,
+value,
+});
 }
 \`\`\`
 
@@ -656,12 +664,12 @@ import { useCarrito } from '@/lib/context/CarritoContext';
 import { trackAddToCart } from '@/lib/analytics/gtag';
 
 export function ProductDetailContent({ producto }) {
-  const [selectedVariacion, setSelectedVariacion] = useState<Variacion | null>(null);
-  const { addItem, openDrawer } = useCarrito();
-  const [isAdding, setIsAdding] = useState(false);
+const [selectedVariacion, setSelectedVariacion] = useState<Variacion | null>(null);
+const { addItem, openDrawer } = useCarrito();
+const [isAdding, setIsAdding] = useState(false);
 
-  const handleAddToCart = () => {
-    if (!selectedVariacion) return;
+const handleAddToCart = () => {
+if (!selectedVariacion) return;
 
     setIsAdding(true);
 
@@ -680,14 +688,15 @@ export function ProductDetailContent({ producto }) {
     openDrawer();
 
     setTimeout(() => setIsAdding(false), 1000);
-  };
 
-  return (
-    <div>
-      <VariationSelector
-        variaciones={producto.variaciones.filter(v => v.activo)}
-        onSelect={setSelectedVariacion}
-      />
+};
+
+return (
+<div>
+<VariationSelector
+variaciones={producto.variaciones.filter(v => v.activo)}
+onSelect={setSelectedVariacion}
+/>
 
       <Button
         onClick={handleAddToCart}
@@ -696,7 +705,8 @@ export function ProductDetailContent({ producto }) {
         {isAdding ? '✓ Agregado' : 'Agregar al carrito'}
       </Button>
     </div>
-  );
+
+);
 }
 \`\`\`
 
@@ -711,22 +721,22 @@ import { trackViewCart } from '@/lib/analytics/gtag';
 import { useEffect } from 'react';
 
 export function CartDrawer() {
-  const { carritoWithDetails, isDrawerOpen, closeDrawer, itemCount } = useCarrito();
+const { carritoWithDetails, isDrawerOpen, closeDrawer, itemCount } = useCarrito();
 
-  // Track view_cart when drawer opens
-  useEffect(() => {
-    if (isDrawerOpen && itemCount > 0 && carritoWithDetails) {
-      trackViewCart(itemCount, carritoWithDetails.subtotal);
-    }
-  }, [isDrawerOpen, itemCount, carritoWithDetails]);
+// Track view_cart when drawer opens
+useEffect(() => {
+if (isDrawerOpen && itemCount > 0 && carritoWithDetails) {
+trackViewCart(itemCount, carritoWithDetails.subtotal);
+}
+}, [isDrawerOpen, itemCount, carritoWithDetails]);
 
-  if (!isDrawerOpen) return null;
+if (!isDrawerOpen) return null;
 
-  return (
-    <div className="cart-drawer">
-      {/* Drawer content */}
-    </div>
-  );
+return (
+<div className="cart-drawer">
+{/_ Drawer content _/}
+</div>
+);
 }
 \`\`\`
 
@@ -740,10 +750,10 @@ import { useCarrito } from '@/lib/context/CarritoContext';
 import { trackRemoveFromCart } from '@/lib/analytics/gtag';
 
 export function CartItemCard({ item, producto, variacion }) {
-  const { removeItem } = useCarrito();
+const { removeItem } = useCarrito();
 
-  const handleRemove = () => {
-    const itemValue = item.precio_unitario * item.cantidad;
+const handleRemove = () => {
+const itemValue = item.precio_unitario \* item.cantidad;
 
     // 1. Remove from cart
     removeItem(item.id);
@@ -755,14 +765,15 @@ export function CartItemCard({ item, producto, variacion }) {
       item.cantidad,
       itemValue
     );
-  };
 
-  return (
-    <div className="cart-item">
-      {/* Item content */}
-      <button onClick={handleRemove}>Remover</button>
-    </div>
-  );
+};
+
+return (
+<div className="cart-item">
+{/_ Item content _/}
+<button onClick={handleRemove}>Remover</button>
+</div>
+);
 }
 \`\`\`
 
@@ -777,32 +788,33 @@ import { trackViewCart } from '@/lib/analytics/gtag';
 import { useEffect } from 'react';
 
 export function CarritoContent() {
-  const { carritoWithDetails, itemCount } = useCarrito();
+const { carritoWithDetails, itemCount } = useCarrito();
 
-  // Track view_cart when page loads
-  useEffect(() => {
-    if (itemCount > 0 && carritoWithDetails) {
-      trackViewCart(itemCount, carritoWithDetails.subtotal);
-    }
-  }, []); // Only on mount
+// Track view_cart when page loads
+useEffect(() => {
+if (itemCount > 0 && carritoWithDetails) {
+trackViewCart(itemCount, carritoWithDetails.subtotal);
+}
+}, []); // Only on mount
 
-  if (itemCount === 0) {
-    return <EmptyCart />;
-  }
+if (itemCount === 0) {
+return <EmptyCart />;
+}
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-      <div className="lg:col-span-2 space-y-4">
-        {carritoWithDetails?.items.map(item => (
-          <CartItemCard key={item.id} item={item} />
-        ))}
-      </div>
+return (
+<div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div className="lg:col-span-2 space-y-4">
+{carritoWithDetails?.items.map(item => (
+<CartItemCard key={item.id} item={item} />
+))}
+</div>
 
       <div className="lg:col-span-1">
         <CartSummary carrito={carritoWithDetails} />
       </div>
     </div>
-  );
+
+);
 }
 \`\`\`
 
@@ -821,6 +833,7 @@ export function CarritoContent() {
 ## ✅ Best Practices Checklist
 
 **Shopping Cart:**
+
 - [ ] Validar variación seleccionada antes de agregar
 - [ ] Snapshot precio al agregar (\`precio_unitario\`)
 - [ ] Detectar cambios de precio y mostrar warning
@@ -832,6 +845,7 @@ export function CarritoContent() {
 - [ ] Loading states en botones (isAdding)
 
 **Analytics:**
+
 - [ ] \`NEXT_PUBLIC_GA_MEASUREMENT_ID\` configurado
 - [ ] Eventos visibles en DebugView
 - [ ] Tracking activo solo en prod

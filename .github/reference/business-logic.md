@@ -5,7 +5,7 @@ version: "1.0"
 lastUpdated: "2026-01-16"
 ---
 
-# Business Logic Reference
+## Business Logic Reference
 
 Complete business rules, workflows, and operational guidelines for Fira Estudio e-commerce.
 
@@ -799,9 +799,11 @@ interface Carrito {
 **Order Lifecycle:**
 
 ```
-Cart → Checkout → Payment → Confirmed → Shipped → Delivered
-                    ↓
-                 Failed → Cart Restored
+Cart → Checkout → Pago Mercado Pago → Pedido Creado ('pending')
+         ↓
+Pago Confirmado (webhook) → Pedido 'paid' → Shipped → Delivered
+         ↓
+Pago Fallido → Pedido 'failed' → Cart Restored
 ```
 
 **Database Tables:**
@@ -810,7 +812,7 @@ Cart → Checkout → Payment → Confirmed → Shipped → Delivered
 CREATE TABLE pedidos (
   id UUID PRIMARY KEY,
   usuario_id UUID REFERENCES usuarios(id),
-  estado VARCHAR(50), -- 'pending', 'paid', 'shipped', 'delivered'
+  estado VARCHAR(50), -- 'pending', 'paid', 'shipped', 'delivered', 'failed'
   total INTEGER,
   created_at TIMESTAMPTZ
 );
@@ -824,6 +826,13 @@ CREATE TABLE pedidos_items (
   precio_unitario INTEGER
 );
 ```
+
+**Notas:**
+
+- El pedido se crea al finalizar el pago exitoso en Mercado Pago (callback o webhook)
+- Estado inicial: 'pending', luego 'paid' al recibir confirmación
+- Si el pago falla o expira, el pedido pasa a 'failed' y el carrito puede restaurarse
+- Stock se descuenta solo al confirmar pago
 
 ---
 
@@ -962,7 +971,13 @@ User on Product Detail
    - View subtotal
    - Price change warnings
    - Stock validation warnings
-   - "Iniciar checkout" button (→ /checkout in Phase 2)
+   - "Iniciar checkout" button (→ /checkout)
+         ↓
+5. Iniciar Checkout
+   - Validar stock y reservar por 15 min
+   - Redirigir a Mercado Pago
+   - Al volver, confirmar pago y crear pedido
+   - Actualizar stock y limpiar carrito
 ```
 
 ---
@@ -995,9 +1010,10 @@ User on Product Detail
 
 ### Expiration (TTL)
 
-- **Duration**: 14 days
-- **Check**: On every `getCarrito()` call
-- **Action**: If expired, clear cart and return empty state
+- **Duration**: 14 days (carrito)
+- **Stock reservation**: 15 minutos durante checkout
+- **Check**: On every `getCarrito()` call y al iniciar checkout
+- **Action**: Si carrito expiró, limpiar y mostrar estado vacío. Si reserva de stock expiró, liberar stock y cancelar checkout.
 
 ---
 
@@ -1092,11 +1108,12 @@ if (currentPrice !== snapshotPrice) {
 
 ### Stock Validation
 
-**V1 (Current Phase):**
+**Actual (V2):**
 
-- No stock reservation
-- `stock = 0` still means "bajo pedido" (valid)
-- Show informational messages only
+- Reserva de stock al iniciar checkout (15 min)
+- Validación real de stock antes de pago
+- Prevent checkout si stock insuficiente
+- Si stock = 0, mostrar "A pedido" y permitir checkout solo si producto es bajo pedido
 
 **Warnings:**
 
@@ -1115,13 +1132,12 @@ if (variacion.stock === 0) {
   info = "Este producto se fabrica bajo pedido";
   allowCheckout = true;
 }
+
+if (variacion.stock > 0 && variacion.stock < cantidadSolicitada) {
+  warning = `Solo quedan ${variacion.stock} disponibles`;
+  allowCheckout = false;
+}
 ```
-
-**V2 (Future - Phase 2):**
-
-- Stock reservation on add to cart (15 min timer)
-- Real stock validation at checkout
-- Prevent checkout if insufficient stock
 
 ---
 
@@ -1276,8 +1292,6 @@ Breadcrumbs: Home > Carrito
 }
 ```
 
----
-
 ### remove_from_cart
 
 **Triggered:** User removes item from cart
@@ -1294,8 +1308,6 @@ Breadcrumbs: Home > Carrito
 }
 ```
 
----
-
 ### view_cart
 
 **Triggered:** User opens `/carrito` page
@@ -1311,11 +1323,9 @@ Breadcrumbs: Home > Carrito
 }
 ```
 
----
-
 ### begin_checkout
 
-**Triggered:** User clicks "Iniciar Checkout" (Phase 2)
+**Triggered:** User clicks "Iniciar Checkout"
 
 **Params:**
 
@@ -1330,7 +1340,38 @@ Breadcrumbs: Home > Carrito
     variacion_id: string,
     cantidad: number,
     precio: number,
-  }>
+  }>}
+```
+
+### payment_success
+
+**Triggered:** Pago exitoso en Mercado Pago
+
+**Params:**
+
+```typescript
+{
+  event_category: 'ecommerce',
+  pedido_id: string,
+  total: number,
+  payment_method: 'mercado_pago',
+  status: 'paid',
+}
+```
+
+### payment_failed
+
+**Triggered:** Pago fallido o expirado
+
+**Params:**
+
+```typescript
+{
+  event_category: 'ecommerce',
+  pedido_id: string,
+  total: number,
+  payment_method: 'mercado_pago',
+  status: 'failed',
 }
 ```
 
@@ -1338,30 +1379,20 @@ Breadcrumbs: Home > Carrito
 
 ## Security Considerations
 
-### V1 (Current - No Auth)
+### V2 (Actual - Con Checkout y Pago)
 
 **Safe:**
 
-- Cart data stored client-side only
-- No PII (personal identifiable information)
-- No payment info
-- Public product data only
+- Cart data stored client-side y/o server-side
+- Datos de pago gestionados por Mercado Pago (no se almacenan datos sensibles en la plataforma)
+- Validación de respuesta de Mercado Pago antes de confirmar pedido
+- Webhooks de Mercado Pago actualizan estado de pedido
 
 **Risks:**
 
-- User can manipulate localStorage (but doesn't affect backend)
-- Cart lost if localStorage cleared
-
----
-
-### V2 (Future - With Auth)
-
-**When User Logs In:**
-
-1. Merge anonymous cart with server cart
-2. Resolve conflicts (keep most recent)
-3. Save merged cart to database
-4. Clear localStorage cart
+- Manipulación de carrito local (no afecta backend)
+- Carrito perdido si localStorage se borra
+- Validar correctamente los estados de pago para evitar doble confirmación
 
 **Server-Side Cart Table:**
 
@@ -1396,7 +1427,11 @@ const debouncedSave = debounce((carrito) => {
 - User drags quantity slider: 1 → 5
 - Only 1 localStorage write (not 5)
 
----
+### Checkout Optimizations
+
+- Validar reserva de stock antes de iniciar pago
+- Evitar doble pago (deshabilitar botón hasta recibir respuesta)
+- Manejar correctamente expiración de reserva
 
 ### Lazy Loading Product Details
 
@@ -1416,22 +1451,24 @@ const debouncedSave = debounce((carrito) => {
 
 ## Migration Path to V2
 
-### Phase 1 (Current)
+### Phase 1 (Completado)
 
 - ✅ Anonymous cart (localStorage)
 - ✅ Add/remove/update items
 - ✅ Drawer + Page UI
 - ✅ Price change detection
-- ⏸️ No checkout (future)
+- ✅ Checkout y pago con Mercado Pago
+- ✅ Reserva de stock (15 min)
+- ✅ Creación de pedidos
 
-### Phase 2 (Next)
+### Phase 2 (Actual)
 
-- 🔄 Mercado Pago integration
-- 🔄 Server Actions for checkout
-- 🔄 Stock reservation (15 min)
-- 🔄 Order creation
+- 🔄 Mejoras UX checkout
+- 🔄 Validación avanzada de stock
+- 🔄 Webhooks Mercado Pago
+- 🔄 Notificaciones de estado de pedido
 
-### Phase 3 (Future)
+### Phase 3 (Futuro)
 
 - 🔮 User accounts (Supabase Auth)
 - 🔮 Server-side cart storage

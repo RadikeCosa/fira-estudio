@@ -1,3 +1,44 @@
+// BOTONES de acción principales y secundarios
+export const BUTTONS = {
+  primary:
+    "bg-primary text-primary-foreground px-4 py-3 rounded-lg hover:bg-primary/90 transition text-center font-medium",
+  secondary:
+    "border border-border px-4 py-3 rounded-lg hover:bg-muted transition",
+  danger: "text-sm text-red-600 hover:text-red-700 disabled:opacity-50",
+  disabled: "disabled:opacity-50 disabled:cursor-not-allowed",
+  inline: "inline-block px-6 py-2 rounded-lg",
+  underline: "text-sm underline hover:no-underline",
+};
+
+// SUBTOTALES y totales
+export const CART = {
+  subtotal: "font-semibold text-lg",
+  totalLabel: "text-lg font-medium",
+  totalValue: "text-2xl font-bold",
+  empty: "text-muted-foreground mb-4",
+  itemTitle: "font-medium text-lg truncate",
+  itemDetail: "text-sm text-muted-foreground",
+  itemPrice: "text-sm text-muted-foreground mt-1",
+  itemControls: "flex items-center gap-3 mt-3",
+  itemQtyBox: "flex items-center border border-border rounded-lg",
+  itemQtyBtn:
+    "px-3 py-1 hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed",
+  itemQtyValue: "px-4 py-1 border-x border-border min-w-12 text-center",
+};
+
+// HELPERS para layout de carrito
+export const CART_LAYOUT = {
+  container: "space-y-6",
+  items: "space-y-4",
+  item: "flex gap-4 p-4 bg-white border border-border rounded-lg",
+  imageBox: "relative w-24 h-24 shrink-0",
+  image: "object-cover rounded-lg",
+  itemInfo: "flex-1 min-w-0",
+  itemSubtotal: "text-right",
+  summary: "border-t border-border pt-4",
+  summaryRow: "flex justify-between items-center mb-4",
+  summaryActions: "flex gap-3",
+};
 // Tipografías personalizadas para títulos
 export const FONTS = {
   sugoDisplay: "'Sugo Display', serif",

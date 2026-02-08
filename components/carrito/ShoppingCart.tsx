@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+
 import { formatPrice, getImageUrl } from "@/lib/utils";
 import type { Cart, CartItem } from "@/lib/types";
 import {
@@ -11,6 +12,9 @@ import {
   updateCartQuantity,
   clearCart,
 } from "@/app/api/cart/actions";
+import { BUTTONS, CART, CART_LAYOUT } from "@/lib/design/tokens";
+import { combine } from "@/lib/design/tokens";
+import { CARRITO_CONTENT } from "@/lib/content/carrito";
 
 export function ShoppingCart() {
   const [cart, setCart] = useState<(Cart & { items: CartItem[] }) | null>(null);
@@ -62,7 +66,7 @@ export function ShoppingCart() {
   };
 
   const handleClearCart = async () => {
-    if (!confirm("¿Estás seguro de vaciar el carrito?")) return;
+    if (!confirm(CARRITO_CONTENT.error.confirmClear)) return;
 
     try {
       setLoading(true);
@@ -77,22 +81,33 @@ export function ShoppingCart() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className={combine("flex items-center justify-center py-12")}>
+        {" "}
+        {/* Spinner layout */}
+        <div
+          className={combine(
+            "animate-spin rounded-full h-8 w-8 border-b-2 border-primary",
+          )}
+        ></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
-        <p className="font-medium">Error al cargar el carrito</p>
+      <div
+        className={combine(
+          "bg-red-50 border border-red-200 rounded-lg p-4 text-red-800",
+        )}
+      >
+        {/* Error container, custom style */}
+        <p className="font-medium">{CARRITO_CONTENT.error.load}</p>
         <p className="text-sm">{error}</p>
         <button
           onClick={loadCart}
-          className="mt-2 text-sm underline hover:no-underline"
+          className={combine("mt-2", BUTTONS.underline)}
         >
-          Reintentar
+          {CARRITO_CONTENT.actions.retry}
         </button>
       </div>
     );
@@ -101,21 +116,21 @@ export function ShoppingCart() {
   if (!cart || !cart.items || cart.items.length === 0) {
     return (
       <div className="text-center py-12">
-        <p className="text-muted-foreground mb-4">Tu carrito está vacío</p>
+        <p className={CART.empty}>{CARRITO_CONTENT.empty.message}</p>
         <Link
           href="/productos"
-          className="inline-block bg-primary text-primary-foreground px-6 py-2 rounded-lg hover:bg-primary/90 transition"
+          className={combine(BUTTONS.inline, BUTTONS.primary)}
         >
-          Ver productos
+          {CARRITO_CONTENT.empty.cta}
         </Link>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className={CART_LAYOUT.container}>
       {/* Items del carrito */}
-      <div className="space-y-4">
+      <div className={CART_LAYOUT.items}>
         {cart.items.map((item) => {
           const producto = item.variacion?.producto;
           const imagenPrincipal =
@@ -124,55 +139,50 @@ export function ShoppingCart() {
           const isUpdating = updating === item.id;
 
           return (
-            <div
-              key={item.id}
-              className="flex gap-4 p-4 bg-white border border-border rounded-lg"
-            >
+            <div key={item.id} className={CART_LAYOUT.item}>
               {/* Imagen */}
               {imagenPrincipal && (
-                <div className="relative w-24 h-24 shrink-0">
+                <div className={CART_LAYOUT.imageBox}>
                   <Image
                     src={getImageUrl(imagenPrincipal)}
                     alt={producto?.nombre || "Producto"}
                     fill
-                    className="object-cover rounded-lg"
+                    className={CART_LAYOUT.image}
                   />
                 </div>
               )}
 
               {/* Info del producto */}
-              <div className="flex-1 min-w-0">
-                <h3 className="font-medium text-lg truncate">
+              <div className={CART_LAYOUT.itemInfo}>
+                <h3 className={CART.itemTitle}>
                   {producto?.nombre || "Producto"}
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className={CART.itemDetail}>
                   {item.variacion?.tamanio} • {item.variacion?.color}
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className={CART.itemPrice}>
                   {formatPrice(item.price_at_addition)} c/u
                 </p>
 
                 {/* Controles de cantidad */}
-                <div className="flex items-center gap-3 mt-3">
-                  <div className="flex items-center border border-border rounded-lg">
+                <div className={CART.itemControls}>
+                  <div className={CART.itemQtyBox}>
                     <button
                       onClick={() =>
                         handleUpdateQuantity(item.id, item.quantity - 1)
                       }
                       disabled={isUpdating || item.quantity <= 1}
-                      className="px-3 py-1 hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={CART.itemQtyBtn}
                     >
                       -
                     </button>
-                    <span className="px-4 py-1 border-x border-border min-w-12 text-center">
-                      {item.quantity}
-                    </span>
+                    <span className={CART.itemQtyValue}>{item.quantity}</span>
                     <button
                       onClick={() =>
                         handleUpdateQuantity(item.id, item.quantity + 1)
                       }
                       disabled={isUpdating}
-                      className="px-3 py-1 hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={CART.itemQtyBtn}
                     >
                       +
                     </button>
@@ -181,16 +191,16 @@ export function ShoppingCart() {
                   <button
                     onClick={() => handleRemoveItem(item.id)}
                     disabled={isUpdating}
-                    className="text-sm text-red-600 hover:text-red-700 disabled:opacity-50"
+                    className={BUTTONS.danger}
                   >
-                    Eliminar
+                    {CARRITO_CONTENT.actions.remove}
                   </button>
                 </div>
               </div>
 
               {/* Subtotal */}
-              <div className="text-right">
-                <p className="font-semibold text-lg">
+              <div className={CART_LAYOUT.itemSubtotal}>
+                <p className={CART.subtotal}>
                   {formatPrice(item.quantity * item.price_at_addition)}
                 </p>
               </div>
@@ -200,26 +210,22 @@ export function ShoppingCart() {
       </div>
 
       {/* Resumen */}
-      <div className="border-t border-border pt-4">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-lg font-medium">Total</span>
-          <span className="text-2xl font-bold">
+      <div className={CART_LAYOUT.summary}>
+        <div className={CART_LAYOUT.summaryRow}>
+          <span className={CART.totalLabel}>
+            {CARRITO_CONTENT.labels.total}
+          </span>
+          <span className={CART.totalValue}>
             {formatPrice(cart.total_amount)}
           </span>
         </div>
 
-        <div className="flex gap-3">
-          <button
-            onClick={handleClearCart}
-            className="flex-1 border border-border px-4 py-3 rounded-lg hover:bg-muted transition"
-          >
-            Vaciar carrito
+        <div className={CART_LAYOUT.summaryActions}>
+          <button onClick={handleClearCart} className={BUTTONS.secondary}>
+            {CARRITO_CONTENT.actions.clear}
           </button>
-          <Link
-            href="/checkout"
-            className="flex-1 bg-primary text-primary-foreground px-4 py-3 rounded-lg hover:bg-primary/90 transition text-center font-medium"
-          >
-            Continuar con la compra
+          <Link href="/checkout" className={BUTTONS.primary}>
+            {CARRITO_CONTENT.actions.checkout}
           </Link>
         </div>
       </div>

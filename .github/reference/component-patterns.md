@@ -5,7 +5,7 @@ version: "1.0"
 lastUpdated: "2026-02-02"
 ---
 
-# Component Patterns Reference
+## Component Patterns Reference
 
 Complete guide to component structure, naming conventions, and content/style centralization patterns for Fira Estudio.
 
@@ -78,7 +78,12 @@ interface ButtonProps {
   onClick?: () => void;
 }
 
-export function Button({ children, variant = "primary", size = "md", ...props }: ButtonProps) {
+export function Button({
+  children,
+  variant = "primary",
+  size = "md",
+  ...props
+}: ButtonProps) {
   // Implementation
 }
 ```
@@ -93,15 +98,15 @@ export function Button({ children, variant = "primary", size = "md", ...props }:
 
 ```typescript
 // ✅ CORRECT
-ProductCard
-VariationSelector
-MobileNav
-WhatsAppButton
+ProductCard;
+VariationSelector;
+MobileNav;
+WhatsAppButton;
 
 // ❌ INCORRECT
-productCard
-variation_selector
-mobile-nav
+productCard;
+variation_selector;
+mobile - nav;
 ```
 
 ### Functions and Variables
@@ -143,7 +148,7 @@ export const errorMessages = { ... };
 
 ### Content Exports
 
-**Use UPPER_SNAKE_CASE with _CONTENT suffix:**
+**Use UPPER_SNAKE_CASE with \_CONTENT suffix:**
 
 ```typescript
 // lib/content/home.ts
@@ -305,7 +310,7 @@ export function HeroSection() {
         <h1 className={cn(TYPOGRAPHY.heading.page, ANIMATIONS.fadeIn)}>
           {title}
         </h1>
-        
+
         <p className={cn(TYPOGRAPHY.body.large, ANIMATIONS.fadeIn, "mt-6")}>
           {subtitle}
         </p>
