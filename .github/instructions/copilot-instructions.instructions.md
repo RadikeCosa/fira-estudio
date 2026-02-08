@@ -1,14 +1,7 @@
 ---
 name: "GitHub Copilot Instructions - Fira Estudio"
 description: "Development guidelines for textile e-commerce with Next.js 16 + Supabase"
-version: "3.1"
-lastUpdated: "2026-02-02"
-stack:
-  - Next.js 16 (App Router)
-  - TypeScript (strict mode)
-  - Supabase (PostgreSQL + Storage)
-  - Tailwind CSS
-  - Vercel
+applyTo: "**"
 ---
 
 # GitHub Copilot Instructions - Fira Estudio
@@ -17,8 +10,7 @@ stack:
 
 **Fira Estudio** is an artisan textile e-commerce (tablecloths, napkins, table runners) with products that have multiple size and color variations.
 
-- **V1 (Current):** Visual catalog + WhatsApp inquiries
-- **V2 (Future):** Shopping cart + Mercado Pago payments
+- **V2:** Shopping cart + Mercado Pago payments
 
 ### Business Model
 
@@ -368,20 +360,6 @@ GitHub Copilot will automatically activate these skills when relevant:
 
 ---
 
-## ❌ What NOT to Do
-
-**Critical Anti-Patterns:**
-
-1. ❌ Never use `any` type
-2. ❌ Cannot order nested relations in Supabase (sort in JavaScript)
-3. ❌ Don't use `disponible` column (use `activo`)
-4. ❌ Don't use Client Component unnecessarily
-5. ❌ Don't hardcode text or styles (use centralized content/tokens)
-
-📋 **Complete anti-patterns guide**: `.github/reference/anti-patterns.md`
-
----
-
 ## 📚 Progressive Disclosure
 
 This file contains **core rules only**. For detailed patterns and implementations, reference:
@@ -434,17 +412,6 @@ When working with V2 features, load these skills:
 - **Shopping Cart**: `.github/skills/carrito/SKILL.md` - Cart management, localStorage, Context API
 - **Analytics**: `.github/skills/analytics/SKILL.md` - GA4 tracking, ecommerce events
 
-**Do NOT implement these unless explicitly requested:**
-
-- Shopping cart (Context API + localStorage)
-- Mercado Pago integration
-- Server Actions for checkout
-- Order management system
-- User accounts (Supabase Auth)
-- Admin panel
-
-📋 See `.github/reference/business-logic.md` for complete V2 workflows and business rules.
-
 ---
 
 ## 📖 Commit Conventions
@@ -458,19 +425,6 @@ style: Improve mobile layout spacing
 refactor: Extract WhatsApp logic to utility
 docs: Update README with setup instructions
 ```
-
----
-
-## 🎓 Remember
-
-1. **Server Components by default** - only use Client Components when necessary
-2. **TypeScript strict mode** - explicit types, never `any`
-3. **Sort relations in JavaScript** - Supabase limitation
-4. **Use `activo` column** - not `disponible`
-5. **Mobile-first responsive** - Tailwind breakpoints
-6. **Centralized constants** - import from `lib/constants`
-7. **Centralized content & styles** - import from `lib/content/` and `lib/design/tokens`
-8. **Reference skills** - detailed patterns in `.github/skills/`
 
 ---
 

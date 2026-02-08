@@ -1,400 +1,188 @@
-# Fira Estudio
+# 🎨 Fira Estudio - E-commerce
 
-E-commerce de productos textiles artesanales (manteles, servilletas y caminos de mesa).
+E-commerce de Fira Estudio construido con Next.js 15, TypeScript, Tailwind CSS, y Mercado Pago.
 
-## 📋 Descripción del Proyecto
+---
 
-Fira Estudio es una tienda en línea especializada en creaciones textiles y digitales. La plataforma permite a los clientes explorar un catálogo de productos con variaciones de tamaño y color, y realizar consultas directamente por WhatsApp.
-
-**Estado actual (V1):** Catálogo de productos + consultas por WhatsApp
-**Próxima versión (V2):** Integración con Mercado Pago para compras online
-
-## 🛠️ Stack Tecnológico
-
-- **Framework:** [Next.js 14](https://nextjs.org/) con App Router
-- **Lenguaje:** TypeScript
-- **Base de datos:** [Supabase](https://supabase.com/) (PostgreSQL + Storage)
-- **Estilos:** [Tailwind CSS](https://tailwindcss.com/)
-- **Iconos:** [Lucide React](https://lucide.dev/)
-- **Deploy:** [Vercel](https://vercel.com/)
-
-## 📦 Requisitos Previos
-
-Asegúrate de tener instalado:
-
-- Node.js 20.x o superior
-- npm (viene con Node.js)
-
-## 🚀 Instalación
-
-1. **Clonar el repositorio:**
+## 🚀 Quick Start
 
 ```bash
-git clone https://github.com/RadikeCosa/fira-estudio.git
-cd fira-estudio
-```
-
-2. **Instalar dependencias:**
-
-```bash
+# Instalar dependencias
 npm install
-```
 
-3. **Configurar variables de entorno:**
-
-```bash
+# Copiar variables de entorno
 cp .env.local.example .env.local
-```
 
-Edita `.env.local` con tus valores reales.
+# Editar .env.local con tus valores
+nano .env.local
 
-4. **Ejecutar en modo desarrollo:**
-
-```bash
+# Iniciar servidor de desarrollo
 npm run dev
 ```
 
 Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
-## 🔧 Configuración de Variables de Entorno
+---
 
-Crea un archivo `.env.local` en la raíz del proyecto con las siguientes variables:
+## 📚 Documentación
 
-```env
-# Instagram URL
-NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/firaestudio
+- **[Guía de Entornos](./docs/ENVIRONMENTS.md)** - Configuración de development, staging, production
+- **[Modo Mantenimiento](./docs/MAINTENANCE_MODE.md)** - Cómo activar/desactivar mantenimiento
+- **[Guía de Deployment](./docs/DEPLOYMENT.md)** - Cómo hacer deployments y rollbacks
 
-# Contact Email
-NEXT_PUBLIC_CONTACT_EMAIL=firaestudio@gmail.com
+---
 
-# Google Analytics Measurement ID
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+## 🌐 Entornos
 
-# WhatsApp Number (with country code, no spaces or +)
-NEXT_PUBLIC_WHATSAPP_NUMBER=5492999123456
+| Entorno         | URL                                                                   | Rama      | Estado           |
+| --------------- | --------------------------------------------------------------------- | --------- | ---------------- |
+| **Development** | `localhost:3000`                                                      | local     | 🟢 Activo        |
+| **Staging**     | [Preview URL](https://fira-estudio-git-develop-radikecosa.vercel.app) | `develop` | 🟢 Activo        |
+| **Production**  | [fira-estudio.vercel.app](https://fira-estudio.vercel.app)            | `main`    | 🟡 Mantenimiento |
 
-# Site URL (for SEO and sitemap generation)
-NEXT_PUBLIC_SITE_URL=https://firaestudio.com
-```
+**Nota:** Production está en modo mantenimiento mientras se configuran credenciales de Mercado Pago.
 
-> **Nota:** Todas las variables que comienzan con `NEXT_PUBLIC_` son accesibles desde el lado del cliente.
+---
 
-### Variables Requeridas vs Opcionales
-
-**Requeridas:**
-
-- `NEXT_PUBLIC_SITE_URL` - URL base del sitio para sitemap y SEO
-
-**Opcionales:**
-
-- `NEXT_PUBLIC_GA_MEASUREMENT_ID` - Si no se configura, Google Analytics no se cargará
-- `NEXT_PUBLIC_WHATSAPP_NUMBER` - Número de contacto para consultas
-- `NEXT_PUBLIC_INSTAGRAM_URL` - Link a Instagram
-- `NEXT_PUBLIC_CONTACT_EMAIL` - Email de contacto
-
-## 📜 Scripts Disponibles
-
-- `npm run dev` - Inicia el servidor de desarrollo
-- `npm run build` - Genera el build de producción
-- `npm run start` - Inicia el servidor de producción
-- `npm run lint` - Ejecuta el linter ESLint
-- `npm test` - Ejecuta todos los tests (node:test + Vitest)
-- `npm run test:node` - Ejecuta tests de lógica pura con node:test
-- `npm run test:unit` - Ejecuta tests de componentes con Vitest
-- `npm run test:watch` - Ejecuta Vitest en modo watch
-- `npm run test:coverage` - Genera reporte de cobertura
-
-## 🧪 Testing
-
-Este proyecto utiliza una estrategia dual de testing:
-
-### Node:test (Lógica Pura)
-
-Para funciones utilitarias, repositories y servicios que no dependen de React:
+## 🛠️ Scripts
 
 ```bash
-npm run test:node
+# Desarrollo
+npm run dev          # Servidor de desarrollo (localhost:3000)
+npm run build        # Build de producción
+npm start            # Ejecutar build local
+
+# Quality
+npm run lint         # ESLint
+npm run type-check   # TypeScript checking
+
+# (Futuros)
+npm test             # Tests con Vitest
+npm run test:e2e     # Tests E2E con Playwright
 ```
 
-**Archivos testeados:**
+---
 
-- `lib/utils/` - Funciones utilitarias (formatters, slugify, truncateText, isDefined)
-- `lib/seo/` - Generación de schemas SEO (Product, Breadcrumb, Organization)
-- `lib/analytics/` - Funciones de tracking (WhatsApp, product view, category filter)
+## 🏗️ Stack Tecnológico
 
-### Vitest (Componentes React)
+- **Framework:** Next.js 15 (App Router)
+- **Lenguaje:** TypeScript
+- **Estilos:** Tailwind CSS
+- **Pagos:** Mercado Pago
+- **Database:** Supabase
+- **Deployment:** Vercel
+- **Analytics:** Google Analytics 4
 
-Para componentes React y tests que necesitan jsdom:
-
-```bash
-# Ejecutar tests una vez
-npm run test:unit
-
-# Modo watch para desarrollo
-npm run test:watch
-
-# Con coverage
-npm run test:coverage
-```
-
-**Componentes testeados:**
-
-- `components/productos/ProductCard` - Tarjeta de producto con imagen y precio
-- `components/productos/CategoryFilter` - Filtro de categorías con analytics
-- `components/productos/RelatedProducts` - Productos relacionados
-- `components/ui/Breadcrumbs` - Navegación breadcrumb con JSON-LD
-
-### Ejecutar todos los tests
-
-```bash
-npm test
-```
-
-### Estructura de Tests
-
-```
-lib/
-├── utils/
-│   ├── index.test.ts          ← node:test
-│   └── formatters.test.ts     ← node:test
-├── seo/
-│   └── structured-data.test.ts ← node:test
-└── analytics/
-    └── gtag.test.ts           ← node:test
-
-components/
-├── productos/
-│   ├── ProductCard.test.tsx   ← vitest
-│   ├── CategoryFilter.test.tsx ← vitest
-│   └── RelatedProducts.test.tsx ← vitest
-└── ui/
-    └── Breadcrumbs.test.tsx   ← vitest
-```
-
-> 📖 **Guía completa de testing:** Ver [docs/TESTING.md](docs/TESTING.md) para patrones, convenciones y mejores prácticas.
+---
 
 ## 📁 Estructura del Proyecto
 
 ```
-Fira-estudio/
-├── app/                      # App Router de Next.js
-│   ├── page.tsx             # Página principal
-│   ├── layout.tsx           # Layout principal
-│   ├── robots.ts            # Configuración de robots.txt
-│   ├── sitemap.ts           # Sitemap dinámico
-│   └── globals.css          # Estilos globales
-├── components/              # Componentes React
-│   ├── layout/             # Componentes de layout
-│   │   ├── Header.tsx      # Encabezado
-│   │   ├── Footer.tsx      # Pie de página
-│   │   └── MobileNav.tsx   # Navegación móvil
-│   ├── productos/          # Componentes de productos
-│   │   ├── ProductCard.tsx
-│   │   ├── ProductGrid.tsx
-│   │   ├── CategoryFilter.tsx    # Filtro de categorías
-│   │   ├── RelatedProducts.tsx   # Productos relacionados
-│   │   └── WhatsAppButton.tsx    # Con tracking analytics
-│   └── ui/                 # Componentes UI reutilizables
-│       └── Breadcrumbs.tsx # Navegación breadcrumb con SEO
-├── lib/                    # Utilidades y configuraciones
-│   ├── analytics/          # Google Analytics
-│   │   └── gtag.ts        # Event tracking utilities
-│   ├── constants/          # Constantes centralizadas
-│   │   ├── index.ts       # Config general
-│   │   └── navigation.ts  # Links de navegación
-│   ├── seo/               # SEO utilities
-│   │   └── structured-data.ts  # Schema.org JSON-LD
-│   ├── supabase/          # Cliente y queries de Supabase
-│   ├── utils/             # Utilidades generales
-│   │   └── index.ts       # formatPrice, truncateText, etc.
-│   └── types.ts           # Tipos TypeScript compartidos
-├── public/                 # Archivos estáticos
-├── .env.local.example      # Template de variables de entorno
-└── README.md              # Este archivo
+fira-estudio/
+├── app/                    # Next.js App Router
+│   ├── (routes)/          # Rutas del sitio
+│   ├── api/               # API Routes
+│   └── layout.tsx         # Layout principal
+├── components/            # Componentes React
+│   ├── layout/           # Header, Footer, etc.
+│   ├── ui/               # Componentes reutilizables
+│   └── maintenance-banner.tsx
+├── lib/                   # Utilidades y configuración
+│   ├── config/           # Feature flags, constants
+│   ├── supabase/         # Cliente de Supabase
+│   └── utils/            # Helpers
+├── docs/                  # Documentación
+│   ├── ENVIRONMENTS.md
+│   ├── MAINTENANCE_MODE.md
+│   └── DEPLOYMENT.md
+├── public/               # Assets estáticos
+└── .env.local.example    # Template de variables
 ```
-
-## 💻 Convenciones de Código
-
-### TypeScript
-
-- **Siempre tipos explícitos**, nunca `any`
-- Preferir `interface` para objetos, `type` para unions
-- Nombres de UI/datos en español, código en inglés
-
-```typescript
-// ✅ Bien
-interface Product {
-  nombre: string; // Datos en español
-  precio: number;
-}
-
-// ❌ Evitar
-let data: any;
-const products = []; // Sin tipo explícito
-```
-
-### React
-
-- **Server Components por defecto**
-- Solo usar `'use client'` cuando sea necesario (hooks, eventos, browser APIs)
-- Orden recomendado: imports → types → component → handlers → JSX
-
-```typescript
-// Server Component (por defecto)
-export function ProductList() {
-  const products = await getProducts();
-  return ...;
-}
-
-// Client Component (solo cuando es necesario)
-'use client';
-export function ProductCard() {
-  const [liked, setLiked] = useState(false);
-  return ...;
-}
-```
-
-### Naming Conventions
-
-- **Componentes:** `ProductCard.tsx` (PascalCase)
-- **Funciones/variables:** `fetchProducts`, `isLoading` (camelCase)
-- **Constantes:** `API_ROUTES` (UPPER_SNAKE_CASE)
-- **Booleans:** prefijos `is`, `has`, `should`
-
-### Tailwind CSS
-
-- Clases en múltiples líneas para legibilidad
-- Mobile-first (sin prefijo → `sm` → `md` → `lg`)
-- Usar `clsx` para clases condicionales
-
-```tsx
-// ✅ Bien
-<div className="
-  flex items-center gap-4
-  p-4 rounded-lg
-  bg-white hover:shadow-lg
-  md:flex-row md:gap-6
-">
-```
-
-### Commits
-
-Seguimos [Conventional Commits](https://www.conventionalcommits.org/):
-
-- `feat:` Nueva funcionalidad
-- `fix:` Corrección de bugs
-- `style:` Cambios de estilo/formato
-- `refactor:` Refactorización de código
-- `docs:` Cambios en documentación
-- `test:` Añadir o modificar tests
-- `chore:` Tareas de mantenimiento
-
-## 📊 Analytics y SEO
-
-### Google Analytics 4
-
-El proyecto incluye integración con Google Analytics 4 para tracking de eventos personalizados:
-
-**Eventos Implementados:**
-
-- `whatsapp_click` - Clicks en botón de WhatsApp
-- `view_item` - Visualización de productos
-- `filter_products` - Uso de filtros de categoría
-- `select_item` - Selección de variaciones
-
-**Configuración:**
-
-1. Crear una propiedad GA4 en [Google Analytics](https://analytics.google.com)
-2. Copiar el Measurement ID (formato: `G-XXXXXXXXXX`)
-3. Agregar a `.env.local`:
-
-```env
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-```
-
-> **Nota:** El tracking solo funciona en producción (`NODE_ENV=production`)
-
-### SEO Features
-
-**Structured Data (Schema.org):**
-
-- Product schema con información completa
-- BreadcrumbList para navegación
-- Organization schema para homepage
-
-**Metadata Dinámica:**
-
-- OpenGraph tags para redes sociales
-- Twitter Cards
-- Meta descriptions optimizadas
-
-**Archivos Generados:**
-
-- `robots.txt` - Configuración de crawlers
-- `sitemap.xml` - Mapa del sitio dinámico con productos
-
-**Acceso:**
-
-- `/robots.txt` - Ver configuración de robots
-- `/sitemap.xml` - Ver sitemap generado
-
-## 🗄️ Base de Datos (Supabase)
-
-### Tablas Principales
-
-- `categorias` - Categorías de productos
-- `productos` - Información de productos
-- `variaciones` - Variaciones (tamaño/color) de productos
-- `imagenes_producto` - Imágenes de productos
-- `consultas` - Consultas de clientes
-
-Para más información sobre el esquema de base de datos, ver `.github/reference/database-schema.md`
-
-## 🎨 Nuevas Características (V1.1)
-
-### Filtro de Categorías
-
-Componente de filtrado horizontal con scroll para explorar productos por categoría:
-
-- Click tracking automático en Google Analytics
-- Estado activo persistente con query params
-- Diseño responsive con scroll horizontal en móvil
-
-### Productos Relacionados
-
-Muestra automáticamente hasta 4 productos de la misma categoría en la página de detalle.
-
-### Breadcrumbs
-
-Navegación breadcrumb con:
-
-- Datos estructurados (Schema.org BreadcrumbList)
-- Enlaces funcionales para mejorar UX
-- Iconos de Lucide React
-
-### Utilities
-
-Nuevas funciones utilitarias en `lib/utils/`:
-
-- `formatPrice()` - Formato consistente de precios ARS
-- `truncateText()` - Truncar texto con elipsis
-- `slugify()` - Generar slugs URL-safe
-- `isDefined()` - Type guard para valores no-null
-
-## 📱 Contacto y Contribución
-
-Para contribuir al proyecto:
-
-1. Fork el repositorio
-2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
-3. Commit tus cambios (`git commit -m 'feat: Add some AmazingFeature'`)
-4. Push a la rama (`git push origin feature/AmazingFeature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este es un proyecto privado de Fira Estudio.
 
 ---
 
-**Fira Estudio** - Creaciones Textiles y Digitales
+## 🔐 Variables de Entorno
+
+Ver [.env.local.example](./.env.local.example) para la lista completa.
+
+**Variables críticas:**
+
+```bash
+# Mercado Pago
+MERCADOPAGO_ACCESS_TOKEN=
+MERCADOPAGO_WEBHOOK_SECRET=
+
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+
+# Feature Flags
+NEXT_PUBLIC_MAINTENANCE_MODE=false
+NEXT_PUBLIC_CHECKOUT_ENABLED=true
+```
+
+---
+
+## 🤝 Contribución
+
+### Git Flow
+
+```
+main (production)
+  ↑
+develop (staging)
+  ↑
+feature/[nombre] (features individuales)
+```
+
+### Proceso
+
+1. Crear branch desde `develop`
+2. Desarrollar y probar localmente
+3. Push y crear PR a `develop`
+4. Review y merge
+5. Testing en staging
+6. Cuando esté listo, PR de `develop` a `main`
+
+Ver [DEPLOYMENT.md](./docs/DEPLOYMENT.md) para detalles.
+
+---
+
+## 📝 TODOs
+
+### Alta Prioridad
+
+- [ ] Obtener credenciales PROD de Mercado Pago
+- [ ] Desactivar modo mantenimiento en producción
+- [ ] Crear proyecto Supabase Staging
+
+### Media Prioridad
+
+- [ ] Implementar CI/CD con GitHub Actions
+- [ ] Agregar tests unitarios (Vitest)
+- [ ] Agregar tests E2E (Playwright)
+
+### Baja Prioridad
+
+- [ ] Configurar Sentry para error tracking
+- [ ] Optimización de imágenes con next/image
+- [ ] Configurar Redis para caching
+
+---
+
+## 📄 Licencia
+
+Privado - Fira Estudio
+
+---
+
+## 📞 Contacto
+
+- **Desarrollador:** @RadikeCosa
+- **Proyecto:** Fira Estudio E-commerce
+- **Repositorio:** [github.com/RadikeCosa/fira-estudio](https://github.com/RadikeCosa/fira-estudio)
+
+---
+
+Última actualización: 2026-02-06
