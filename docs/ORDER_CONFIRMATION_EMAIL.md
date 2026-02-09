@@ -185,7 +185,7 @@ Then open: `http://localhost:3000` and select `OrderConfirmationEmail`.
 import { sendOrderConfirmationEmail } from "@/lib/emails/send-order-confirmation";
 
 // In a test script or API route
-await sendOrderConfirmationEmail("order-uuid-here");
+await sendOrderConfirmationEmail("123e4567-e89b-12d3-a456-426614174000");
 ```
 
 ### Monitor Logs
