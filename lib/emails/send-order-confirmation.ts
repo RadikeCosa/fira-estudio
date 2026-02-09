@@ -64,8 +64,7 @@ export async function sendOrderConfirmationEmail(
     }
 
     // Prepare email
-    const fromEmail =
-      process.env.RESEND_FROM_EMAIL || "Fira Estudio <no-reply@firaestudio.com>";
+    const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
     const subject = `¡Pedido confirmado! #${order.order_number} - Fira Estudio`;
 
     // Render email HTML
