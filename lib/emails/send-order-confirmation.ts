@@ -63,7 +63,7 @@ export async function sendOrderConfirmationEmail(
       return;
     }
 
-    // Prepare email
+    // Prepare email con fallback provisiorio
     const fromEmail = process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev";
     const subject = `¡Pedido confirmado! #${order.order_number} - Fira Estudio`;
 
