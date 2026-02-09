@@ -29,6 +29,7 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 - **[Guía de Entornos](./docs/ENVIRONMENTS.md)** - Configuración de development, staging, production
 - **[Modo Mantenimiento](./docs/MAINTENANCE_MODE.md)** - Cómo activar/desactivar mantenimiento
 - **[Guía de Deployment](./docs/DEPLOYMENT.md)** - Cómo hacer deployments y rollbacks
+- **[Email de Confirmación](./docs/ORDER_CONFIRMATION_EMAIL.md)** - Configuración de emails de pedido
 
 ---
 
@@ -70,6 +71,7 @@ npm run test:e2e     # Tests E2E con Playwright
 - **Estilos:** Tailwind CSS
 - **Pagos:** Mercado Pago
 - **Database:** Supabase
+- **Emails:** Resend + React Email
 - **Deployment:** Vercel
 - **Analytics:** Google Analytics 4
 
@@ -116,6 +118,9 @@ MERCADOPAGO_WEBHOOK_SECRET=
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
+
+# Resend (Emails)
+RESEND_API_KEY=
 
 # Feature Flags
 NEXT_PUBLIC_MAINTENANCE_MODE=false
