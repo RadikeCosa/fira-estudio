@@ -17,6 +17,7 @@ import { createClient, SupabaseClient } from "@supabase/supabase-js";
 import { CartRepository } from "@/lib/repositories/cart.repository";
 import { client } from "@/lib/mercadopago/client";
 import { Payment } from "mercadopago";
+import { sendOrderConfirmationEmail } from "@/lib/emails/send-order-confirmation";
 
 export interface WebhookQueueEvent {
   id?: number;
@@ -257,6 +258,20 @@ export class WebhookQueueProcessor {
           console.error(
             `[WebhookQueue] Post-approval actions failed:`,
             postApprovalError,
+          );
+        }
+
+        // Send confirmation email
+        try {
+          await sendOrderConfirmationEmail(orderId);
+          console.log(
+            `[WebhookQueue] Confirmation email sent for order: ${orderId}`,
+          );
+        } catch (emailError) {
+          // Don't fail the webhook if email fails - payment already confirmed
+          console.error(
+            `[WebhookQueue] Failed to send confirmation email:`,
+            emailError,
           );
         }
       }
