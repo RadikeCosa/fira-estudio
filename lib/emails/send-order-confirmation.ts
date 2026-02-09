@@ -8,8 +8,20 @@ import { CartRepository } from "@/lib/repositories/cart.repository";
 import { OrderConfirmationEmail } from "./OrderConfirmationEmail";
 import { render } from "@react-email/components";
 
-// Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY);
+// Lazy-initialized Resend client to avoid build-time errors
+// The client is only created when actually needed (at runtime),
+// not during Next.js build when env vars may not be available
+let _resend: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  if (!process.env.RESEND_API_KEY) {
+    return null;
+  }
+  if (!_resend) {
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
 
 /**
  * Send order confirmation email to customer
@@ -22,8 +34,9 @@ export async function sendOrderConfirmationEmail(
   orderId: string,
 ): Promise<void> {
   try {
-    // Validate API key exists
-    if (!process.env.RESEND_API_KEY) {
+    // Get Resend client (will be null if API key not configured)
+    const resend = getResendClient();
+    if (!resend) {
       console.error(
         "[Email] RESEND_API_KEY not configured - skipping email send",
       );
