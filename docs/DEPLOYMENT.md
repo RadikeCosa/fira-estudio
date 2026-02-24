@@ -175,7 +175,7 @@ git push origin develop
 
 - [ ] Sitio carga correctamente
 - [ ] No hay errores en DevTools Console
-- [ ] Banner de mantenimiento se muestra (si `MAINTENANCE_MODE=true`)
+- [ ] Banner de mantenimiento se muestra (si `NEXT_PUBLIC_MAINTENANCE_MODE=true`)
 - [ ] Checkout deshabilitado/habilitado según configuración
 - [ ] Imágenes cargan correctamente
 - [ ] Navegación funciona

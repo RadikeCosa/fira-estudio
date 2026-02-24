@@ -26,7 +26,7 @@ proyecto/
 │       ├── hero/               # Imágenes hero section
 │       └── collections/        # Imágenes de colecciones
 │
-├── sql-code/                   # SQL scripts para DB setup
+├── scripts/sql-code/                   # SQL scripts para DB setup
 │   ├── main.sql                # Schema principal
 │   ├── init-real-data.sql      # Datos reales de producción
 │   ├── mock-data.sql           # Datos de prueba
@@ -268,7 +268,7 @@ CREATE INDEX idx_consultas_created ON consultas(created_at);
 
 ```bash
 # Ejecutar en Supabase SQL Editor
-psql -f sql-code/main.sql
+psql -f scripts/sql-code/main.sql
 ```
 
 **Contenido:**
@@ -283,7 +283,7 @@ psql -f sql-code/main.sql
 
 ```bash
 # Ejecutar en Supabase SQL Editor
-psql -f sql-code/init-real-data.sql
+psql -f scripts/sql-code/init-real-data.sql
 ```
 
 **Incluye:**
@@ -298,7 +298,7 @@ psql -f sql-code/init-real-data.sql
 
 ```bash
 # Ejecutar en dev environment
-psql -f sql-code/mock-data.sql
+psql -f scripts/sql-code/mock-data.sql
 ```
 
 **Incluye:**
@@ -468,9 +468,9 @@ RATE_LIMIT_MAX_REQUESTS=3
 ```bash
 # En Supabase SQL Editor
 1. Abrir SQL Editor
-2. Copiar contenido de sql-code/main.sql
+2. Copiar contenido de scripts/sql-code/main.sql
 3. Ejecutar
-4. Ejecutar sql-code/mock-data.sql para datos de prueba
+4. Ejecutar scripts/sql-code/mock-data.sql para datos de prueba
 ```
 
 #### 3. Configurar Environment

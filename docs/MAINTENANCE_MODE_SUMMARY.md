@@ -11,15 +11,15 @@ A complete maintenance mode system that allows controlling the checkout function
    - Feature flags configuration
    - Environment variable readers
    - Development logging
-   - Exports: `IS_MAINTENANCE_MODE`, `IS_CHECKOUT_ENABLED`, `MAINTENANCE_MESSAGE`
+   - Exports: `IS_NEXT_PUBLIC_MAINTENANCE_MODE`, `IS_CHECKOUT_ENABLED`, `MAINTENANCE_MESSAGE`
 
 2. **`components/maintenance-banner.tsx`** (1.6 KB)
    - Client component for maintenance banner
    - Yellow warning banner with dismissible functionality
-   - Only shows when `IS_MAINTENANCE_MODE=true`
+   - Only shows when `IS_NEXT_PUBLIC_MAINTENANCE_MODE=true`
 
 ### Documentation
-3. **`docs/MAINTENANCE_MODE.md`** (4.8 KB)
+3. **`docs/NEXT_PUBLIC_MAINTENANCE_MODE.md`** (4.8 KB)
    - Complete guide for maintenance mode
    - Usage instructions for Vercel and local development
    - Variable reference table
@@ -71,7 +71,7 @@ A complete maintenance mode system that allows controlling the checkout function
 - ✅ Add to Cart button disabled when maintenance mode active
 - ✅ Error message displayed: "El checkout está temporalmente deshabilitado"
 - ✅ Can be controlled independently via `NEXT_PUBLIC_CHECKOUT_ENABLED`
-- ✅ Works with `IS_MAINTENANCE_MODE OR !IS_CHECKOUT_ENABLED`
+- ✅ Works with `IS_NEXT_PUBLIC_MAINTENANCE_MODE OR !IS_CHECKOUT_ENABLED`
 
 ### 3. Environment Variables
 - ✅ `NEXT_PUBLIC_MAINTENANCE_MODE` - Show/hide banner
@@ -249,7 +249,7 @@ a205ac2 feat: Add maintenance mode system with feature flags
 
 ## 📚 Reference Links
 
-- **Primary Documentation**: `docs/MAINTENANCE_MODE.md`
+- **Primary Documentation**: `docs/NEXT_PUBLIC_MAINTENANCE_MODE.md`
 - **Quick Start**: `docs/MAINTENANCE_MODE_QUICKSTART.md`
 - **Visual Reference**: `docs/MAINTENANCE_MODE_VISUAL.md`
 - **Environment Variables**: `.env.local.example`

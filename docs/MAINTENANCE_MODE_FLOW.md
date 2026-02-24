@@ -17,7 +17,7 @@
 │                    lib/config/features.ts                        │
 │                     (Feature Flags Layer)                        │
 ├─────────────────────────────────────────────────────────────────┤
-│  export const IS_MAINTENANCE_MODE =                             │
+│  export const IS_NEXT_PUBLIC_MAINTENANCE_MODE =                             │
 │    process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "true"          │
 │                                                                  │
 │  export const IS_CHECKOUT_ENABLED =                             │
@@ -35,8 +35,8 @@
                     ↓                           ↓
                     ↓                           ↓
 ┌─────────────────────────────┐   ┌───────────────────────────────┐
-│ if (!IS_MAINTENANCE_MODE)   │   │ const isCheckoutDisabled =   │
-│   return null // Hide       │   │   IS_MAINTENANCE_MODE ||     │
+│ if (!IS_NEXT_PUBLIC_MAINTENANCE_MODE)   │   │ const isCheckoutDisabled =   │
+│   return null // Hide       │   │   IS_NEXT_PUBLIC_MAINTENANCE_MODE ||     │
 │                              │   │   !IS_CHECKOUT_ENABLED       │
 │ // Show yellow banner       │   │                               │
 │ with MAINTENANCE_MESSAGE    │   │ if (isCheckoutDisabled)      │
@@ -146,7 +146,7 @@ process.env.NEXT_PUBLIC_MAINTENANCE_MODE = "true"
 process.env.NEXT_PUBLIC_CHECKOUT_ENABLED = "false"
 
 // lib/config/features.ts evaluates
-IS_MAINTENANCE_MODE = true  // "true" === "true"
+IS_NEXT_PUBLIC_MAINTENANCE_MODE = true  // "true" === "true"
 IS_CHECKOUT_ENABLED = false // "false" !== "true"
 ```
 
@@ -158,7 +158,7 @@ export default function RootLayout({ children }) {
   return (
     <html>
       <body>
-        <MaintenanceBanner />  // ← Will evaluate IS_MAINTENANCE_MODE
+        <MaintenanceBanner />  // ← Will evaluate IS_NEXT_PUBLIC_MAINTENANCE_MODE
         <Header />
         <main>{children}</main>
         <Footer />
@@ -178,7 +178,7 @@ export function MaintenanceBanner() {
   const [isVisible, setIsVisible] = useState(true)
   
   // Check feature flag
-  if (!IS_MAINTENANCE_MODE || !isVisible) {
+  if (!IS_NEXT_PUBLIC_MAINTENANCE_MODE || !isVisible) {
     return null  // Don't render anything
   }
   
@@ -207,7 +207,7 @@ export function MaintenanceBanner() {
 
 export function AddToCartButton({ producto }) {
   // Calculate if checkout should be disabled
-  const isCheckoutDisabled = IS_MAINTENANCE_MODE || !IS_CHECKOUT_ENABLED
+  const isCheckoutDisabled = IS_NEXT_PUBLIC_MAINTENANCE_MODE || !IS_CHECKOUT_ENABLED
   
   const handleAddToCart = async () => {
     // Early exit if maintenance mode
@@ -245,7 +245,7 @@ NEXT_PUBLIC_CHECKOUT_ENABLED = "false"
 # Vercel → Deployments → Latest → Redeploy
 
 # 3. Result (after ~2 minutes)
-IS_MAINTENANCE_MODE = true    ← Banner shows
+IS_NEXT_PUBLIC_MAINTENANCE_MODE = true    ← Banner shows
 IS_CHECKOUT_ENABLED = false   ← Checkout disabled
 ```
 
@@ -260,7 +260,7 @@ NEXT_PUBLIC_CHECKOUT_ENABLED = "true"
 # Vercel → Deployments → Latest → Redeploy
 
 # 3. Result (after ~2 minutes)
-IS_MAINTENANCE_MODE = false   ← Banner hidden
+IS_NEXT_PUBLIC_MAINTENANCE_MODE = false   ← Banner hidden
 IS_CHECKOUT_ENABLED = true    ← Checkout enabled
 ```
 
@@ -296,7 +296,7 @@ const [isVisible, setIsVisible] = useState(true)
 ```typescript
 // Two flags for flexibility:
 
-// IS_MAINTENANCE_MODE
+// IS_NEXT_PUBLIC_MAINTENANCE_MODE
 // - Shows banner
 // - General "something is wrong" signal
 
@@ -305,7 +305,7 @@ const [isVisible, setIsVisible] = useState(true)
 // - Could be disabled independently
 
 // Combined logic:
-const isCheckoutDisabled = IS_MAINTENANCE_MODE || !IS_CHECKOUT_ENABLED
+const isCheckoutDisabled = IS_NEXT_PUBLIC_MAINTENANCE_MODE || !IS_CHECKOUT_ENABLED
 
 // This means:
 // - If maintenance mode = checkout disabled

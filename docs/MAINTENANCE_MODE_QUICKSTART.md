@@ -29,7 +29,7 @@ Y redeploy.
 
 ## Documentación Completa
 
-- [MAINTENANCE_MODE.md](./MAINTENANCE_MODE.md) - Guía completa
+- [NEXT_PUBLIC_MAINTENANCE_MODE.md](./NEXT_PUBLIC_MAINTENANCE_MODE.md) - Guía completa
 - [MAINTENANCE_MODE_VISUAL.md](./MAINTENANCE_MODE_VISUAL.md) - Referencias visuales
 
 ## ¿Qué hace?

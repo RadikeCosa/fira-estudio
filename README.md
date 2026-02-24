@@ -27,7 +27,7 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 ## 📚 Documentación
 
 - **[Guía de Entornos](./docs/ENVIRONMENTS.md)** - Configuración de development, staging, production
-- **[Modo Mantenimiento](./docs/MAINTENANCE_MODE.md)** - Cómo activar/desactivar mantenimiento
+- **[Modo Mantenimiento](./docs/NEXT_PUBLIC_MAINTENANCE_MODE.md)** - Cómo activar/desactivar mantenimiento
 - **[Guía de Deployment](./docs/DEPLOYMENT.md)** - Cómo hacer deployments y rollbacks
 - **[Email de Confirmación](./docs/ORDER_CONFIRMATION_EMAIL.md)** - Configuración de emails de pedido
 
@@ -95,7 +95,7 @@ fira-estudio/
 │   └── utils/            # Helpers
 ├── docs/                  # Documentación
 │   ├── ENVIRONMENTS.md
-│   ├── MAINTENANCE_MODE.md
+│   ├── NEXT_PUBLIC_MAINTENANCE_MODE.md
 │   └── DEPLOYMENT.md
 ├── public/               # Assets estáticos
 └── .env.local.example    # Template de variables

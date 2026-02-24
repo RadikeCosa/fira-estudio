@@ -59,7 +59,7 @@ NEXT_PUBLIC_CHECKOUT_ENABLED=true
 
 ```
 app/layout.tsx
-├── <MaintenanceBanner /> ← Shows when IS_MAINTENANCE_MODE=true
+├── <MaintenanceBanner /> ← Shows when IS_NEXT_PUBLIC_MAINTENANCE_MODE=true
 ├── <Header />
 ├── <main>
 │   └── {children}
@@ -73,14 +73,14 @@ app/layout.tsx
 
 ```typescript
 // lib/config/features.ts
-IS_MAINTENANCE_MODE = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "true"
+IS_NEXT_PUBLIC_MAINTENANCE_MODE = process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "true"
 IS_CHECKOUT_ENABLED = process.env.NEXT_PUBLIC_CHECKOUT_ENABLED === "true"
 
 // components/maintenance-banner.tsx
-if (!IS_MAINTENANCE_MODE) return null; // Hide banner
+if (!IS_NEXT_PUBLIC_MAINTENANCE_MODE) return null; // Hide banner
 
 // components/carrito/AddToCartButton.tsx
-const isCheckoutDisabled = IS_MAINTENANCE_MODE || !IS_CHECKOUT_ENABLED;
+const isCheckoutDisabled = IS_NEXT_PUBLIC_MAINTENANCE_MODE || !IS_CHECKOUT_ENABLED;
 if (isCheckoutDisabled) {
   setError("El checkout está temporalmente deshabilitado");
 }
