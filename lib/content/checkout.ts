@@ -10,9 +10,28 @@ export interface CheckoutContent {
     title: string;
   };
   success: {
+    pageTitle: string;
     title: string;
-    description: string;
-    cta: string;
+    subtitle: string;
+    // Estados de error / intermedios
+    orderNotFound: string;
+    orderNotFoundDescription: string;
+    invalidReference: string;
+    invalidReferenceDescription: string;
+    pendingTitle: string;
+    pendingMessage: string;
+    // Resumen de orden
+    orderSummaryTitle: string;
+    orderIdLabel: string;
+    totalLabel: string;
+    quantityLabel: string;
+    unitLabel: string;
+    // Próximos pasos
+    whatNextTitle: string;
+    nextSteps: string[];
+    // CTAs (compartidos entre happy path y estados de error)
+    ctaPrimary: string;
+    ctaSecondary: string;
   };
   failure: {
     title: string;
@@ -42,10 +61,36 @@ export const CHECKOUT_CONTENT: CheckoutContent = {
     title: "Finalizar Compra",
   },
   success: {
-    title: "Pago Exitoso",
-    description:
-      "¡Gracias por tu compra! Te enviaremos un email con los detalles de tu pedido.",
-    cta: "Ver pedido",
+    pageTitle: "Pago Exitoso",
+    title: "¡Pago exitoso!",
+    subtitle:
+      "Tu pago fue aprobado y estamos preparando tu pedido. Recibirás un email de confirmación.",
+    // Estados de error / intermedios
+    orderNotFound: "Orden no encontrada",
+    orderNotFoundDescription:
+      "No pudimos encontrar la orden asociada a este pago. Revisá tu email o contactá con soporte.",
+    invalidReference: "Error en referencia",
+    invalidReferenceDescription:
+      "Formato de referencia inválido. Revisá tu email o contactá con soporte.",
+    pendingTitle: "Pago pendiente",
+    pendingMessage:
+      "Tu orden está siendo procesada. Te notificaremos cuando se confirme el pago.",
+    // Resumen de orden
+    orderSummaryTitle: "Resumen de la orden",
+    orderIdLabel: "N° de orden",
+    totalLabel: "Total",
+    quantityLabel: "Cantidad",
+    unitLabel: "c/u",
+    // Próximos pasos
+    whatNextTitle: "¿Qué sigue?",
+    nextSteps: [
+      "Te enviaremos la confirmación por email.",
+      "Vamos a preparar tu pedido.",
+      "Te contactaremos para coordinar la entrega.",
+    ],
+    // CTAs
+    ctaPrimary: "Ver catálogo",
+    ctaSecondary: "Volver al inicio",
   },
   failure: {
     title: "Pago Fallido",
@@ -53,10 +98,10 @@ export const CHECKOUT_CONTENT: CheckoutContent = {
     message:
       "No pudimos procesar tu pago. Esto puede deberse a fondos insuficientes, datos incorrectos o cancelación del proceso.",
     instructions: [
-      "Verifica los datos de tu tarjeta",
-      "Asegúrate de tener fondos suficientes",
-      "Intenta con otro método de pago",
-      "Contacta a tu banco si el problema persiste",
+      "Verificá los datos de tu tarjeta",
+      "Asegurate de tener fondos suficientes",
+      "Intentá con otro método de pago",
+      "Contactá a tu banco si el problema persiste",
     ],
     ctaBack: "Volver al carrito",
     ctaRetry: "Reintentar pago",
@@ -70,7 +115,7 @@ export const CHECKOUT_CONTENT: CheckoutContent = {
       "Tu pago está en proceso de verificación",
       "Recibirás un email cuando se confirme",
       "No es necesario realizar un nuevo pago",
-      "Si tienes dudas, contáctanos",
+      "Si tenés dudas, contactanos",
     ],
     ctaSupport: "Contactar soporte",
     ctaHome: "Volver al inicio",

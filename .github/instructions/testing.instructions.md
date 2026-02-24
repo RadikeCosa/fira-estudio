@@ -1,86 +1,65 @@
 ---
-applyTo: "components/**,app/**"
+applyTo: "**/*.test.ts,**/*.test.tsx"
 ---
 
-# Componentes — Patrones del proyecto
+# Testing — Patrones del proyecto
 
-## Server vs Client Component
+## Cuándo usar cada herramienta
 
+| Herramienta | Usar para |
+|---|---|
+| `node:test` | Funciones puras, utils, cálculos, schemas SEO |
+| `Vitest` | Componentes React, hooks, browser APIs (jsdom) |
+
+## Ejemplos
+
+**node:test (lógica pura):**
 ```ts
-// ✅ Server Component por defecto (sin directiva)
-export default async function ProductosPage() {
-  const productos = await getProductos();
-  return <ProductGrid productos={productos} />;
-}
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import { formatPrice } from "./utils";
 
-// ✅ Client Component solo cuando es necesario
-"use client";
-export function VariationSelector({ variaciones }: { variaciones: Variacion[] }) {
-  const [selected, setSelected] = useState<string | null>(null);
-  // ...
-}
+describe("formatPrice", () => {
+  it("formatea con separador de miles", () => {
+    assert.equal(formatPrice(15000), "$15.000");
+  });
+});
 ```
 
-Usar `"use client"` solo para: hooks de estado/efecto, event handlers, browser APIs.
-
-## Contenido y estilos: siempre centralizados
-
+**Vitest (React/hooks):**
 ```ts
-// ✅
-import { HOME_CONTENT } from "@/lib/content/home";
-import { TYPOGRAPHY, SPACING } from "@/lib/design/tokens";
+import { render, screen } from "@testing-library/react";
+import { describe, it, expect } from "vitest";
 
-export function HeroSection() {
-  return (
-    <section className={SPACING.sectionPadding.md}>
-      <h1 className={TYPOGRAPHY.heading.page}>{HOME_CONTENT.hero.title}</h1>
-    </section>
-  );
-}
-
-// ❌ Nunca hardcodear texto o clases repetidas
-<h1 className="text-4xl font-bold">Fira Estudio</h1>
+describe("ProductCard", () => {
+  it("renderiza nombre y precio", () => {
+    render(<ProductCard producto={mockProducto} />);
+    expect(screen.getByText("Mantel Floral")).toBeInTheDocument();
+  });
+});
 ```
 
-## Composición sobre monolitos
-
+**Mock de Supabase:**
 ```ts
-// ✅ Componentes pequeños y enfocados
-export function ProductCard({ producto }: { producto: ProductoCompleto }) {
-  return (
-    <article>
-      <ProductImage producto={producto} />
-      <ProductInfo producto={producto} />
-      <ProductActions producto={producto} />
-    </article>
-  );
-}
-// ❌ Un componente con 200+ líneas mezclando UI, lógica y fetching
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({
+    from: () => ({ select: () => ({ data: [mockProducto], error: null }) }),
+  }),
+}));
 ```
 
-## Loading states
+## Convenciones
 
-```ts
-// Opción 1: Suspense
-<Suspense fallback={<ProductosSkeleton />}>
-  <ProductosContent />
-</Suspense>
+- Tests junto al código: `ComponentName.test.tsx`
+- Usar queries de accesibilidad: `getByRole`, `getByLabelText`
+- Tests independientes y deterministas (sin orden entre sí)
+- Objetivo: cubrir paths críticos, no 100% a cualquier costo
 
-// Opción 2: app/productos/loading.tsx (App Router)
-export default function Loading() {
-  return <ProductosSkeleton />;
-}
+## Comandos
+
+```bash
+npm run test:node      # node:test
+npm run test:unit      # Vitest
+npm run test:watch     # Watch mode
+npm run test:coverage  # Coverage report
 ```
-
-Los skeletons deben coincidir con el layout final (evitar layout shift).
-
-## Server Actions vs API Routes
-
-- **Preferir Server Actions** para mutaciones internas
-- **API Routes** solo para webhooks (Mercado Pago) e integraciones externas
-
-## Variaciones: reglas de UI
-
-- Nunca mostrar precio del producto base; solo precio de la variación seleccionada
-- WhatsApp CTA deshabilitado hasta que haya variación seleccionada
-- `stock = 0` → mostrar "A pedido", no ocultar ni deshabilitar

@@ -3,164 +3,94 @@ import Link from "next/link";
 import { CheckCircle, XCircle } from "lucide-react";
 import { CartRepository } from "@/lib/repositories/cart.repository";
 import type { Order, OrderItem } from "@/lib/types";
+import { CHECKOUT_CONTENT } from "@/lib/content/checkout";
+import { BUTTONS, TYPOGRAPHY } from "@/lib/design/tokens";
+import { combine } from "@/lib/design/tokens";
+import { formatPrice } from "@/lib/utils";
+
+const content = CHECKOUT_CONTENT.success;
 
 export const metadata: Metadata = {
-  title: "Pago Exitoso",
-  description: "Tu pago ha sido procesado correctamente",
+  title: content.pageTitle,
+  description: content.subtitle,
 };
 
-interface SuccessPageProps {
-  searchParams: Promise<{
-    payment_id?: string;
-    collection_id?: string;
-    external_reference?: string;
-    status?: string;
-  }>;
-}
-
-/**
- * Extrae el order_id del external_reference
- * Formato: "email|orderId"
- */
 function extractOrderId(externalReference: string): string | null {
   const parts = externalReference.split("|");
-  if (parts.length === 2) {
-    return parts[1];
-  }
-  return null;
+  return parts.length >= 2 ? parts[parts.length - 1] : null;
 }
 
-/**
- * Formatea el precio en pesos argentinos
- */
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat("es-AR", {
-    style: "currency",
-    currency: "ARS",
-  }).format(price);
-}
-
-export default async function SuccessPage({ searchParams }: SuccessPageProps) {
-  const params = await searchParams;
-  const externalReference = params.external_reference;
-
-  // Si no hay external_reference, mostrar error
-  if (!externalReference) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <div className="max-w-md w-full text-center space-y-6">
-          <div className="flex justify-center">
-            <div className="rounded-full bg-red-100 p-4">
-              <XCircle className="w-16 h-16 text-red-600" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold">Orden no encontrada</h1>
-          <p className="text-muted-foreground">
-            No pudimos encontrar la información de tu orden. Por favor, revisa
-            tu email o contacta con soporte.
-          </p>
-          <div className="flex gap-3">
-            <Link
-              href="/productos"
-              className="flex-1 border border-border px-6 py-3 rounded-lg hover:bg-muted transition"
-            >
-              Seguir comprando
-            </Link>
-            <Link
-              href="/"
-              className="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition"
-            >
-              Volver al inicio
-            </Link>
+/** Estado de error reutilizable para los casos previos al happy path */
+function ErrorState({ title, message }: { title: string; message: string }) {
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className="max-w-md w-full text-center space-y-6">
+        <div className="flex justify-center">
+          <div className="rounded-full bg-red-100 p-4">
+            <XCircle className="w-16 h-16 text-red-600" />
           </div>
         </div>
+        <h1 className={TYPOGRAPHY.heading.section}>{title}</h1>
+        <p className={TYPOGRAPHY.body.muted}>{message}</p>
+        <div className="flex gap-3">
+          <Link href="/productos" className={combine(BUTTONS.secondary, "flex-1 px-6 py-3")}>
+            {content.ctaSecondary}
+          </Link>
+          <Link href="/" className={combine(BUTTONS.primary, "flex-1 px-6 py-3")}>
+            {content.ctaPrimary}
+          </Link>
+        </div>
       </div>
+    </div>
+  );
+}
+
+export default async function CheckoutSuccessPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const params = await searchParams;
+  const externalReference = params.external_reference as string | undefined;
+
+  if (!externalReference) {
+    return (
+      <ErrorState
+        title={content.orderNotFound}
+        message={content.orderNotFoundDescription}
+      />
     );
   }
 
-  // Extraer order_id del external_reference
   const orderId = extractOrderId(externalReference);
 
   if (!orderId) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <div className="max-w-md w-full text-center space-y-6">
-          <div className="flex justify-center">
-            <div className="rounded-full bg-red-100 p-4">
-              <XCircle className="w-16 h-16 text-red-600" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold">Error en referencia</h1>
-          <p className="text-muted-foreground">
-            Formato de referencia inválido. Por favor, revisa tu email o
-            contacta con soporte.
-          </p>
-          <div className="flex gap-3">
-            <Link
-              href="/productos"
-              className="flex-1 border border-border px-6 py-3 rounded-lg hover:bg-muted transition"
-            >
-              Seguir comprando
-            </Link>
-            <Link
-              href="/"
-              className="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition"
-            >
-              Volver al inicio
-            </Link>
-          </div>
-        </div>
-      </div>
+      <ErrorState
+        title={content.invalidReference}
+        message={content.invalidReferenceDescription}
+      />
     );
   }
 
-  // Obtener orden con items desde la base de datos
   let order: (Order & { order_items: OrderItem[] }) | null = null;
-  let orderError = false;
 
   try {
     const repo = new CartRepository();
     order = await repo.getOrderWithItems(orderId);
   } catch (error) {
-    console.error("Error fetching order:", error);
-    orderError = true;
+    console.error("[Success] Error fetching order:", error);
   }
 
-  // Si no se encuentra la orden o hay error, mostrar mensaje
-  if (orderError || !order) {
+  if (!order) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
-        <div className="max-w-md w-full text-center space-y-6">
-          <div className="flex justify-center">
-            <div className="rounded-full bg-red-100 p-4">
-              <XCircle className="w-16 h-16 text-red-600" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold">Orden no encontrada</h1>
-          <p className="text-muted-foreground">
-            No pudimos encontrar tu orden en el sistema. Por favor, revisa tu
-            email o contacta con soporte.
-          </p>
-          <div className="flex gap-3">
-            <Link
-              href="/productos"
-              className="flex-1 border border-border px-6 py-3 rounded-lg hover:bg-muted transition"
-            >
-              Seguir comprando
-            </Link>
-            <Link
-              href="/"
-              className="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition"
-            >
-              Volver al inicio
-            </Link>
-          </div>
-        </div>
-      </div>
+      <ErrorState
+        title={content.orderNotFound}
+        message={content.orderNotFoundDescription}
+      />
     );
   }
 
-  // Verificar que la orden esté aprobada
   if (order.status !== "approved" && order.status !== "paid") {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -170,27 +100,18 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
               <XCircle className="w-16 h-16 text-yellow-600" />
             </div>
           </div>
-          <h1 className="text-3xl font-bold">Pago pendiente</h1>
-          <p className="text-muted-foreground">
-            Tu orden está siendo procesada. Te notificaremos cuando se confirme
-            el pago.
-          </p>
+          <h1 className={TYPOGRAPHY.heading.section}>{content.pendingTitle}</h1>
+          <p className={TYPOGRAPHY.body.muted}>{content.pendingMessage}</p>
           <div className="bg-muted/30 border border-border rounded-lg p-4 text-sm text-left">
-            <p className="font-medium mb-2">Número de orden:</p>
+            <p className="font-medium mb-2">{content.orderIdLabel}</p>
             <p className="font-mono text-xs">{order.order_number}</p>
           </div>
           <div className="flex gap-3">
-            <Link
-              href="/productos"
-              className="flex-1 border border-border px-6 py-3 rounded-lg hover:bg-muted transition"
-            >
-              Seguir comprando
+            <Link href="/productos" className={combine(BUTTONS.secondary, "flex-1 px-6 py-3")}>
+              {content.ctaSecondary}
             </Link>
-            <Link
-              href="/"
-              className="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition"
-            >
-              Volver al inicio
+            <Link href="/" className={combine(BUTTONS.primary, "flex-1 px-6 py-3")}>
+              {content.ctaPrimary}
             </Link>
           </div>
         </div>
@@ -198,36 +119,30 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
     );
   }
 
-  // Mostrar éxito con resumen de la orden
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4 py-8">
       <div className="max-w-2xl w-full space-y-6">
-        <div className="text-center space-y-6">
+
+        {/* Header */}
+        <div className="text-center space-y-4">
           <div className="flex justify-center">
             <div className="rounded-full bg-green-100 p-4">
               <CheckCircle className="w-16 h-16 text-green-600" />
             </div>
           </div>
-
-          <h1 className="text-3xl font-bold">¡Pago exitoso!</h1>
-
-          <p className="text-muted-foreground">
-            Tu pago ha sido procesado correctamente. Recibirás un email de
-            confirmación con los detalles de tu compra.
-          </p>
+          <h1 className={TYPOGRAPHY.heading.section}>{content.title}</h1>
+          <p className={TYPOGRAPHY.body.muted}>{content.subtitle}</p>
         </div>
 
         {/* Número de orden */}
         <div className="bg-muted/30 border border-border rounded-lg p-4 text-center">
-          <p className="text-sm text-muted-foreground mb-2">
-            Número de orden:
-          </p>
+          <p className={combine(TYPOGRAPHY.body.muted, "mb-2")}>{content.orderIdLabel}</p>
           <p className="text-2xl font-bold font-mono">{order.order_number}</p>
         </div>
 
-        {/* Resumen de la orden */}
+        {/* Resumen */}
         <div className="bg-white border border-border rounded-lg p-6 space-y-4">
-          <h2 className="text-xl font-semibold">Resumen de la compra</h2>
+          <h2 className={TYPOGRAPHY.heading.subsection}>{content.orderSummaryTitle}</h2>
 
           <div className="space-y-3">
             {order.order_items.map((item) => (
@@ -237,58 +152,49 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
               >
                 <div className="flex-1">
                   <p className="font-medium">{item.product_name}</p>
-                  <p className="text-sm text-muted-foreground">
+                  <p className={TYPOGRAPHY.body.muted}>
                     {item.variacion_size} • {item.variacion_color}
                   </p>
-                  <p className="text-sm text-muted-foreground">
-                    Cantidad: {item.quantity}
+                  <p className={TYPOGRAPHY.body.muted}>
+                    {content.quantityLabel}: {item.quantity}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="font-medium">{formatPrice(item.subtotal)}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {formatPrice(item.unit_price)} c/u
+                  <p className={TYPOGRAPHY.body.muted}>
+                    {formatPrice(item.unit_price)} {content.unitLabel}
                   </p>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className="border-t border-border pt-4">
-            <div className="flex justify-between items-center">
-              <p className="text-lg font-semibold">Total</p>
-              <p className="text-2xl font-bold">
-                {formatPrice(order.total_amount)}
-              </p>
-            </div>
+          <div className="border-t border-border pt-4 flex justify-between items-center">
+            <p className="text-lg font-semibold">{content.totalLabel}</p>
+            <p className="text-2xl font-bold">{formatPrice(order.total_amount)}</p>
           </div>
         </div>
 
-        {/* Información de qué sigue */}
+        {/* Qué sigue */}
         <div className="bg-muted/30 border border-border rounded-lg p-6 space-y-2 text-sm">
-          <p className="font-medium">¿Qué sigue?</p>
+          <p className="font-medium">{content.whatNextTitle}</p>
           <ul className="space-y-1 text-muted-foreground">
-            <li>• Recibirás un email con el resumen de tu compra</li>
-            <li>• Te contactaremos para coordinar la entrega</li>
-            <li>• Puedes seguir el estado de tu pedido en tu email</li>
+            {content.nextSteps.map((step, i) => (
+              <li key={i}>• {step}</li>
+            ))}
           </ul>
         </div>
 
-        {/* Botones de navegación */}
+        {/* CTAs */}
         <div className="flex gap-3">
-          <Link
-            href="/productos"
-            className="flex-1 border border-border px-6 py-3 rounded-lg hover:bg-muted transition text-center"
-          >
-            Seguir comprando
+          <Link href="/productos" className={combine(BUTTONS.secondary, "flex-1 px-6 py-3 text-center")}>
+            {content.ctaSecondary}
           </Link>
-          <Link
-            href="/"
-            className="flex-1 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:bg-primary/90 transition text-center"
-          >
-            Volver al inicio
+          <Link href="/" className={combine(BUTTONS.primary, "flex-1 px-6 py-3 text-center")}>
+            {content.ctaPrimary}
           </Link>
         </div>
+
       </div>
     </div>
   );

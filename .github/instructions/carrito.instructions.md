@@ -1,71 +1,50 @@
 ---
-applyTo: "components/carrito/**,lib/context/CarritoContext*,lib/storage/carrito*"
+applyTo: "app/api/cart/**,app/carrito/**,components/carrito/**"
 ---
 
-# Carrito — Patrones y reglas
+# Instrucciones de carrito (arquitectura vigente)
 
-## Arquitectura
+## Arquitectura real
+El carrito es **server-side** y persiste en Supabase.
 
-```
-CarritoProvider (app/layout.tsx)
-  └── CarritoContext  →  useCarrito()
-        ├── localStorage (fira_carrito, TTL 14 días)
-        └── Supabase (detalles de productos en runtime)
-```
+### Flujo principal
+- `app/api/cart/actions.ts` (Server Actions, todas con `"use server"`).
+- `getSessionId()`
+  - Lee/crea cookie `session_id`.
+  - Cookie `httpOnly`, `maxAge: 7 días`.
+- `CartRepository`
+  - Opera sobre tablas `cart` y `cart_items` en Supabase.
 
-## Tipos clave
+## Server Actions disponibles
+- `createOrGetCart`
+- `getCart`
+- `addToCart`
+- `removeFromCart`
+- `updateCartQuantity`
+- `clearCart`
 
-```ts
-interface CarritoItem {
-  id: string;              // crypto.randomUUID() en cliente
-  producto_id: string;
-  variacion_id: string;
-  cantidad: number;
-  precio_unitario: number; // Snapshot al momento de agregar — no cambia
-  agregado_at: string;
-}
+Todas deben mantenerse como Server Actions (`"use server"`).
 
-interface Carrito {
-  items: CarritoItem[];
-  subtotal: number;        // sum(precio_unitario * cantidad)
-  created_at: string;
-  updated_at: string;
-}
-```
+## Tipos y reglas de datos
+- `CartItem` incluye `price_at_addition`.
+  - Es snapshot al momento de agregar.
+  - No debe cambiar aunque cambie el precio del producto.
+- `Cart` incluye:
+  - `id`
+  - `session_id`
+  - `total_amount`
 
-## Reglas de negocio
+## Bug conocido (no replicar)
+En `getSessionId()`, si falla `cookies()`, el `catch` genera un UUID pero no lo persiste en cookie.  
+Eso puede crear carritos huérfanos en DB.
 
-**Al agregar:**
-- Variación requerida; botón disabled sin selección
-- Guardar `precio_unitario = variacion.precio` como snapshot
-- Si mismo `producto_id + variacion_id` ya existe → mergear sumando cantidad
+**Regla:** no agregar código nuevo que repita ese patrón (generar `session_id` sin persistencia real en cookie).
 
-**En el carrito:**
-- Detectar cambio de precio: `item.precio_unitario !== variacion.precio` → mostrar warning
-- `stock = 0` en variación → permitir checkout ("A pedido")
-- `producto.activo = false` o `variacion.activo = false` → warning, bloquear checkout
+## Reglas UX obligatorias
+- Si `stock = 0`, permitir agregar mostrando estado **"A pedido"**.
+- Si el producto requiere variación, no habilitar botón de agregar hasta seleccionarla.
 
-**localStorage:**
-```ts
-try {
-  localStorage.setItem("fira_carrito", JSON.stringify(carrito));
-} catch {
-  // QuotaExceededError o Safari private mode → fallback a memoria
-  // Mostrar banner: "Tu carrito no se guardará al cerrar la pestaña"
-}
-```
-
-## UX del drawer
-
-- Drawer: vista compacta, sin editar cantidad
-- Página `/carrito`: vista completa con `QuantitySelector`
-- Usar `useScrollLock(isDrawerOpen)` y `useEscapeKey(closeDrawer, isDrawerOpen)`
-- `CartBadge` en header muestra `itemCount`; click abre drawer
-
-## Analytics (siempre trackear)
-
-```ts
-trackAddToCart(producto, variacion, cantidad, variacion.precio);  // Al agregar
-trackViewCart(itemCount, subtotal);                                // Al abrir drawer/página
-trackRemoveFromCart(producto, variacion, cantidad, value);         // Al eliminar
-```
+## Restricciones
+- No usar `localStorage` para estado fuente de carrito.
+- No usar `CarritoContext` / `CarritoProvider`.
+- No agregar lógica de carrito cliente que desincronice Supabase.
