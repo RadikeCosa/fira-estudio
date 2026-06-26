@@ -1,5 +1,8 @@
 # 🔐 Webhook Security - Quick Reference
 
+> Documento archivado.
+> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+
 ## 📋 Checklist Pre-Deployment
 
 ```bash
@@ -215,7 +218,7 @@ if (!isSignatureValid) {
 ## 📚 Documentación Completa
 
 - [WEBHOOK_SECURITY.md](./WEBHOOK_SECURITY.md) - Guía técnica
-- [SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md) - Checklist
+- [WEBHOOK_SECURITY.md](../../WEBHOOK_SECURITY.md) - Referencia vigente
 - [WEBHOOK_SECURITY_VISUAL.md](./WEBHOOK_SECURITY_VISUAL.md) - Diagramas
 - [WEBHOOK_SECURITY_SUMMARY.md](./WEBHOOK_SECURITY_SUMMARY.md) - Resumen ejecutivo
 

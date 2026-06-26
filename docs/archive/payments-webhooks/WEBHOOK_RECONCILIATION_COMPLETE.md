@@ -1,5 +1,8 @@
 # Webhook Reconciliation Implementation - COMPLETE ✅
 
+> Documento archivado.
+> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+
 **Status:** IMPLEMENTED - Queue-based processing with reconciliation  
 **Date:** 2026-02-04  
 **Session:** Phase 2 - Webhook Reconciliation
@@ -84,7 +87,7 @@ Successfully implemented **queue-based webhook processing with exponential backo
 - `handleManualReconciliation()` - Trigger reconciliation manually
 - `handleCronReconciliation()` - Handle cron service requests
 
-**3. `scripts/sql-code/webhook-reconciliation-schema.sql`** (110 lines)
+**3. `scripts/sql-code/supabase.sql`** (snapshot de referencia)
 Database schema for:
 
 - `webhook_queue` - Store pending webhook events
@@ -381,7 +384,7 @@ Response:
 
 ```bash
 # Execute the SQL to create tables and triggers
-psql -h {SUPABASE_HOST} -U postgres -d postgres < webhook-reconciliation-schema.sql
+Consultar `scripts/sql-code/README.md` y `scripts/sql-code/supabase.sql` antes de ejecutar SQL manual
 
 # Or run via Supabase SQL Editor in dashboard
 ```

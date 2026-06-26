@@ -473,7 +473,7 @@ Eso viene después. Por ahora solo los 6 eventos.
 ## 📚 Próximos Pasos
 
 1. Lee `lib/analytics/gtag.ts` para ver cómo se implementa
-2. Lee `.github/skills/analytics/SKILL.md` para detalles técnicos
+2. Revisa `lib/analytics/` y los eventos del codigo real para detalles tecnicos vigentes
 3. Abre `npm run dev` y verifica que GA4 NO registra (modo dev)
 4. Ahora que entiendas, ayuda a implementar tracking en nuevos componentes
 

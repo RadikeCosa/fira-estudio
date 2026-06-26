@@ -1,101 +1,68 @@
-# Configurar Variables en Vercel Dashboard
+# Configuracion de variables en Vercel
 
-## Pasos para Producción
+Esta guia documenta que variables deben cargarse en Vercel sin exponer valores reales.
 
-### 1. Ir a Settings en Vercel
+## Estado sensible
 
-- https://vercel.com → Dashboard
-- Selecciona tu proyecto `muma-estudio`
-- Settings → Environment Variables
+Historicamente este archivo incluyo valores reales o aparentemente reales para integraciones de pago.
 
-### 2. Agregar Variables Requeridas
+- Esos valores fueron removidos del repositorio.
+- Cualquier credencial previamente versionada debe tratarse como `requiere rotacion manual`.
+- No reutilizar ejemplos viejos de este archivo como si siguieran siendo seguros.
 
-Copia exactamente estas variables (cambia los valores por los reales):
+## Pasos
 
-#### Variable 1: MERCADOPAGO_ACCESS_TOKEN
+1. Ir a Vercel Dashboard.
+2. Seleccionar el proyecto correspondiente a `fira-estudio`.
+3. Abrir `Settings` → `Environment Variables`.
+4. Cargar variables por entorno con placeholders seguros como referencia.
+5. Hacer redeploy despues de cambios en variables.
 
-- **Name**: `MERCADOPAGO_ACCESS_TOKEN`
-- **Value**: `APP_USR-2041126739898991-012617-97a492e49f68b199a8724a914f712b4d-3160583787`
-- **Environment**: Production, Preview, Development
-- Click: **Save**
-
-#### Variable 2: MERCADOPAGO_INTEGRATOR_ID
-
-- **Name**: `MERCADOPAGO_INTEGRATOR_ID`
-- **Value**: `dev_24c65fb163bf11ea96500242ac130004`
-- **Environment**: Production, Preview, Development
-- Click: **Save**
-
-### 3. Verificar Configuración
-
-Las siguientes variables se generan automáticamente (NO necesitas configurarlas):
-
-- ✅ `VERCEL_URL` → Auto-generado por Vercel
-- ✅ URLs de Checkout → Generadas automáticamente en `/lib/config/urls.ts`
-- ✅ Webhook URL → Generada automáticamente
-
-### 4. Redeploy
-
-Después de agregar variables:
-
-1. Ve a **Deployments**
-2. Haz click en los 3 puntos del último deploy
-3. **Redeploy**
-
-O simplemente hace push:
+## Variables habituales
 
 ```bash
-git push origin feat/fase2
+MERCADOPAGO_ACCESS_TOKEN=your-mercadopago-access-token
+MERCADOPAGO_WEBHOOK_SECRET=your-mercadopago-webhook-secret
+MERCADOPAGO_INTEGRATOR_ID=your-mercadopago-integrator-id
+
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+RESEND_API_KEY=your-resend-api-key
+RESEND_FROM_EMAIL="Fira Estudio <noreply@example.com>"
+
+NEXT_PUBLIC_SITE_URL=https://your-public-site.example
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+
+WEBHOOK_RECONCILIATION_TOKEN=your-reconciliation-token
+WEBHOOK_QUEUE_PROCESSOR_TOKEN=your-queue-token
+WEBHOOK_STATUS_TOKEN=your-status-token
+CRON_SECRET=your-cron-secret
 ```
 
-## Verificar que Funciona
+`VERCEL_URL` se genera automaticamente en Vercel. Las URLs de checkout y webhook se resuelven desde `lib/config/urls.ts`.
 
-1. Abre https://fira-estudio.vercel.app
-2. Navega a: Productos → Agregar al carrito → Ir a Checkout
-3. Llena el formulario y continúa a Mercado Pago
-4. En DevTools (F12) → Network tab:
-   - Busca `/api/checkout/create-preference`
-   - Response debería mostrar:
-     ```json
-     {
-       "back_urls": {
-         "success": "https://fira-estudio.vercel.app/checkout/success",
-         "failure": "https://fira-estudio.vercel.app/checkout/failure",
-         "pending": "https://fira-estudio.vercel.app/checkout/pending"
-       }
-     }
-     ```
+## Verificacion sugerida
 
-## Para Testing sin Incógnito
+- Confirmar que las variables quedaron cargadas en el entorno correcto.
+- Hacer redeploy sin asumir cache reutilizable si se cambiaron `NEXT_PUBLIC_*`.
+- Validar checkout y webhook solo con credenciales seguras de prueba o con un procedimiento operacional confirmado fuera del repo.
 
-Si necesitas probar sin modo incógnito en Vercel:
+## Troubleshooting
 
-1. Inicia sesión en tu cuenta real en Mercado Pago
-2. En el checkout, selecciona "Pagar con Tarjeta"
-3. Usa tarjetas de prueba:
-   - **Visa**: 4111 1111 1111 1111
-   - **Master**: 5555 5555 5555 4444
-   - Fecha: 12/25
-   - CVV: 123
+### Build fallido
 
-Las transacciones de prueba no se cobran realmente.
+- Revisar Build Logs en Vercel.
+- Verificar que no falten variables requeridas.
+- Corroborar que la documentacion local no este mencionando scripts inexistentes.
 
-## Troubleshooting en Vercel
+### Error de runtime
 
-### Vercel Build falló
+- Revisar Runtime Logs del deployment.
+- Confirmar que las variables sensibles existan en el entorno correcto.
 
-- Revisa los logs en Deployments
-- Busca errores TypeScript
-- Verifica que todos los imports están correctos
+### Integracion de Mercado Pago falla
 
-### 500 Error en Checkout
-
-- Revisa Environment Variables están configuradas
-- Revisa logs en Vercel Functions
-- Verifica que MERCADOPAGO_ACCESS_TOKEN es correcto
-
-### Mercado Pago retorna 400
-
-- Verifica URLs en respuesta de `/api/checkout/create-preference`
-- Asegúrate que URLs usan `https://` (no http://)
-- Verifica que dominio es exacto: `fira-estudio.vercel.app`
+- Confirmar que las credenciales cargadas sean las esperadas para ese entorno.
+- Confirmar fuera del repo la URL publica final antes de usarla como webhook o `back_url`.

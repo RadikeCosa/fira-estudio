@@ -1,7 +1,7 @@
 # Configuration & Standards - Onboarding Guide
 
 **Última actualización:** 29 de enero de 2026  
-**Proyecto:** Challaco - Textile E-commerce  
+**Proyecto:** Fira Estudio  
 **Stack:** Next.js 16, React 19, TypeScript 5, Tailwind CSS 4
 
 ---
@@ -794,4 +794,4 @@ chore: update dependencies
 ---
 
 **Última actualización:** 29 de enero de 2026  
-**Mantenido por:** Equipo de desarrollo Challaco
+**Mantenido por:** Equipo de desarrollo Fira Estudio

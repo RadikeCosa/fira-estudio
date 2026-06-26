@@ -1,5 +1,8 @@
 # 🎉 Maintenance Mode Implementation - Complete
 
+> Documento archivado.
+> La referencia vigente para maintenance mode es [`../../MAINTENANCE_MODE.md`](../../MAINTENANCE_MODE.md).
+
 ## ✅ What Was Implemented
 
 A complete maintenance mode system that allows controlling the checkout functionality through environment variables, without requiring code deployments.
@@ -19,7 +22,7 @@ A complete maintenance mode system that allows controlling the checkout function
    - Only shows when `IS_NEXT_PUBLIC_MAINTENANCE_MODE=true`
 
 ### Documentation
-3. **`docs/NEXT_PUBLIC_MAINTENANCE_MODE.md`** (4.8 KB)
+3. **`docs/MAINTENANCE_MODE.md`** (documentacion vigente)
    - Complete guide for maintenance mode
    - Usage instructions for Vercel and local development
    - Variable reference table
@@ -249,7 +252,7 @@ a205ac2 feat: Add maintenance mode system with feature flags
 
 ## 📚 Reference Links
 
-- **Primary Documentation**: `docs/NEXT_PUBLIC_MAINTENANCE_MODE.md`
+- **Primary Documentation**: `docs/MAINTENANCE_MODE.md`
 - **Quick Start**: `docs/MAINTENANCE_MODE_QUICKSTART.md`
 - **Visual Reference**: `docs/MAINTENANCE_MODE_VISUAL.md`
 - **Environment Variables**: `.env.local.example`

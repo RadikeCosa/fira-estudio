@@ -259,8 +259,8 @@ export default function RootLayout({
 
 ```typescript
 title: {
-  default: "Challaco",
-  template: "%s | Challaco"
+  default: "Fira Estudio",
+  template: "%s | Fira Estudio"
 }
 ```
 
@@ -268,7 +268,7 @@ Usado en sub-páginas:
 
 ```typescript
 export const metadata = { title: "Productos" };
-// Resultado: "Productos | Challaco"
+// Resultado: "Productos | Fira Estudio"
 ```
 
 ---
@@ -815,7 +815,7 @@ export const metadata: Metadata = {
     title: "OG Title",
     description: "OG Description",
     url: "https://example.com",
-    siteName: "Challaco",
+    siteName: "Fira Estudio",
     images: [
       {
         url: "https://example.com/image.jpg",
@@ -1109,4 +1109,4 @@ http://localhost:3000/contacto
 ---
 
 **Última actualización:** 29 de enero de 2026  
-**Mantenido por:** Equipo de desarrollo Challaco
+**Mantenido por:** Equipo de desarrollo Fira Estudio

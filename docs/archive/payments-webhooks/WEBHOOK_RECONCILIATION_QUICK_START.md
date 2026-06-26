@@ -1,5 +1,8 @@
 # Webhook Reconciliation - Quick Integration Guide
 
+> Documento archivado.
+> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+
 **Estimated Integration Time:** 30 minutes  
 **Complexity:** Medium  
 **Production Ready:** YES ✅
@@ -13,8 +16,9 @@
 Execute this SQL in your Supabase SQL editor or psql:
 
 ```bash
-# Copy and paste the contents of this file into Supabase SQL Editor:
-scripts/sql-code/webhook-reconciliation-schema.sql
+# Historical note:
+# the dedicated schema file is no longer present.
+# use scripts/sql-code/README.md and scripts/sql-code/supabase.sql as current references.
 ```
 
 This creates 3 new tables:
@@ -165,7 +169,7 @@ GROUP BY status;
 
 ### "Table Does Not Exist"
 
-→ Run the SQL schema file: `webhook-reconciliation-schema.sql`
+→ Consult `scripts/sql-code/README.md` y `scripts/sql-code/supabase.sql`
 
 ---
 
@@ -218,7 +222,7 @@ After completing the 5 steps, verify:
 
 - Full implementation: [WEBHOOK_RECONCILIATION_COMPLETE.md](./WEBHOOK_RECONCILIATION_COMPLETE.md)
 - API examples: See "API Endpoints" section in full doc
-- Database schema: [webhook-reconciliation-schema.sql](../scripts/sql-code/webhook-reconciliation-schema.sql)
+- Database reference: [scripts/sql-code/README.md](../../../scripts/sql-code/README.md)
 
 ---
 

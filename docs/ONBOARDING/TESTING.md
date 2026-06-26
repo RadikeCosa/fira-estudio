@@ -1011,4 +1011,4 @@ describe("Component", () => {
 ---
 
 **Última actualización:** 29 de enero de 2026  
-**Mantenido por:** Equipo de desarrollo Challaco
+**Mantenido por:** Equipo de desarrollo Fira Estudio

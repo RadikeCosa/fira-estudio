@@ -1010,7 +1010,7 @@ export function ProductHighlight({ producto }: { producto: Producto }) {
 
 - [Project Structure](./PROJECT_STRUCTURE.md) - Arquitectura completa
 - [Data & Queries](./DATA_AND_QUERIES.md) - Supabase y queries
-- [Phase 1 Complete](../PHASE_1_COMPLETE.md) - Fixes recientes
+- `PHASE_1_COMPLETE.md` ya no forma parte de la documentacion activa
 
 ### Utilidades Importantes
 
@@ -1053,4 +1053,4 @@ Antes de crear un nuevo componente, verificá:
 ---
 
 **Última actualización:** 29 de enero de 2026  
-**Mantenido por:** Equipo de desarrollo Challaco
+**Mantenido por:** Equipo de desarrollo Fira Estudio

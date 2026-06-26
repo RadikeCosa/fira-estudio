@@ -1,5 +1,9 @@
 ## 🗺️ Mapa de Onboarding - Día 1 a Día 3
 
+> Material secundario de aprendizaje.
+> No usar esta carpeta como fuente de verdad operativa del proyecto.
+> Para estado vigente, priorizar `README.md`, `AGENTS.md` y los documentos activos de `docs/`.
+
 ### Día 1: Conceptos Fundamentales (45 minutos)
 
 #### 1️⃣ **Estructura del Proyecto** - Dónde viven las cosas
@@ -153,7 +157,7 @@ Después de leer los basics, puedes profundizar:
 | **Datos** | DATA_AND_QUERIES.md | [docs/CACHING_ARCHITECTURE.md](../CACHING_ARCHITECTURE.md) |
 | **Caching** | CACHING_BASICS.md | [docs/CACHING_ARCHITECTURE.md](../CACHING_ARCHITECTURE.md) |
 | **Metadata/SEO** | METADATA_BASICS.md | [docs/METADATA_STANDARD.md](../METADATA_STANDARD.md) |
-| **Analytics** | ANALYTICS_BASICS.md | [.github/skills/analytics/SKILL.md](../../.github/skills/analytics/SKILL.md) |
+| **Analytics** | ANALYTICS_BASICS.md | `lib/analytics/` y eventos instrumentados en codigo |
 | **Errores** | (cubierto en DATA_AND_QUERIES) | [docs/error-boundaries.md](../error-boundaries.md) |
 | **Design System** | (cubierto en PROJECT_STRUCTURE) | [docs/STYLE_MANAGEMENT.md](../STYLE_MANAGEMENT.md) |
 

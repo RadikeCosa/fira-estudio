@@ -1,5 +1,8 @@
 # 🚨 QUICK SETUP: Activar Modo Mantenimiento en Producción
 
+> Documento archivado.
+> La referencia vigente para maintenance mode es [`../../MAINTENANCE_MODE.md`](../../MAINTENANCE_MODE.md).
+
 ## Pasos Rápidos (Vercel)
 
 1. Ve a: https://vercel.com/tu-proyecto/settings/environment-variables
@@ -29,7 +32,7 @@ Y redeploy.
 
 ## Documentación Completa
 
-- [NEXT_PUBLIC_MAINTENANCE_MODE.md](./NEXT_PUBLIC_MAINTENANCE_MODE.md) - Guía completa
+- [MAINTENANCE_MODE.md](../../MAINTENANCE_MODE.md) - Guia vigente
 - [MAINTENANCE_MODE_VISUAL.md](./MAINTENANCE_MODE_VISUAL.md) - Referencias visuales
 
 ## ¿Qué hace?

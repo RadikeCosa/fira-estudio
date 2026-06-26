@@ -1,7 +1,7 @@
 # Resources & Data - Onboarding Guide
 
 **Última actualización:** 29 de enero de 2026  
-**Proyecto:** Challaco - Textile E-commerce  
+**Proyecto:** Fira Estudio  
 **Database:** Supabase (PostgreSQL)
 
 ---
@@ -689,4 +689,4 @@ supabase status
 ---
 
 **Última actualización:** 29 de enero de 2026  
-**Mantenido por:** Equipo de desarrollo Challaco
+**Mantenido por:** Equipo de desarrollo Fira Estudio

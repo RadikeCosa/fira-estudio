@@ -1,5 +1,8 @@
 # 🔐 Seguridad del Webhook de Mercado Pago - Resumen Ejecutivo
 
+> Documento archivado.
+> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+
 ## ✅ Problema Resuelto
 
 Se identificaron y corrigieron **2 vulnerabilidades críticas** en el endpoint del webhook:
@@ -77,7 +80,7 @@ function validateWebhookSignature(headers, rawBody, paymentId, timestamp);
    - Testing en desarrollo
    - Deployment en Vercel
 
-4. **`docs/SECURITY_IMPLEMENTATION.md`** (Checklist)
+4. **`docs/WEBHOOK_SECURITY.md`** (documentacion vigente)
    - Resumen de implementación
    - Configuración requerida
    - Testing y deployment
@@ -237,7 +240,7 @@ curl -X POST http://localhost:3000/api/checkout/webhook \
 | Documento                                                  | Contenido                                       |
 | ---------------------------------------------------------- | ----------------------------------------------- |
 | [WEBHOOK_SECURITY.md](./WEBHOOK_SECURITY.md)               | Guía completa de configuración y funcionamiento |
-| [SECURITY_IMPLEMENTATION.md](./SECURITY_IMPLEMENTATION.md) | Checklist de implementación                     |
+| [WEBHOOK_SECURITY.md](../../WEBHOOK_SECURITY.md) | Documentacion vigente de seguridad              |
 | [WEBHOOK_SECURITY_VISUAL.md](./WEBHOOK_SECURITY_VISUAL.md) | Diagramas visuales y flujos                     |
 
 ---
@@ -302,7 +305,7 @@ Files created:
   + lib/mercadopago/webhook-security.ts (140 líneas)
   + lib/mercadopago/webhook-security.test.ts (200 líneas)
   + docs/WEBHOOK_SECURITY.md (completo)
-  + docs/SECURITY_IMPLEMENTATION.md (completo)
+  + docs/WEBHOOK_SECURITY.md (vigente)
   + docs/WEBHOOK_SECURITY_VISUAL.md (completo)
 
 Files modified:

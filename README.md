@@ -1,193 +1,131 @@
-# 🎨 Fira Estudio - E-commerce
+# Fira Estudio
 
-E-commerce de Fira Estudio construido con Next.js 15, TypeScript, Tailwind CSS, y Mercado Pago.
+Fira Estudio es un e-commerce construido con Next.js App Router para publicar un catalogo de textiles artesanales, permitir agregar productos al carrito y completar un checkout integrado con Mercado Pago.
 
----
+El objetivo de este repositorio es documentar el proyecto con precision tecnica, sin inflar capacidades que el codigo no respalda.
 
-## 🚀 Quick Start
+## Funcionalidades actuales
+
+- Catalogo de productos y categorias con datos desde Supabase.
+- Pagina de detalle con imagenes, variaciones y productos relacionados.
+- Carrito persistente asociado a `session_id`.
+- Checkout con creacion de orden y preferencia de Mercado Pago.
+- Paginas de resultado de checkout: `success`, `failure` y `pending`.
+- Webhook de Mercado Pago con validaciones de seguridad y cola de procesamiento.
+- Email de confirmacion de pedido con Resend.
+- Eventos de Google Analytics 4 para interacciones de ecommerce.
+- Tests de logica y componentes con `node:test` y Vitest.
+
+## Stack real
+
+- Next.js 16
+- React 19
+- TypeScript
+- Tailwind CSS 4
+- Supabase
+- Mercado Pago
+- Resend + React Email
+- Vercel
+- Google Analytics 4
+- Vitest
+
+## Arquitectura breve
+
+- `app/`: rutas App Router, paginas publicas y endpoints API.
+- `components/`: UI por dominio (`productos`, `carrito`, `layout`, `ui`).
+- `lib/supabase/`: clientes y queries.
+- `lib/repositories/`: acceso a datos y operaciones de dominio.
+- `lib/mercadopago/`: cliente y utilidades de seguridad para webhooks.
+- `lib/webhooks/`: cola, retries y reconciliacion.
+- `lib/emails/`: template y envio de emails de confirmacion.
+- `docs/`: documentacion operativa y tecnica complementaria.
+
+## Setup local
 
 ```bash
-# Instalar dependencias
 npm install
-
-# Copiar variables de entorno
 cp .env.local.example .env.local
-
-# Editar .env.local con tus valores
-nano .env.local
-
-# Iniciar servidor de desarrollo
 npm run dev
 ```
 
-Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+Abrir `http://localhost:3000`.
 
----
+## Variables de entorno
 
-## 📚 Documentación
+Usar [.env.local.example](./.env.local.example) como referencia. No commitear valores reales.
 
-- **[Guía de Entornos](./docs/ENVIRONMENTS.md)** - Configuración de development, staging, production
-- **[Modo Mantenimiento](./docs/NEXT_PUBLIC_MAINTENANCE_MODE.md)** - Cómo activar/desactivar mantenimiento
-- **[Guía de Deployment](./docs/DEPLOYMENT.md)** - Cómo hacer deployments y rollbacks
-- **[Email de Confirmación](./docs/ORDER_CONFIRMATION_EMAIL.md)** - Configuración de emails de pedido
-
----
-
-## 🌐 Entornos
-
-| Entorno         | URL                                                                   | Rama      | Estado           |
-| --------------- | --------------------------------------------------------------------- | --------- | ---------------- |
-| **Development** | `localhost:3000`                                                      | local     | 🟢 Activo        |
-| **Staging**     | [Preview URL](https://fira-estudio-git-develop-radikecosa.vercel.app) | `develop` | 🟢 Activo        |
-| **Production**  | [fira-estudio.vercel.app](https://fira-estudio.vercel.app)            | `main`    | 🟡 Mantenimiento |
-
-**Nota:** Production está en modo mantenimiento mientras se configuran credenciales de Mercado Pago.
-
----
-
-## 🛠️ Scripts
+Variables principales:
 
 ```bash
-# Desarrollo
-npm run dev          # Servidor de desarrollo (localhost:3000)
-npm run build        # Build de producción
-npm start            # Ejecutar build local
+NEXT_PUBLIC_SITE_URL=http://localhost:3000
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# Quality
-npm run lint         # ESLint
-npm run type-check   # TypeScript checking
+MERCADOPAGO_ACCESS_TOKEN=your-mercadopago-access-token
+MERCADOPAGO_WEBHOOK_SECRET=your-mercadopago-webhook-secret
+MERCADOPAGO_INTEGRATOR_ID=your-mercadopago-integrator-id
 
-# (Futuros)
-npm test             # Tests con Vitest
-npm run test:e2e     # Tests E2E con Playwright
-```
+RESEND_API_KEY=your-resend-api-key
+RESEND_FROM_EMAIL="Fira Estudio <noreply@example.com>"
 
----
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
+NEXT_PUBLIC_CONTACT_EMAIL=contacto@example.com
+NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/firaestudio
 
-## 🏗️ Stack Tecnológico
-
-- **Framework:** Next.js 15 (App Router)
-- **Lenguaje:** TypeScript
-- **Estilos:** Tailwind CSS
-- **Pagos:** Mercado Pago
-- **Database:** Supabase
-- **Emails:** Resend + React Email
-- **Deployment:** Vercel
-- **Analytics:** Google Analytics 4
-
----
-
-## 📁 Estructura del Proyecto
-
-```
-fira-estudio/
-├── app/                    # Next.js App Router
-│   ├── (routes)/          # Rutas del sitio
-│   ├── api/               # API Routes
-│   └── layout.tsx         # Layout principal
-├── components/            # Componentes React
-│   ├── layout/           # Header, Footer, etc.
-│   ├── ui/               # Componentes reutilizables
-│   └── maintenance-banner.tsx
-├── lib/                   # Utilidades y configuración
-│   ├── config/           # Feature flags, constants
-│   ├── supabase/         # Cliente de Supabase
-│   └── utils/            # Helpers
-├── docs/                  # Documentación
-│   ├── ENVIRONMENTS.md
-│   ├── NEXT_PUBLIC_MAINTENANCE_MODE.md
-│   └── DEPLOYMENT.md
-├── public/               # Assets estáticos
-└── .env.local.example    # Template de variables
-```
-
----
-
-## 🔐 Variables de Entorno
-
-Ver [.env.local.example](./.env.local.example) para la lista completa.
-
-**Variables críticas:**
-
-```bash
-# Mercado Pago
-MERCADOPAGO_ACCESS_TOKEN=
-MERCADOPAGO_WEBHOOK_SECRET=
-
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=
-
-# Resend (Emails)
-RESEND_API_KEY=
-
-# Feature Flags
 NEXT_PUBLIC_MAINTENANCE_MODE=false
 NEXT_PUBLIC_CHECKOUT_ENABLED=true
+NEXT_PUBLIC_MAINTENANCE_MESSAGE="Mensaje opcional"
 ```
 
----
+Adicionalmente, el codigo usa tokens operativos para webhooks y reconciliacion. Esos valores deben configurarse como secretos y no deben documentarse con valores reales.
 
-## 🤝 Contribución
+## Scripts
 
-### Git Flow
+Solo los scripts existentes en `package.json`:
 
+```bash
+npm run dev
+npm run build
+npm run start
+npm run lint
+npm run test
+npm run test:node
+npm run test:unit
+npm run test:watch
+npm run test:coverage
 ```
-main (production)
-  ↑
-develop (staging)
-  ↑
-feature/[nombre] (features individuales)
-```
 
-### Proceso
+## Testing y calidad
 
-1. Crear branch desde `develop`
-2. Desarrollar y probar localmente
-3. Push y crear PR a `develop`
-4. Review y merge
-5. Testing en staging
-6. Cuando esté listo, PR de `develop` a `main`
+- `npm run lint`: validacion de ESLint.
+- `npm run test`: ejecuta pruebas de logica y pruebas unitarias.
+- `npm run build`: verificacion de build de produccion.
 
-Ver [DEPLOYMENT.md](./docs/DEPLOYMENT.md) para detalles.
+Si se toca checkout, carrito, webhooks o emails, conviene ejecutar como minimo `lint`, `test` y `build`.
 
----
+## Entornos
 
-## 📝 TODOs
+- `local`: desarrollo con `.env.local`.
+- `preview`: despliegues de Vercel Preview.
+- `production`: despliegue principal esperado en Vercel.
 
-### Alta Prioridad
+El estado operativo concreto de preview y production, incluyendo URLs activas, auth, maintenance mode o credenciales vigentes, queda pendiente de confirmar fuera del repo.
 
-- [ ] Obtener credenciales PROD de Mercado Pago
-- [ ] Desactivar modo mantenimiento en producción
-- [ ] Crear proyecto Supabase Staging
+## Estado actual y limitaciones
 
-### Media Prioridad
+- La base funcional de carrito, checkout, webhook y emails existe en el codigo.
+- Parte de la documentacion historica del repo todavia esta en proceso de saneamiento.
+- Hay flujos sensibles de pagos y webhooks que requieren especial cuidado antes de cambiar comportamiento.
+- Existen decisiones operativas que no pueden confirmarse solo leyendo el repositorio y deben tratarse como `pendiente de confirmar`.
 
-- [ ] Implementar CI/CD con GitHub Actions
-- [ ] Agregar tests unitarios (Vitest)
-- [ ] Agregar tests E2E (Playwright)
+## Documentacion relacionada
 
-### Baja Prioridad
-
-- [ ] Configurar Sentry para error tracking
-- [ ] Optimización de imágenes con next/image
-- [ ] Configurar Redis para caching
-
----
-
-## 📄 Licencia
-
-Privado - Fira Estudio
-
----
-
-## 📞 Contacto
-
-- **Desarrollador:** @RadikeCosa
-- **Proyecto:** Fira Estudio E-commerce
-- **Repositorio:** [github.com/RadikeCosa/fira-estudio](https://github.com/RadikeCosa/fira-estudio)
-
----
-
-Última actualización: 2026-02-06
+- [AGENTS.md](./AGENTS.md): guia canonica para agentes de codigo.
+- [docs/ENVIRONMENTS.md](./docs/ENVIRONMENTS.md): criterios de entornos y manejo de secretos.
+- [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md): proceso de deploy y rollback.
+- [docs/VERCEL_SETUP.md](./docs/VERCEL_SETUP.md): configuracion segura de variables en Vercel.
+- [docs/ORDER_CONFIRMATION_EMAIL.md](./docs/ORDER_CONFIRMATION_EMAIL.md): email de confirmacion.
+- [docs/WEBHOOK_SECURITY.md](./docs/WEBHOOK_SECURITY.md): seguridad del webhook de Mercado Pago.
+- [docs/TESTING_STRATEGY.md](./docs/TESTING_STRATEGY.md): estrategia de pruebas en flujos criticos.
