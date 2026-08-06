@@ -73,11 +73,13 @@ describe("Header", () => {
       render(<Header />);
 
       // Desktop nav links should be in the DOM
+      const inicioLinks = screen.getAllByText("Inicio");
       const productosLinks = screen.getAllByText("Productos");
       const nosotrosLinks = screen.getAllByText("Nosotros");
       const contactoLinks = screen.getAllByText("Contacto");
 
       // Should have at least one of each (desktop nav)
+      expect(inicioLinks.length).toBeGreaterThanOrEqual(1);
       expect(productosLinks.length).toBeGreaterThanOrEqual(1);
       expect(nosotrosLinks.length).toBeGreaterThanOrEqual(1);
       expect(contactoLinks.length).toBeGreaterThanOrEqual(1);
@@ -88,6 +90,10 @@ describe("Header", () => {
 
       // Get all links and filter for desktop nav (not in mobile menu)
       const allLinks = screen.getAllByRole("link");
+      const inicioLink = allLinks.find(
+        (link) =>
+          link.textContent === "Inicio" && link.getAttribute("href") === "/",
+      );
       const productosLink = allLinks.find(
         (link) =>
           link.textContent === "Productos" &&
@@ -104,9 +110,21 @@ describe("Header", () => {
           link.getAttribute("href") === "/contacto",
       );
 
+      expect(inicioLink).toBeInTheDocument();
       expect(productosLink).toBeInTheDocument();
       expect(nosotrosLink).toBeInTheDocument();
       expect(contactoLink).toBeInTheDocument();
+    });
+
+    it("does not expose cart or checkout links", () => {
+      render(<Header />);
+
+      const hrefs = screen
+        .getAllByRole("link")
+        .map((link) => link.getAttribute("href"));
+
+      expect(hrefs).not.toContain("/carrito");
+      expect(hrefs).not.toContain("/checkout");
     });
   });
 
@@ -235,7 +253,7 @@ describe("Header", () => {
       expect(desktopNav).toHaveClass("hidden");
     });
 
-    it("hides the cart indicator when public checkout is unavailable", () => {
+    it("does not render the cart indicator in the public header", () => {
       render(<Header />);
 
       expect(screen.queryByTestId("cart-indicator")).not.toBeInTheDocument();

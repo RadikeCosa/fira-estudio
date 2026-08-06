@@ -31,20 +31,22 @@ export const SITE_CONFIG = {
 /** Configuración de WhatsApp */
 export const WHATSAPP = {
   /**
-   * Getter para el número (dificulta scraping)
+   * Getter para el numero publico.
+   * Si no esta configurado, no se genera enlace funcional.
    */
-  get number(): string {
-    return process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "5492999XXXXXX";
+  get number(): string | undefined {
+    const trimmed = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim();
+    return trimmed || undefined;
   },
 
   /**
    * Genera URL de WhatsApp con mensaje pre-formateado
-   * Incluye timestamp para dificultar scraping automatizado
    *
    * @param message - Mensaje a enviar
-   * @returns URL completa de WhatsApp
+   * @returns URL completa de WhatsApp o null si no hay numero configurado
    */
-  getUrl: (message: string): string => {
+  getUrl: (message: string): string | null => {
+    if (!WHATSAPP.number) return null;
     return `https://wa.me/${WHATSAPP.number}?text=${encodeURIComponent(message)}`;
   },
 } as const;

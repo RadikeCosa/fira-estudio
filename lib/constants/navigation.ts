@@ -32,6 +32,7 @@ export const PUBLIC_CONTACT_CHANNELS = {
  * Main navigation links displayed in Header and Footer
  */
 export const NAV_LINKS: NavLink[] = [
+  { label: "Inicio", href: "/" },
   { label: "Productos", href: "/productos" },
   { label: "Nosotros", href: "/sobre-nosotros" },
   { label: "Contacto", href: "/contacto" },

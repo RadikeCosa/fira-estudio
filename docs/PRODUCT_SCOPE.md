@@ -25,8 +25,11 @@ El caso de uso principal es:
 - Catalogo de productos y categorias.
 - Detalle de producto con imagenes, descripcion, variantes, materiales, cuidados y tiempos.
 - Informacion de disponibilidad como referencia sujeta a consulta.
+- Acciones publicas de consulta manual desde el detalle de producto.
 - Pagina de contacto.
 - Metadata, sitemap y estructura SEO compatibles con una vidriera digital.
+
+Actualizacion Fase 1A: la UI publica visible fue adaptada para no ofrecer carrito ni checkout desde header, navegacion o acciones de producto. Las rutas e infraestructura historica de comercio siguen existiendo internamente hasta una fase funcional posterior.
 
 ## Fuera de alcance vigente
 

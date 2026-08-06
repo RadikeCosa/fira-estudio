@@ -2,8 +2,7 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
-import { AddToCartButton } from "@/components/carrito/AddToCartButton";
-import { IS_PUBLIC_CHECKOUT_AVAILABLE } from "@/lib/config/features";
+import { WhatsAppButton } from "@/components/productos/WhatsAppButton";
 import { BUTTONS, CART_LAYOUT } from "@/lib/design/tokens";
 import { formatPrice } from "@/lib/utils";
 import { ProductoCompleto } from "@/lib/types";
@@ -15,7 +14,7 @@ interface ProductActionsProps {
 /**
  * ProductActions - Wrapper Client Component
  *
- * Renderiza acciones de compra basadas en carrito
+ * Renderiza acciones publicas de consulta para el catalogo.
  *
  * @param producto - Información del producto
  */
@@ -23,7 +22,10 @@ export function ProductActions({ producto }: ProductActionsProps) {
   const [selectedSize, setSelectedSize] = useState<string | null>(null);
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
 
-  const variations = useMemo(() => producto.variaciones || [], [producto.variaciones]);
+  const variations = useMemo(
+    () => producto.variaciones || [],
+    [producto.variaciones],
+  );
   const sizes = useMemo(
     () => [...new Set(variations.map((variation) => variation.tamanio))],
     [variations],
@@ -32,7 +34,8 @@ export function ProductActions({ producto }: ProductActionsProps) {
     () => [...new Set(variations.map((variation) => variation.color))],
     [variations],
   );
-  const resolvedSelectedSize = selectedSize ?? (sizes.length === 1 ? sizes[0] : null);
+  const resolvedSelectedSize =
+    selectedSize ?? (sizes.length === 1 ? sizes[0] : null);
   const resolvedSelectedColor =
     selectedColor ?? (colors.length === 1 ? colors[0] : null);
 
@@ -48,7 +51,9 @@ export function ProductActions({ producto }: ProductActionsProps) {
   });
 
   const hasVariations = sizes.length > 0 || colors.length > 0;
-  const hasAnyStock = variations.some((currentVariation) => currentVariation.stock > 0);
+  const hasAnyStock = variations.some(
+    (currentVariation) => currentVariation.stock > 0,
+  );
   const displayPrice = variation?.precio ?? producto.precio_desde;
 
   let availabilityLabel = "Disponibilidad sujeta a consulta";
@@ -61,14 +66,6 @@ export function ProductActions({ producto }: ProductActionsProps) {
     availabilityLabel = "Disponibilidad sujeta a consulta";
   } else if (!hasAnyStock) {
     availabilityLabel = "Consultar disponibilidad";
-  }
-
-  if (IS_PUBLIC_CHECKOUT_AVAILABLE) {
-    return (
-      <div className="space-y-6">
-        <AddToCartButton producto={producto} />
-      </div>
-    );
   }
 
   return (
@@ -99,6 +96,7 @@ export function ProductActions({ producto }: ProductActionsProps) {
                   key={size}
                   type="button"
                   onClick={() => setSelectedSize(size)}
+                  aria-pressed={isSelected}
                   className={isSelected ? BUTTONS.primary : BUTTONS.secondary}
                 >
                   {size}
@@ -121,6 +119,7 @@ export function ProductActions({ producto }: ProductActionsProps) {
                   key={color}
                   type="button"
                   onClick={() => setSelectedColor(color)}
+                  aria-pressed={isSelected}
                   className={isSelected ? BUTTONS.primary : BUTTONS.secondary}
                 >
                   {color}
@@ -135,18 +134,15 @@ export function ProductActions({ producto }: ProductActionsProps) {
         <p className="text-sm font-semibold text-foreground">Disponibilidad</p>
         <p className="text-sm text-muted-foreground">{availabilityLabel}</p>
         <p className="text-sm text-muted-foreground">
-          La compra online está suspendida por el momento. Confirmamos stock,
-          variantes disponibles y tiempos de entrega de forma manual.
+          Confirmamos disponibilidad, variantes y tiempos de entrega de forma
+          manual.
         </p>
       </div>
 
       <div className="flex flex-col gap-3 sm:flex-row">
-        <Link
-          href="/contacto"
-          className={BUTTONS.primary + " flex-1 text-center"}
-        >
-          Consultar disponibilidad
-        </Link>
+        <div className="flex-1">
+          <WhatsAppButton producto={producto} variacion={variation} />
+        </div>
         <Link
           href="/productos"
           className={BUTTONS.secondary + " flex-1 text-center"}

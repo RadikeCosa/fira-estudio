@@ -4,15 +4,17 @@ Fecha: `2026-06-25`
 
 Actualizacion Fase 0: `2026-08-06`
 
+Actualizacion Fase 1A: `2026-08-06`
+
 Contrato canonico vigente: [`../PRODUCT_SCOPE.md`](../PRODUCT_SCOPE.md)
 
-Esta actualizacion registra el saneamiento documental de Fase 0. No modifica comportamiento publico ni marca como resueltos los hallazgos funcionales sobre carrito, checkout, pagos, webhooks, ordenes o emails.
+La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. No modifica rutas comerciales sensibles, endpoints, Mercado Pago, webhooks, ordenes ni emails.
 
 ## Resumen Ejecutivo
 
 Fira Estudio conserva una base tecnica historica de e-commerce, pero el objetivo vigente ya no es vender online sino relanzar el proyecto como catalogo/vidriera publica de marca textil artesanal.
 
-El repositorio todavia expone superficies de carrito, checkout, pagos y webhooks. El flag `NEXT_PUBLIC_CHECKOUT_ENABLED=false` no alcanza por si solo para un relanzamiento seguro como catalogo, porque solo bloquea una parte del flujo y no elimina toda la superficie publica asociada a compra.
+El repositorio todavia conserva superficies de carrito, checkout, pagos y webhooks. El flag `NEXT_PUBLIC_CHECKOUT_ENABLED=false` no alcanza por si solo para un relanzamiento seguro como catalogo, porque solo bloquea una parte del flujo y no elimina toda la superficie asociada a compra.
 
 La opcion recomendada para esta etapa es:
 
@@ -25,7 +27,7 @@ Estado general al cierre de esta auditoria:
 
 - documentacion y framing del repo: saneados parcialmente en Fase 0;
 - catalogo y datos: siguen dependiendo de Supabase;
-- checkout/pagos: siguen presentes en codigo;
+- checkout/pagos: siguen presentes en codigo, pero fuera de la UI publica principal desde Fase 1A;
 - deploy: pendiente de validar contra servicios externos;
 - validacion tecnica local al 2026-08-06: `git diff --check`, `npm run lint`, `npm run test` y `npm run build` pasan.
 
@@ -137,7 +139,9 @@ Actualizacion Fase 0:
 
 - `docs/PRODUCT_SCOPE.md` queda como contrato canonico;
 - `README.md`, `AGENTS.md`, `docs/README.md`, `docs/ENVIRONMENTS.md`, `docs/VERCEL_SETUP.md`, `docs/MAINTENANCE_MODE.md` y `.env.local.example` fueron reorientados al catalogo;
-- no se resolvieron en esta fase las superficies funcionales de carrito, checkout, pagos, webhooks, ordenes o emails.
+- Fase 1A removio carrito/checkout de header, navegacion y acciones publicas de producto;
+- Fase 1A removio datos estructurados comerciales de oferta comprable;
+- no se resolvieron en estas fases las rutas comerciales, endpoints, pagos, webhooks, ordenes o emails.
 
 Hallazgos principales:
 
@@ -174,7 +178,7 @@ Hallazgos principales:
 
 ### Observacion
 
-Para el objetivo catalogo, carrito y checkout siguen demasiado visibles en el flujo publico actual. La remocion de esas superficies debe resolverse en un patch funcional posterior.
+Para el objetivo catalogo, Fase 1A ya removio enlaces y CTAs comerciales de la experiencia publica principal. Las rutas `/carrito`, `/checkout` y endpoints sensibles siguen existiendo y deben aislarse en un patch funcional posterior.
 
 ## Inventario de Variables de Entorno
 
@@ -302,8 +306,14 @@ El flag `NEXT_PUBLIC_CHECKOUT_ENABLED=false` no alcanza para relanzamiento segur
 - no elimina `/carrito`;
 - no elimina `/checkout`;
 - no elimina las paginas de resultado;
-- no remueve el icono de carrito del header;
 - no recorta todas las APIs sensibles del recorrido publico.
+
+Actualizacion Fase 1A:
+
+- el header publico ya no muestra icono de carrito;
+- las acciones publicas de producto ya no renderizan `Agregar al carrito`;
+- el CTA principal de producto pasa a consulta manual;
+- el schema de producto ya no incluye oferta comercial.
 
 ### Recomendacion
 
@@ -406,7 +416,7 @@ Estado real de GA4 y configuracion externa: `pendiente de confirmar`.
 
 ### Fase 1 - Aislamiento funcional de comercio
 
-- remover carrito del header y recorrido publico;
+- estado parcial Fase 1A: header, navegacion, acciones de producto, analytics y schema comercial adaptados a consulta manual;
 - sacar `/carrito` y `/checkout` del flujo publico;
 - bloquear o retirar endpoints comerciales del runtime publico;
 - preservar pagos y webhooks como infraestructura historica no operativa.

@@ -29,27 +29,29 @@ function canTrack(): boolean {
 }
 
 /**
- * Track WhatsApp button click with product information
+ * Track product inquiry intent with product information.
+ * Does not send the generated contact message or personal data.
  * @param producto - Product being consulted
  * @param variacion - Selected variation (optional)
+ * @param channel - Contact channel used
  */
-export function trackWhatsAppClick(
+export function trackProductInquiry(
   producto: Producto,
   variacion?: Variacion,
+  channel: "whatsapp" | "email" | "contact_form" = "whatsapp",
 ): void {
   if (!canTrack()) return;
 
-  const event = ANALYTICS_EVENTS.WHATSAPP_CLICK;
+  const event = ANALYTICS_EVENTS.PRODUCT_INQUIRY;
   window.gtag!("event", event.name, {
     event_category: event.category,
     event_label: producto.nombre,
+    contact_channel: channel,
     producto_id: producto.id,
     producto_nombre: producto.nombre,
     producto_slug: producto.slug,
     variacion_tamanio: variacion?.tamanio ?? null,
     variacion_color: variacion?.color ?? null,
-    variacion_precio: variacion?.precio ?? null,
-    value: variacion?.precio ?? producto.precio_desde ?? 0,
   });
 }
 
@@ -68,8 +70,6 @@ export function trackProductView(producto: Producto): void {
     producto_nombre: producto.nombre,
     producto_slug: producto.slug,
     categoria_id: producto.categoria_id,
-    precio_desde: producto.precio_desde,
-    value: producto.precio_desde ?? 0,
   });
 }
 
@@ -112,7 +112,5 @@ export function trackVariationSelect(
     variacion_id: variacion.id,
     variacion_tamanio: variacion.tamanio,
     variacion_color: variacion.color,
-    variacion_precio: variacion.precio,
-    value: variacion.precio,
   });
 }

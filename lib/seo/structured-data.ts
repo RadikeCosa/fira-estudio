@@ -17,18 +17,6 @@ export function generateProductSchema(producto: ProductoCompleto) {
     producto.imagenes.find((img) => img.es_principal)?.url ||
     producto.imagenes[0]?.url;
 
-  // Calculate price range from variations
-  const activeVariations = producto.variaciones.filter((v) => v.activo);
-  const prices = activeVariations.map((v) => v.precio);
-  const minPrice = prices.length > 0 ? Math.min(...prices) : null;
-  const maxPrice = prices.length > 0 ? Math.max(...prices) : null;
-
-  // Determine availability
-  const hasStock = activeVariations.some((v) => v.stock > 0);
-  const availability = hasStock
-    ? "https://schema.org/InStock"
-    : "https://schema.org/PreOrder"; // stock=0 means "available on request"
-
   const schema = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -39,20 +27,7 @@ export function generateProductSchema(producto: ProductoCompleto) {
       "@type": "Brand",
       name: SITE_CONFIG.name,
     },
-    offers:
-      minPrice && maxPrice
-        ? {
-            "@type": "AggregateOffer",
-            priceCurrency: "ARS",
-            lowPrice: minPrice,
-            highPrice: maxPrice,
-            availability: availability,
-            seller: {
-              "@type": "Organization",
-              name: SITE_CONFIG.name,
-            },
-          }
-        : undefined,
+    category: producto.categoria?.nombre || undefined,
     material: producto.material || undefined,
     additionalProperty: [
       {

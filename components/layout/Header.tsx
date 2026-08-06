@@ -1,11 +1,9 @@
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
 import { NAV_LINKS } from "@/lib/constants/navigation";
-import { IS_PUBLIC_CHECKOUT_AVAILABLE } from "@/lib/config/features";
 import { COMPONENTS, COLORS } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./MobileNav";
-import { CartIndicator } from "./CartIndicator";
 
 /**
  * Header - Navegación principal con diseño minimalista
@@ -45,10 +43,8 @@ export function Header() {
             ))}
           </div>
 
-          {/* Cart Indicator & Mobile Navigation */}
+          {/* Mobile Navigation */}
           <div className="flex items-center gap-2">
-            {IS_PUBLIC_CHECKOUT_AVAILABLE && <CartIndicator />}
-
             <div className="md:hidden">
               <MobileNav
                 links={NAV_LINKS}

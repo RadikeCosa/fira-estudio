@@ -1,16 +1,27 @@
 "use client";
 
+import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import { Producto, Variacion } from "@/lib/types";
-import { WHATSAPP, SITE_CONFIG } from "@/lib/constants";
-import { formatPrice } from "@/lib/utils";
-import { trackWhatsAppClick } from "@/lib/analytics/gtag";
+import { WHATSAPP } from "@/lib/constants";
+import { trackProductInquiry } from "@/lib/analytics/gtag";
 import { useRateLimit } from "@/hooks/useRateLimit";
 import { cn } from "@/lib/utils";
 
 interface WhatsAppButtonProps {
   producto: Producto;
   variacion?: Variacion;
+}
+
+export function buildProductInquiryMessage(
+  producto: Producto,
+  variacion?: Variacion,
+): string {
+  const variantLabel = variacion
+    ? `, variante ${variacion.tamanio} / ${variacion.color}`
+    : "";
+
+  return `Hola, queria consultar por ${producto.nombre}${variantLabel}. ¿Esta disponible?`;
 }
 
 /**
@@ -32,25 +43,9 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
     key: "whatsapp_clicks",
   });
 
-  // Construir mensaje pre-formateado
-  const construirMensaje = (): string => {
-    let mensaje = `Hola! Me interesa este producto de ${SITE_CONFIG.name}: `;
-    mensaje += `${producto.nombre}`;
-    if (variacion) {
-      mensaje += ` - Tamaño: ${variacion.tamanio}`;
-      mensaje += `, Color: ${variacion.color}`;
-      mensaje += `, Precio: ${formatPrice(variacion.precio)}`;
-      if (variacion.stock === 0) {
-        mensaje += ", a pedido";
-      } else {
-        mensaje += ", disponible en stock";
-      }
-    }
-    mensaje += ". ¿Cómo hago para comprarlo?";
-    return mensaje;
-  };
-
-  const whatsappUrl = WHATSAPP.getUrl(construirMensaje());
+  const whatsappUrl = WHATSAPP.getUrl(
+    buildProductInquiryMessage(producto, variacion),
+  );
 
   const handleClick = (e: React.MouseEvent) => {
     // Check rate limit
@@ -78,8 +73,8 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
       return;
     }
 
-    // Track WhatsApp button click
-    trackWhatsAppClick(producto, variacion);
+    // Track product inquiry intent without sending the message body.
+    trackProductInquiry(producto, variacion, "whatsapp");
   };
 
   // Format countdown message
@@ -88,8 +83,30 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
       const seconds = Math.ceil(timeUntilReset / 1000);
       return `Disponible en ${seconds}s`;
     }
-    return "Consultar por WhatsApp";
+    return "Consultar por este producto";
   };
+
+  if (!whatsappUrl) {
+    return (
+      <div className="space-y-2">
+        <Link
+          href="/contacto"
+          className={cn(
+            "group inline-flex w-full items-center justify-center gap-3",
+            "rounded-xl bg-foreground px-8 py-4 text-base font-semibold text-background shadow-lg",
+            "transition-all duration-300 hover:shadow-xl",
+            "focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2",
+          )}
+        >
+          <MessageCircle className="h-5 w-5" aria-hidden="true" />
+          <span>Consultar por este producto</span>
+        </Link>
+        <p className="text-center text-sm text-muted-foreground" role="status">
+          WhatsApp no está configurado. Podés consultar desde contacto.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <a
@@ -114,6 +131,7 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
           !isRateLimited &&
             "motion-safe:transition-transform motion-safe:group-hover:rotate-12",
         )}
+        aria-hidden="true"
       />
       <span>{getButtonText()}</span>
     </a>

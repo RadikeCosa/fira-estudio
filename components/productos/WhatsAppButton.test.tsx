@@ -1,11 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { WhatsAppButton } from "./WhatsAppButton";
+import { render, screen, fireEvent } from "@testing-library/react";
+import {
+  buildProductInquiryMessage,
+  WhatsAppButton,
+} from "./WhatsAppButton";
 import type { Producto, Variacion } from "@/lib/types";
+import { trackProductInquiry } from "@/lib/analytics/gtag";
 
 // Mock the analytics module
 vi.mock("@/lib/analytics/gtag", () => ({
-  trackWhatsAppClick: vi.fn(),
+  trackProductInquiry: vi.fn(),
 }));
 
 // Mock useRateLimit hook
@@ -57,9 +61,31 @@ describe("WhatsAppButton", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = "5492999123456";
   });
 
   describe("Message construction", () => {
+    it("builds a concise product inquiry message", () => {
+      const message = buildProductInquiryMessage(mockProducto);
+
+      expect(message).toBe(
+        "Hola, queria consultar por Mantel Floral. ¿Esta disponible?",
+      );
+      expect(message).not.toContain("comprarlo");
+      expect(message).not.toContain("pagar");
+    });
+
+    it("builds a concise product inquiry message with variation", () => {
+      const message = buildProductInquiryMessage(
+        mockProducto,
+        mockVariacionEnStock,
+      );
+
+      expect(message).toBe(
+        "Hola, queria consultar por Mantel Floral, variante 150x200cm / Rojo. ¿Esta disponible?",
+      );
+    });
+
     it("includes product name", () => {
       const { container } = render(<WhatsAppButton producto={mockProducto} />);
       const link = container.querySelector("a");
@@ -67,6 +93,7 @@ describe("WhatsAppButton", () => {
       const decodedMessage = decodeURIComponent(href);
 
       expect(decodedMessage).toContain("Mantel Floral");
+      expect(decodedMessage).toContain("consultar");
     });
 
     it("includes variation details when provided", () => {
@@ -82,12 +109,12 @@ describe("WhatsAppButton", () => {
 
       expect(decodedMessage).toContain("150x200cm");
       expect(decodedMessage).toContain("Rojo");
-      expect(decodedMessage).toMatch(/\$\s*15\.000/); // Match with optional space
+      expect(decodedMessage).not.toContain("$");
     });
   });
 
   describe("Stock-aware messaging", () => {
-    it("asks about immediate shipping when stock > 0", () => {
+    it("does not invent stock availability when stock > 0", () => {
       const { container } = render(
         <WhatsAppButton
           producto={mockProducto}
@@ -98,11 +125,12 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("disponible en stock");
+      expect(decodedMessage).toContain("¿Esta disponible?");
+      expect(decodedMessage).not.toContain("disponible en stock");
       expect(decodedMessage).not.toContain("a pedido");
     });
 
-    it("asks about production time when stock = 0", () => {
+    it("does not invent production status when stock = 0", () => {
       const { container } = render(
         <WhatsAppButton
           producto={mockProducto}
@@ -113,7 +141,8 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("a pedido");
+      expect(decodedMessage).toContain("¿Esta disponible?");
+      expect(decodedMessage).not.toContain("a pedido");
       expect(decodedMessage).not.toContain("disponible en stock");
     });
 
@@ -123,7 +152,7 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("¿Cómo hago para comprarlo?");
+      expect(decodedMessage).toContain("queria consultar");
       expect(decodedMessage).toContain("Mantel Floral");
     });
   });
@@ -134,7 +163,7 @@ describe("WhatsAppButton", () => {
       const link = container.querySelector("a");
       const href = link?.getAttribute("href") || "";
 
-      expect(href).toMatch(/^https:\/\/wa\.me\/[\dX]+\?text=/); // Allow X in phone number for test env
+      expect(href).toMatch(/^https:\/\/wa\.me\/5492999123456\?text=/);
     });
 
     it("opens in new tab with proper security attributes", () => {
@@ -150,7 +179,7 @@ describe("WhatsAppButton", () => {
     it("renders button with WhatsApp text", () => {
       render(<WhatsAppButton producto={mockProducto} />);
 
-      expect(screen.getByText("Consultar por WhatsApp")).toBeInTheDocument();
+      expect(screen.getByText("Consultar por este producto")).toBeInTheDocument();
     });
 
     it("has appropriate styling classes", () => {
@@ -159,6 +188,37 @@ describe("WhatsAppButton", () => {
 
       expect(link).toHaveClass("from-green-600");
       expect(link).toHaveClass("to-green-500");
+    });
+
+    it("uses a safe contact fallback when WhatsApp number is missing", () => {
+      delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+
+      render(<WhatsAppButton producto={mockProducto} />);
+
+      const link = screen.getByRole("link", {
+        name: /consultar por este producto/i,
+      });
+      expect(link).toHaveAttribute("href", "/contacto");
+      expect(screen.getByRole("status")).toHaveTextContent(
+        "WhatsApp no está configurado",
+      );
+      expect(link.getAttribute("href")).not.toContain("wa.me");
+    });
+  });
+
+  describe("Analytics", () => {
+    it("tracks product inquiry without ecommerce conversion events", () => {
+      render(<WhatsAppButton producto={mockProducto} />);
+
+      fireEvent.click(
+        screen.getByRole("link", { name: /consultar por este producto/i }),
+      );
+
+      expect(trackProductInquiry).toHaveBeenCalledWith(
+        mockProducto,
+        undefined,
+        "whatsapp",
+      );
     });
   });
 });
