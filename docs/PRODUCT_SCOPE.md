@@ -31,6 +31,8 @@ El caso de uso principal es:
 
 Actualizacion Fase 1A: la UI publica visible fue adaptada para no ofrecer carrito ni checkout desde header, navegacion o acciones de producto. Las rutas e infraestructura historica de comercio siguen existiendo internamente hasta una fase funcional posterior.
 
+Actualizacion Fase 1B: las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico ya no forman parte del runtime publico vigente. La infraestructura interna de comercio permanece suspendida para auditoria posterior.
+
 ## Fuera de alcance vigente
 
 Estas capacidades no forman parte del producto publico actual:

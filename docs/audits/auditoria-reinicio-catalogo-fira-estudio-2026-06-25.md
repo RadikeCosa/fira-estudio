@@ -6,9 +6,11 @@ Actualizacion Fase 0: `2026-08-06`
 
 Actualizacion Fase 1A: `2026-08-06`
 
+Actualizacion Fase 1B: `2026-08-06`
+
 Contrato canonico vigente: [`../PRODUCT_SCOPE.md`](../PRODUCT_SCOPE.md)
 
-La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. No modifica rutas comerciales sensibles, endpoints, Mercado Pago, webhooks, ordenes ni emails.
+La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. La actualizacion de Fase 1B bloquea las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico. No modifica endpoints, Mercado Pago, webhooks, ordenes ni emails.
 
 ## Resumen Ejecutivo
 
@@ -18,7 +20,7 @@ El repositorio todavia conserva superficies de carrito, checkout, pagos y webhoo
 
 La opcion recomendada para esta etapa es:
 
-- remover carrito y checkout del flujo publico en un patch funcional posterior;
+- mantener carrito y checkout fuera del flujo publico;
 - conservar el codigo sensible de pagos, webhooks, ordenes y emails como funcionalidad suspendida;
 - reordenar la documentacion para que el proyecto no se presente como e-commerce activo;
 - mantener validaciones tecnicas limpias antes de cualquier redeploy.
@@ -27,7 +29,7 @@ Estado general al cierre de esta auditoria:
 
 - documentacion y framing del repo: saneados parcialmente en Fase 0;
 - catalogo y datos: siguen dependiendo de Supabase;
-- checkout/pagos: siguen presentes en codigo, pero fuera de la UI publica principal desde Fase 1A;
+- checkout/pagos: siguen presentes en codigo, pero sus paginas publicas historicas responden como inexistentes desde Fase 1B;
 - deploy: pendiente de validar contra servicios externos;
 - validacion tecnica local al 2026-08-06: `git diff --check`, `npm run lint`, `npm run test` y `npm run build` pasan.
 
@@ -50,19 +52,22 @@ Confirmado desde `package.json`, `next.config.ts`, `tsconfig.json`, `eslint.conf
 
 ### Rutas publicas actuales
 
-Superficie publica confirmada en `app/`:
+Superficie publica vigente confirmada en `app/`:
 
 - `/`
 - `/productos`
 - `/productos/[slug]`
 - `/sobre-nosotros`
 - `/contacto`
+
+Rutas historicas presentes en el arbol pero bloqueadas con `notFound()` desde Fase 1B:
+
 - `/carrito`
 - `/checkout`
 - `/checkout/success`
 - `/checkout/pending`
 - `/checkout/failure`
-- `/test-errors`
+- `/test-errors` en produccion
 
 ### APIs y superficies sensibles
 
@@ -141,7 +146,9 @@ Actualizacion Fase 0:
 - `README.md`, `AGENTS.md`, `docs/README.md`, `docs/ENVIRONMENTS.md`, `docs/VERCEL_SETUP.md`, `docs/MAINTENANCE_MODE.md` y `.env.local.example` fueron reorientados al catalogo;
 - Fase 1A removio carrito/checkout de header, navegacion y acciones publicas de producto;
 - Fase 1A removio datos estructurados comerciales de oferta comprable;
-- no se resolvieron en estas fases las rutas comerciales, endpoints, pagos, webhooks, ordenes o emails.
+- Fase 1B bloqueo las paginas publicas historicas de carrito, checkout y resultados de pago con `notFound()`;
+- Fase 1B dejo `/test-errors` fuera de produccion mediante `notFound()`;
+- no se resolvieron en estas fases los endpoints, pagos, webhooks, ordenes o emails.
 
 Hallazgos principales:
 
@@ -152,19 +159,22 @@ Hallazgos principales:
 
 ## Inventario de Rutas Publicas y APIs Sensibles
 
-### Rutas publicas
+### Rutas publicas vigentes
 
 - `/`
 - `/productos`
 - `/productos/[slug]`
 - `/sobre-nosotros`
 - `/contacto`
+
+### Rutas historicas bloqueadas
+
 - `/carrito`
 - `/checkout`
 - `/checkout/success`
 - `/checkout/pending`
 - `/checkout/failure`
-- `/test-errors`
+- `/test-errors` en produccion
 
 ### APIs sensibles
 
@@ -178,7 +188,7 @@ Hallazgos principales:
 
 ### Observacion
 
-Para el objetivo catalogo, Fase 1A ya removio enlaces y CTAs comerciales de la experiencia publica principal. Las rutas `/carrito`, `/checkout` y endpoints sensibles siguen existiendo y deben aislarse en un patch funcional posterior.
+Para el objetivo catalogo, Fase 1A removio enlaces y CTAs comerciales de la experiencia publica principal. Fase 1B bloqueo las paginas historicas de `/carrito`, `/checkout` y resultados de pago con `notFound()`. Los endpoints sensibles siguen existiendo y deben aislarse en un patch funcional posterior.
 
 ## Inventario de Variables de Entorno
 
@@ -315,13 +325,21 @@ Actualizacion Fase 1A:
 - el CTA principal de producto pasa a consulta manual;
 - el schema de producto ya no incluye oferta comercial.
 
+Actualizacion Fase 1B:
+
+- `/carrito` responde como pagina inexistente;
+- `/checkout` responde como pagina inexistente;
+- `/checkout/success`, `/checkout/failure` y `/checkout/pending` responden como paginas inexistentes;
+- `/test-errors` no esta disponible en produccion;
+- sitemap y robots no presentan estas rutas como contenido publico.
+
 ### Recomendacion
 
 Para esta etapa:
 
 - no reactivar nada de pagos;
 - no borrar todavia el codigo sensible;
-- remover carrito y checkout del flujo publico en un patch funcional posterior;
+- revisar endpoints comerciales y URLs de retorno en una fase posterior;
 - documentar esa capa como funcionalidad suspendida.
 
 ## Diagnostico de Vercel / Redeploy
@@ -417,7 +435,7 @@ Estado real de GA4 y configuracion externa: `pendiente de confirmar`.
 ### Fase 1 - Aislamiento funcional de comercio
 
 - estado parcial Fase 1A: header, navegacion, acciones de producto, analytics y schema comercial adaptados a consulta manual;
-- sacar `/carrito` y `/checkout` del flujo publico;
+- estado parcial Fase 1B: paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico bloqueadas;
 - bloquear o retirar endpoints comerciales del runtime publico;
 - preservar pagos y webhooks como infraestructura historica no operativa.
 
