@@ -5,7 +5,10 @@ import { Card } from "@/components/ui/Card";
 import { ContactFormActions } from "@/components/contacto/ContactFormActions";
 import { ContactFormFields } from "@/components/contacto/ContactFormFields";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
-import { SOCIAL_LINKS } from "@/lib/constants/navigation";
+import {
+  PUBLIC_CONTACT_CHANNELS,
+  SOCIAL_LINKS,
+} from "@/lib/constants/navigation";
 import { useRateLimit } from "@/hooks/useRateLimit";
 import {
   sanitizeText,
@@ -26,6 +29,9 @@ import {
 // TODO: (Opcional) Agregar feedback visual de éxito/error al usuario
 export function ContactForm() {
   const { form } = CONTACTO_CONTENT;
+  const isEmailContactAvailable = Boolean(
+    PUBLIC_CONTACT_CHANNELS.emailAddress && SOCIAL_LINKS.email.href,
+  );
 
   // Rate limiting: 3 submissions per 5 minutes
   const { isRateLimited, recordAction, timeUntilReset } = useRateLimit({
@@ -57,6 +63,13 @@ export function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!isEmailContactAvailable || !SOCIAL_LINKS.email.href) {
+      setRateLimitMessage(
+        "El canal de contacto por email no está disponible en este momento.",
+      );
+      return;
+    }
 
     // Check client-side rate limit
     if (isRateLimited) {
@@ -199,6 +212,9 @@ ${data.mensaje}
 
   // Get button text based on state
   const getButtonText = (): string => {
+    if (!isEmailContactAvailable) {
+      return "Email no disponible";
+    }
     if (isSubmitting) {
       return "Abriendo email...";
     }
@@ -217,7 +233,7 @@ ${data.mensaje}
         <ContactFormFields
           form={form}
           errors={errors}
-          disabled={isSubmitting || isRateLimited}
+          disabled={isSubmitting || isRateLimited || !isEmailContactAvailable}
           nombreRef={nombreRef}
           emailRef={emailRef}
           telefonoRef={telefonoRef}
@@ -226,9 +242,10 @@ ${data.mensaje}
 
         <ContactFormActions
           buttonText={getButtonText()}
-          disabled={isSubmitting || isRateLimited}
+          disabled={isSubmitting || isRateLimited || !isEmailContactAvailable}
           rateLimitMessage={rateLimitMessage}
           isRateLimited={isRateLimited}
+          isContactAvailable={isEmailContactAvailable}
           submitHelperText={form.submitHelperText}
         />
       </form>

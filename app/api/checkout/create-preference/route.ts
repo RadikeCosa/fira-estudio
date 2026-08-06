@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { client, Preference } from "@/lib/mercadopago/client";
 import { CartRepository } from "@/lib/repositories/cart.repository";
 import { CHECKOUT_URLS, WEBHOOK_URL } from "@/lib/config/urls";
+import { IS_PUBLIC_CHECKOUT_AVAILABLE } from "@/lib/config/features";
 import type { Cart, CartItem } from "@/lib/types";
 import { logSecurityEvent } from "@/lib/utils/security-logger";
 import {
@@ -151,6 +152,18 @@ function getSessionId(req: NextRequest): string {
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
+    if (!IS_PUBLIC_CHECKOUT_AVAILABLE) {
+      return NextResponse.json(
+        {
+          error: "Checkout no disponible",
+          message:
+            "La compra online está suspendida por el momento. Consultá disponibilidad desde la sección de contacto.",
+          code: "CHECKOUT_DISABLED",
+        },
+        { status: 503 },
+      );
+    }
+
     // RATE LIMIT CHECK - First thing to do
     const clientIP = getClientIP(req);
     const rateLimitCheck = checkCheckoutRateLimit(clientIP);

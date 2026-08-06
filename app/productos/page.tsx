@@ -51,8 +51,8 @@ export async function generateMetadata({
     title: categoriaName,
     description: categoriaDescription,
     url: categoriaSlug
-      ? `${SITE_CONFIG.url}/productos?categoria=${categoriaSlug}`
-      : `${SITE_CONFIG.url}/productos`,
+      ? `/productos?categoria=${categoriaSlug}`
+      : "/productos",
   });
 }
 

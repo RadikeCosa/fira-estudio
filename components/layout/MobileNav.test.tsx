@@ -35,21 +35,21 @@ describe("MobileNav", () => {
     it("renders hamburger button", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       expect(button).toBeInTheDocument();
     });
 
     it("has correct aria-expanded attribute when closed", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       expect(button).toHaveAttribute("aria-expanded", "false");
     });
 
     it("has correct aria-expanded attribute when open", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       fireEvent.click(button);
 
       expect(button).toHaveAttribute("aria-expanded", "true");
@@ -60,41 +60,42 @@ describe("MobileNav", () => {
     it("does not show menu initially", () => {
       render(<MobileNav links={mockLinks} />);
 
-      expect(screen.queryByText("Inicio")).not.toBeInTheDocument();
-      expect(screen.queryByText("Productos")).not.toBeInTheDocument();
+      const button = screen.getByLabelText("Abrir menú");
+      const dialog = screen.getByRole("dialog");
+      expect(button).toHaveAttribute("aria-expanded", "false");
+      expect(dialog).toHaveClass("translate-x-full");
     });
 
     it("shows menu when hamburger is clicked", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       fireEvent.click(button);
 
-      expect(screen.getByText("Inicio")).toBeInTheDocument();
-      expect(screen.getByText("Productos")).toBeInTheDocument();
-      expect(screen.getByText("Sobre Nosotros")).toBeInTheDocument();
-      expect(screen.getByText("Contacto")).toBeInTheDocument();
+      expect(button).toHaveAttribute("aria-expanded", "true");
+      expect(screen.getByRole("dialog")).toHaveClass("translate-x-0");
     });
 
     it("hides menu when hamburger is clicked again", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
 
       // Open menu
       fireEvent.click(button);
-      expect(screen.getByText("Inicio")).toBeInTheDocument();
+      expect(button).toHaveAttribute("aria-expanded", "true");
 
       // Close menu
       fireEvent.click(button);
-      expect(screen.queryByText("Inicio")).not.toBeInTheDocument();
+      expect(screen.getByLabelText("Abrir menú")).toHaveAttribute(
+        "aria-expanded",
+        "false",
+      );
+      expect(screen.getByRole("dialog")).toHaveClass("translate-x-full");
     });
 
     it("renders all navigation links", () => {
       render(<MobileNav links={mockLinks} />);
-
-      const button = screen.getByLabelText("Toggle navigation menu");
-      fireEvent.click(button);
 
       mockLinks.forEach((link) => {
         const linkElement = screen.getByText(link.label);
@@ -106,13 +107,16 @@ describe("MobileNav", () => {
     it("closes menu when a link is clicked", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       fireEvent.click(button);
 
       const link = screen.getByText("Productos");
       fireEvent.click(link);
 
-      expect(screen.queryByText("Productos")).not.toBeInTheDocument();
+      expect(screen.getByLabelText("Abrir menú")).toHaveAttribute(
+        "aria-expanded",
+        "false",
+      );
     });
   });
 
@@ -120,24 +124,26 @@ describe("MobileNav", () => {
     it("shows overlay when menu is open", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       fireEvent.click(button);
 
-      const overlays = document.querySelectorAll('[aria-hidden="true"]');
-      expect(overlays.length).toBeGreaterThan(0);
+      const overlay = document.querySelector('[aria-hidden="true"]');
+      expect(overlay).toHaveClass("opacity-100");
+      expect(overlay).toHaveClass("pointer-events-auto");
     });
 
     it("does not show overlay when menu is closed", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const overlays = document.querySelectorAll('[aria-hidden="true"]');
-      expect(overlays.length).toBe(0);
+      const overlay = document.querySelector('[aria-hidden="true"]');
+      expect(overlay).toHaveClass("opacity-0");
+      expect(overlay).toHaveClass("pointer-events-none");
     });
 
     it("closes menu when overlay is clicked", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       fireEvent.click(button);
 
       const overlay = document.querySelector('[aria-hidden="true"]');
@@ -147,7 +153,10 @@ describe("MobileNav", () => {
         fireEvent.click(overlay);
       }
 
-      expect(screen.queryByText("Inicio")).not.toBeInTheDocument();
+      expect(screen.getByLabelText("Abrir menú")).toHaveAttribute(
+        "aria-expanded",
+        "false",
+      );
     });
   });
 
@@ -156,14 +165,14 @@ describe("MobileNav", () => {
       // This test verifies MobileNav can render with mocked hooks
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       expect(button).toBeInTheDocument();
     });
 
     it("toggles menu state correctly", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
 
       // Initially closed
       expect(button).toHaveAttribute("aria-expanded", "false");
@@ -182,20 +191,18 @@ describe("MobileNav", () => {
     it("applies correct classes to hamburger button", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       expect(button).toHaveClass("flex", "flex-col", "gap-1.5");
     });
 
     it("applies animation classes to menu when open", () => {
       render(<MobileNav links={mockLinks} />);
 
-      const button = screen.getByLabelText("Toggle navigation menu");
+      const button = screen.getByLabelText("Abrir menú");
       fireEvent.click(button);
 
-      const menu = screen.getByRole("list");
-      const menuContainer = menu.closest("div");
-
-      expect(menuContainer).toHaveClass("animate-in", "fade-in");
+      const menu = screen.getByRole("dialog");
+      expect(menu).toHaveClass("animate-in", "fade-in");
     });
   });
 

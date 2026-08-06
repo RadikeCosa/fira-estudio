@@ -8,7 +8,6 @@ import { ProductViewTracker } from "@/components/productos/ProductViewTracker";
 import { RelatedProducts } from "@/components/productos/RelatedProducts";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { generateProductSchema, renderJsonLd } from "@/lib/seo/structured-data";
-import { SITE_CONFIG } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo/metadata";
 
 interface ProductPageProps {
@@ -46,7 +45,8 @@ export async function generateMetadata({
   return buildMetadata({
     title: producto.nombre,
     description,
-    image: mainImage ? `${SITE_CONFIG.url}${mainImage}` : undefined,
+    image: mainImage,
+    url: `/productos/${producto.slug}`,
   });
 }
 

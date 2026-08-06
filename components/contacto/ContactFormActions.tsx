@@ -5,6 +5,7 @@ interface ContactFormActionsProps {
   disabled: boolean;
   rateLimitMessage: string;
   isRateLimited: boolean;
+  isContactAvailable: boolean;
   submitHelperText: string;
 }
 
@@ -13,8 +14,20 @@ export function ContactFormActions({
   disabled,
   rateLimitMessage,
   isRateLimited,
+  isContactAvailable,
   submitHelperText,
 }: ContactFormActionsProps) {
+  const statusMessage =
+    rateLimitMessage ||
+    (!isContactAvailable
+      ? "El formulario por email no está disponible en este momento."
+      : isRateLimited
+        ? "Límite de mensajes alcanzado. Esperá unos minutos."
+        : null);
+  const helperMessage = isContactAvailable
+    ? submitHelperText
+    : "Activá un email público o definí otro canal de contacto antes del deploy.";
+
   return (
     <>
       <Button
@@ -27,20 +40,18 @@ export function ContactFormActions({
         {buttonText}
       </Button>
 
-      {rateLimitMessage && (
-        <p className="text-center text-sm text-orange-600 font-medium">
-          {rateLimitMessage}
-        </p>
-      )}
-
-      {isRateLimited && !rateLimitMessage && (
-        <p className="text-center text-sm text-orange-600 font-medium">
-          Límite de mensajes alcanzado. Esperá unos minutos.
+      {statusMessage && (
+        <p
+          role="status"
+          aria-live="polite"
+          className="text-center text-sm text-orange-600 font-medium"
+        >
+          {statusMessage}
         </p>
       )}
 
       <p className="text-center text-sm text-muted-foreground">
-        {submitHelperText}
+        {helperMessage}
       </p>
     </>
   );

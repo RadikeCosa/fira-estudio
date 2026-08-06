@@ -1,9 +1,11 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { CheckCircle, XCircle } from "lucide-react";
 import { CartRepository } from "@/lib/repositories/cart.repository";
 import type { Order, OrderItem } from "@/lib/types";
 import { CHECKOUT_CONTENT } from "@/lib/content/checkout";
+import { IS_PUBLIC_CHECKOUT_AVAILABLE } from "@/lib/config/features";
 import { BUTTONS, TYPOGRAPHY } from "@/lib/design/tokens";
 import { combine } from "@/lib/design/tokens";
 import { formatPrice } from "@/lib/utils";
@@ -50,6 +52,10 @@ export default async function CheckoutSuccessPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  if (!IS_PUBLIC_CHECKOUT_AVAILABLE) {
+    redirect("/productos");
+  }
+
   const params = await searchParams;
   const externalReference = params.external_reference as string | undefined;
 

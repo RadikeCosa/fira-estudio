@@ -25,6 +25,7 @@ import { buildMetadata } from "@/lib/seo/metadata";
 export const metadata: Metadata = buildMetadata({
   title: SITE_CONFIG.name,
   description: SITE_CONFIG.description,
+  url: "/",
 });
 
 export default function HomePage() {

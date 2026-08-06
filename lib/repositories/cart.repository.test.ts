@@ -12,7 +12,9 @@ describe("CartRepository", () => {
   beforeEach(() => {
     // Mock Supabase client con métodos que retornan Promises correctamente
     mockSupabase = {
-      from: vi.fn((table: string) => ({
+      from: vi.fn((_table: string) => {
+        void _table;
+        return ({
         select: vi.fn().mockReturnValue({
           eq: vi.fn().mockResolvedValue({
             data: [],
@@ -55,7 +57,8 @@ describe("CartRepository", () => {
             error: null,
           }),
         }),
-      })) as any,
+        });
+      }) as any,
     } as any;
   });
 

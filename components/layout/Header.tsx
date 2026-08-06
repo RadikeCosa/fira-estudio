@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SITE_CONFIG } from "@/lib/constants";
 import { NAV_LINKS } from "@/lib/constants/navigation";
+import { IS_PUBLIC_CHECKOUT_AVAILABLE } from "@/lib/config/features";
 import { COMPONENTS, COLORS } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
 import { MobileNav } from "./MobileNav";
@@ -23,12 +24,12 @@ export function Header() {
         <div className={COMPONENTS.header.container}>
           {/* Logo */}
           <Link href="/" className="hover:opacity-70 transition-opacity">
-            <h1 className={COMPONENTS.header.logo}>
+            <span className={COMPONENTS.header.logo}>
               <span className="font-sugo-display text-[1.2em] sm:text-[1.4em] lg:text-[1.6em]">
                 fira
               </span>{" "}
               <span className="font-open-sans">estudio</span>
-            </h1>
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -46,7 +47,7 @@ export function Header() {
 
           {/* Cart Indicator & Mobile Navigation */}
           <div className="flex items-center gap-2">
-            <CartIndicator />
+            {IS_PUBLIC_CHECKOUT_AVAILABLE && <CartIndicator />}
 
             <div className="md:hidden">
               <MobileNav

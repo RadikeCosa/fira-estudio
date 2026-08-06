@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { NextRequest } from "next/server";
 
 // Mock de CartRepository
 vi.mock("@/lib/repositories/cart.repository", () => ({
@@ -14,7 +13,8 @@ vi.mock("@/lib/repositories/cart.repository", () => ({
 vi.mock("@/lib/mercadopago/client", () => ({
   client: {},
   Preference: class {
-    async create(data: any) {
+    async create(_data: unknown) {
+      void _data;
       return {
         id: "mp-pref-123",
         init_point: "https://www.mercadopago.com/checkout/v1/...",
@@ -164,7 +164,7 @@ describe("POST /api/checkout/create-preference", () => {
       ];
 
       const insufficient = items.filter(
-        (item: any) => item.quantity > item.available_stock,
+        (item) => item.quantity > item.available_stock,
       );
       expect(insufficient).toHaveLength(1);
     });
@@ -191,7 +191,7 @@ describe("POST /api/checkout/create-preference", () => {
       ];
 
       const insufficient = items.filter(
-        (item: any) => item.quantity > item.available_stock,
+        (item) => item.quantity > item.available_stock,
       );
       expect(insufficient).toHaveLength(0);
     });

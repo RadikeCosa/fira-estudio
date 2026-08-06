@@ -16,6 +16,9 @@ vi.mock("@/lib/utils/rate-limit-server", () => ({
 describe("ContactForm", () => {
   // Mock localStorage
   beforeEach(() => {
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL = "contacto@firaestudio.com";
+    process.env.NEXT_PUBLIC_INSTAGRAM_URL = "https://instagram.com/firaestudio";
+
     // Clear localStorage before each test
     localStorage.clear();
 
@@ -262,6 +265,19 @@ describe("ContactForm", () => {
       "500",
     );
   });
+
+  it("announces when the email contact channel is unavailable", () => {
+    delete process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+
+    render(<ContactForm />);
+
+    const message = screen.getByText(
+      /El formulario por email no está disponible en este momento/i,
+    );
+
+    expect(message).toHaveAttribute("aria-live", "polite");
+    expect(screen.getByRole("button", { name: "Email no disponible" })).toBeDisabled();
+  });
 });
 
 describe("ContactInfo", () => {
@@ -323,5 +339,19 @@ describe("ContactInfo", () => {
       expect(instagramElement).toHaveAttribute("target", "_blank");
       expect(instagramElement).toHaveAttribute("rel", "noopener noreferrer");
     }
+  });
+
+  it("shows clear fallback text when contact envs are missing", () => {
+    delete process.env.NEXT_PUBLIC_CONTACT_EMAIL;
+    delete process.env.NEXT_PUBLIC_INSTAGRAM_URL;
+
+    render(<ContactInfo />);
+
+    expect(
+      screen.getByText(/Email no disponible por el momento/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Instagram no disponible por el momento/),
+    ).toBeInTheDocument();
   });
 });

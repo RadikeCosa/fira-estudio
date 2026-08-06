@@ -20,8 +20,16 @@ async function handleRevalidate(req: NextRequest) {
 
   // En producción, requiere token
   const isProduction = process.env.NODE_ENV === "production";
+  const configuredSecret = process.env.REVALIDATE_SECRET;
 
-  if (isProduction && secret !== process.env.REVALIDATE_SECRET) {
+  if (isProduction && !configuredSecret) {
+    return NextResponse.json(
+      { error: "Revalidation is not configured" },
+      { status: 503 },
+    );
+  }
+
+  if (isProduction && secret !== configuredSecret) {
     return NextResponse.json({ error: "Invalid secret" }, { status: 401 });
   }
 

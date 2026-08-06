@@ -1,7 +1,9 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { Clock } from "lucide-react";
 import { CHECKOUT_CONTENT } from "@/lib/content/checkout";
+import { IS_PUBLIC_CHECKOUT_AVAILABLE } from "@/lib/config/features";
 import { BUTTONS, TYPOGRAPHY } from "@/lib/design/tokens";
 import { combine } from "@/lib/design/tokens";
 
@@ -11,6 +13,10 @@ export const metadata: Metadata = {
 };
 
 export default function PendingPage() {
+  if (!IS_PUBLIC_CHECKOUT_AVAILABLE) {
+    redirect("/productos");
+  }
+
   return (
     <div
       className={combine(

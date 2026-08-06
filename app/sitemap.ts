@@ -13,20 +13,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ? `https://${process.env.VERCEL_URL}`
       : "http://localhost:3000");
 
-  // Fetch all active products
-  const { items: productos } = await getProductosFresh({
-    page: 1,
-    pageSize: 500,
-  });
-
-  // Generate product URLs
-  const productUrls: MetadataRoute.Sitemap = productos.map((producto) => ({
-    url: `${baseUrl}/productos/${producto.slug}`,
-    lastModified: new Date(producto.created_at),
-    changeFrequency: "weekly" as const,
-    priority: producto.destacado ? 0.8 : 0.6,
-  }));
-
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
     {
@@ -55,5 +41,32 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  return [...staticPages, ...productUrls];
+  // During local builds or env-less checks, allow a static-only sitemap.
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    return staticPages;
+  }
+
+  try {
+    // Fetch all active products only when catalog env is available.
+    const { items: productos } = await getProductosFresh({
+      page: 1,
+      pageSize: 500,
+    });
+
+    const productUrls: MetadataRoute.Sitemap = productos.map((producto) => ({
+      url: `${baseUrl}/productos/${producto.slug}`,
+      lastModified: new Date(producto.created_at),
+      changeFrequency: "weekly" as const,
+      priority: producto.destacado ? 0.8 : 0.6,
+    }));
+
+    return [...staticPages, ...productUrls];
+  } catch (error) {
+    console.warn("[sitemap] Falling back to static pages only:", error);
+  }
+
+  return staticPages;
 }

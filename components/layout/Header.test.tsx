@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
+import type { NavLink } from "@/lib/constants/navigation";
 import { Header } from "./Header";
 
 // Mock next/link
@@ -34,9 +35,10 @@ vi.mock("./CartIndicator", () => ({
 
 // Mock MobileNav component
 vi.mock("./MobileNav", () => ({
-  MobileNav: ({ links }: { links: any[] }) => (
-    <div data-testid="mobile-nav">Mobile Nav</div>
-  ),
+  MobileNav: ({ links }: { links: NavLink[] }) => {
+    void links;
+    return <div data-testid="mobile-nav">Mobile Nav</div>;
+  },
 }));
 
 describe("Header", () => {
@@ -48,15 +50,21 @@ describe("Header", () => {
     it("renders the logo", () => {
       render(<Header />);
 
-      const logo = screen.getByText("fira Estudio");
-      expect(logo).toBeInTheDocument();
+      const logoLink = screen.getByRole("link", { name: /fira\s+estudio/i });
+      expect(logoLink).toBeInTheDocument();
     });
 
     it("logo links to home page", () => {
       render(<Header />);
 
-      const logoLink = screen.getByText("fira Estudio").closest("a");
+      const logoLink = screen.getByRole("link", { name: /fira\s+estudio/i });
       expect(logoLink).toHaveAttribute("href", "/");
+    });
+
+    it("does not introduce a global h1 in the header", () => {
+      const { container } = render(<Header />);
+
+      expect(container.querySelector("h1")).not.toBeInTheDocument();
     });
   });
 
@@ -210,11 +218,10 @@ describe("Header", () => {
   });
 
   describe("Responsive behavior", () => {
-    it("hamburger button has md:hidden class for desktop", () => {
+    it("renders the mobile navigation container", () => {
       render(<Header />);
 
-      const button = screen.getByLabelText("Abrir menú");
-      expect(button).toHaveClass("md:hidden");
+      expect(screen.getByTestId("mobile-nav")).toBeInTheDocument();
     });
 
     it("desktop navigation has hidden md:flex classes", () => {
@@ -227,45 +234,11 @@ describe("Header", () => {
       expect(desktopNav).toBeInTheDocument();
       expect(desktopNav).toHaveClass("hidden");
     });
-  });
 
-  describe("Accessibility", () => {
-    it("menu button has proper aria-label", () => {
+    it("hides the cart indicator when public checkout is unavailable", () => {
       render(<Header />);
 
-      const button = screen.getByLabelText("Abrir menú");
-      expect(button).toBeInTheDocument();
-
-      fireEvent.click(button);
-
-      const closeButtons = screen.getAllByLabelText("Cerrar menú");
-      expect(closeButtons.length).toBeGreaterThan(0);
-      // Header button should have aria-expanded
-      const headerCloseButton = closeButtons.find((btn) =>
-        btn.hasAttribute("aria-expanded"),
-      );
-      expect(headerCloseButton).toBeInTheDocument();
-    });
-
-    it("mobile menu has proper role and aria attributes", () => {
-      render(<Header />);
-
-      const button = screen.getByLabelText("Abrir menú");
-      fireEvent.click(button);
-
-      const mobileMenu = screen.getByRole("dialog");
-      expect(mobileMenu).toBeInTheDocument();
-      expect(mobileMenu).toHaveAttribute("aria-modal", "true");
-      expect(mobileMenu).toHaveAttribute("aria-label", "Menú de navegación");
-    });
-
-    it("icons have aria-hidden attribute", () => {
-      render(<Header />);
-
-      const button = screen.getByLabelText("Abrir menú");
-      const icon = button.querySelector("svg");
-
-      expect(icon).toHaveAttribute("aria-hidden", "true");
+      expect(screen.queryByTestId("cart-indicator")).not.toBeInTheDocument();
     });
   });
 });

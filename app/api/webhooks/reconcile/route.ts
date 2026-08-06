@@ -17,12 +17,19 @@ import { handleManualReconciliation } from "@/lib/webhooks/reconciliation-job";
 
 export async function POST(req: NextRequest) {
   try {
+    const configuredToken = process.env.WEBHOOK_RECONCILIATION_TOKEN;
+
+    if (!configuredToken) {
+      console.warn(`[Reconciliation] Reconciliation endpoint is not configured`);
+      return NextResponse.json(
+        { error: "Reconciliation is not configured" },
+        { status: 503 },
+      );
+    }
+
     // Verify authentication
     const authHeader = req.headers.get("authorization");
-    if (
-      !authHeader ||
-      authHeader !== `Bearer ${process.env.WEBHOOK_RECONCILIATION_TOKEN}`
-    ) {
+    if (!authHeader || authHeader !== `Bearer ${configuredToken}`) {
       console.warn(`[Reconciliation] Unauthorized reconciliation request`);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

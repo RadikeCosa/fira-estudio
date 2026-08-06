@@ -10,9 +10,23 @@ export interface NavLink {
 
 export interface SocialLink {
   label: string;
-  href: string;
+  href?: string;
   ariaLabel: string;
 }
+
+function getPublicValue(value: string | undefined): string | undefined {
+  const trimmed = value?.trim();
+  return trimmed ? trimmed : undefined;
+}
+
+export const PUBLIC_CONTACT_CHANNELS = {
+  get emailAddress() {
+    return getPublicValue(process.env.NEXT_PUBLIC_CONTACT_EMAIL);
+  },
+  get instagramUrl() {
+    return getPublicValue(process.env.NEXT_PUBLIC_INSTAGRAM_URL);
+  },
+} as const;
 
 /**
  * Main navigation links displayed in Header and Footer
@@ -28,14 +42,20 @@ export const NAV_LINKS: NavLink[] = [
  * Uses environment variables for URLs to allow easy configuration
  */
 export const SOCIAL_LINKS = {
-  instagram: {
-    label: "Instagram",
-    href: process.env.NEXT_PUBLIC_INSTAGRAM_URL,
-    ariaLabel: "Instagram",
+  get instagram() {
+    return {
+      label: "Instagram",
+      href: PUBLIC_CONTACT_CHANNELS.instagramUrl,
+      ariaLabel: "Instagram",
+    };
   },
-  email: {
-    label: "Email",
-    href: `mailto:${process.env.NEXT_PUBLIC_CONTACT_EMAIL}`,
-    ariaLabel: "Email",
+  get email() {
+    return {
+      label: "Email",
+      href: PUBLIC_CONTACT_CHANNELS.emailAddress
+        ? `mailto:${PUBLIC_CONTACT_CHANNELS.emailAddress}`
+        : undefined,
+      ariaLabel: "Email",
+    };
   },
 } as const;

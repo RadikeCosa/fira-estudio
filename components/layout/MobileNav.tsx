@@ -1,10 +1,6 @@
 "use client";
 
 import { useState, useCallback } from "react";
-
-// Altura del header para mobile nav
-const HEADER_HEIGHT = 57;
-
 import Link from "next/link";
 import type { NavLink } from "@/lib/constants/navigation";
 import { useScrollLock, useEscapeKey } from "@/hooks";
@@ -21,7 +17,6 @@ interface MobileNavProps {
 
 export function MobileNav({
   links,
-  logo,
   decorativeText,
 }: MobileNavProps): React.ReactElement {
   const [isOpen, setIsOpen] = useState<boolean>(false);

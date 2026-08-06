@@ -12,6 +12,7 @@ export const metadata: Metadata = buildMetadata({
   title: ABOUT_CONTENT.page.title,
   description: `${ABOUT_CONTENT.page.subtitle} ${SITE_CONFIG.description}`,
   image: ABOUT_CONTENT.image.src,
+  url: "/sobre-nosotros",
 });
 
 export default function SobreNosotrosPage() {

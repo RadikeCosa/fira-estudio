@@ -2,10 +2,18 @@ import { Mail, Instagram } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ContactInfoItem } from "@/components/ui/ContactInfoItem";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
-import { SOCIAL_LINKS } from "@/lib/constants/navigation";
+import {
+  PUBLIC_CONTACT_CHANNELS,
+  SOCIAL_LINKS,
+} from "@/lib/constants/navigation";
 
 export function ContactInfo() {
   const { info, horarios } = CONTACTO_CONTENT;
+  const emailContent =
+    PUBLIC_CONTACT_CHANNELS.emailAddress || "Email no disponible por el momento";
+  const instagramContent = PUBLIC_CONTACT_CHANNELS.instagramUrl
+    ? info.items.instagram.handle
+    : "Instagram no disponible por el momento";
 
   return (
     <div className="space-y-6">
@@ -19,14 +27,14 @@ export function ContactInfo() {
           <ContactInfoItem
             icon={Mail}
             title={info.items.email.title}
-            content={SOCIAL_LINKS.email.href.replace("mailto:", "")}
+            content={emailContent}
             href={SOCIAL_LINKS.email.href}
           />
 
           <ContactInfoItem
             icon={Instagram}
             title={info.items.instagram.title}
-            content={info.items.instagram.handle}
+            content={instagramContent}
             href={SOCIAL_LINKS.instagram.href}
             external
           />

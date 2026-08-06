@@ -6,7 +6,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { getProductosRelacionados } from "@/lib/supabase/queries";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, getImageUrl } from "@/lib/utils";
 
 interface RelatedProductsProps {
   productoId: string;
@@ -55,7 +55,7 @@ export async function RelatedProducts({
               <div className="relative aspect-square mb-3 overflow-hidden rounded-lg bg-muted">
                 {mainImage ? (
                   <Image
-                    src={mainImage.url}
+                    src={getImageUrl(mainImage.url)}
                     alt={mainImage.alt_text || producto.nombre}
                     fill
                     className="object-cover transition-transform duration-300 group-hover:scale-105"

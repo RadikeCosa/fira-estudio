@@ -1,14 +1,16 @@
 # Guia de entornos
 
-Esta guia define como documentar y pensar los entornos del proyecto sin asumir estados operativos que no pueden verificarse solo desde el repositorio.
+Esta guia define los entornos del proyecto para la etapa de catalogo publico, sin asumir estados operativos que no pueden verificarse desde el repositorio.
+
+El contrato de producto vigente esta en [`PRODUCT_SCOPE.md`](./PRODUCT_SCOPE.md).
 
 ## Resumen
 
 | Entorno | Uso esperado | Fuente de variables | Estado verificable desde repo |
 | --- | --- | --- | --- |
-| `local` | desarrollo | `.env.local` | si |
+| `local` | desarrollo | `.env.local` | parcialmente |
 | `preview` | validacion en Vercel Preview | Vercel | no |
-| `production` | despliegue publico principal | Vercel | no |
+| `production` | futuro despliegue publico | Vercel | no |
 
 ## Local
 
@@ -31,47 +33,102 @@ npm run lint
 npm run test
 ```
 
+El catalogo local requiere variables publicas de Supabase para renderizar productos reales. Sin datos o variables reales, el build puede pasar, pero el catalogo no prueba contenido remoto.
+
 ## Preview
 
-Se asume un flujo de deploy en Vercel Preview para ramas no productivas, pero los detalles exactos de:
+Preview se usara para validar el catalogo antes de production. Queda `pendiente de confirmar`:
 
-- nombres de ramas activas;
-- URLs publicas vigentes;
-- configuracion de autenticacion;
-- variables cargadas;
-- estado de maintenance mode;
-
-quedan `pendiente de confirmar`.
+- proyecto Vercel;
+- estrategia de ramas;
+- URL de preview;
+- autenticacion o proteccion del preview;
+- variables efectivamente cargadas;
+- estado real de Supabase usado por preview;
+- analytics activo o inactivo.
 
 ## Production
 
-Se asume un despliegue principal en Vercel, pero cualquier afirmacion sobre:
+Production sera el despliegue publico del catalogo. Queda `pendiente de confirmar`:
 
-- URL final en uso;
-- maintenance mode activo o inactivo;
-- credenciales de Mercado Pago;
-- estado del checkout;
-- configuracion efectiva de analytics;
+- URL final;
+- dominio;
+- proyecto Vercel;
+- variables efectivamente cargadas;
+- configuracion real de Supabase;
+- datos, Storage e imagenes;
+- analytics activo;
+- canal oficial de contacto manual.
 
-queda `pendiente de confirmar` si no surge del codigo versionado.
+No presentar Mercado Pago, Resend ni tokens de webhook como requisitos de production para el alcance vigente.
 
-## Variables de entorno
+## Variables requeridas para catalogo
 
-Plantilla versionada:
+Estas variables son necesarias para desplegar el catalogo con datos reales:
 
-- `.env.local.example`
+- `NEXT_PUBLIC_SITE_URL`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-Secretos que no deben versionarse:
+`NEXT_PUBLIC_SITE_URL` debe apuntar a la URL publica esperada del entorno para metadata, sitemap y enlaces absolutos.
 
-- Mercado Pago
+## Variables opcionales
+
+Contacto:
+
+- `NEXT_PUBLIC_CONTACT_EMAIL`
+- `NEXT_PUBLIC_WHATSAPP_NUMBER`
+- `NEXT_PUBLIC_INSTAGRAM_URL`
+
+Analytics:
+
+- `NEXT_PUBLIC_GA_MEASUREMENT_ID`
+
+Mantenimiento del catalogo:
+
+- `NEXT_PUBLIC_MAINTENANCE_MODE`
+- `NEXT_PUBLIC_MAINTENANCE_MESSAGE`
+- `NEXT_PUBLIC_MAINTENANCE_END_DATE`
+
+Flag historica:
+
+- `NEXT_PUBLIC_CHECKOUT_ENABLED`
+
+`NEXT_PUBLIC_CHECKOUT_ENABLED` no define el alcance vigente. Debe quedar `false` mientras exista el codigo comercial historico, pero no reemplaza el aislamiento funcional que se hara en una fase posterior.
+
+## Variables historicas no requeridas
+
+No son requeridas para deploy del catalogo vigente:
+
 - `SUPABASE_SERVICE_ROLE_KEY`
-- Resend
-- tokens de reconciliacion, cola y status de webhooks
-- cualquier secreto operacional de Vercel
+- `MERCADOPAGO_ACCESS_TOKEN`
+- `MERCADOPAGO_WEBHOOK_SECRET`
+- `MERCADOPAGO_INTEGRATOR_ID`
+- `MERCADOPAGO_WEBHOOK_URL`
+- `NEXT_PUBLIC_CHECKOUT_SUCCESS_URL`
+- `NEXT_PUBLIC_CHECKOUT_FAILURE_URL`
+- `NEXT_PUBLIC_CHECKOUT_PENDING_URL`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- `WEBHOOK_RECONCILIATION_TOKEN`
+- `WEBHOOK_QUEUE_PROCESSOR_TOKEN`
+- `WEBHOOK_STATUS_TOKEN`
+- `CRON_SECRET`
+- `REVALIDATE_SECRET`
+- `WEBHOOK_SKIP_IP_VALIDATION`
+- `WEBHOOK_SKIP_SIGNATURE_VALIDATION`
 
-## Reglas de documentacion
+Conservarlas en ejemplos solo porque el codigo historico todavia las referencia. No cargarlas por defecto en Vercel para el catalogo.
+
+## Secretos
 
 - No commitear `.env.local` ni otros `.env` reales.
 - No documentar credenciales con valores concretos.
+- Si una credencial fue versionada historicamente, marcarla como `requiere rotacion manual`.
+- Mantener separadas variables publicas `NEXT_PUBLIC_*` de secretos server-side.
+
+## Reglas de documentacion
+
 - Si una doc vieja afirma estados de Preview o Production como hechos, actualizarla o marcarla `pendiente de confirmar`.
 - Si una variable existe en el codigo pero no en los templates o docs, registrar el gap antes de tocar comportamiento.
+- No asumir checkout activo en ningun entorno como parte del objetivo actual.

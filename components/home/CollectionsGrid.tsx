@@ -133,6 +133,13 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
 }
 
 export async function CollectionsGrid() {
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    return null;
+  }
+
   let categorias: Categoria[] | null = null;
   let error: Error | null = null;
 

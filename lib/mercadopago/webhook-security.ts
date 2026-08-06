@@ -86,6 +86,9 @@ export function validateWebhookSignature(
   paymentId: string | number,
   _timestamp: string,
 ): boolean {
+  void _rawBody;
+  void _timestamp;
+
   const signature = headers["x-signature"];
   const webhookSecret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
 

@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 focus:outline-none focus: ring-2 focus:ring-offset-2 active:scale-[0.98]",
+  "inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 active:scale-[0.98]",
   {
     variants: {
       variant: {
@@ -15,7 +15,7 @@ const buttonVariants = cva(
         ghost: "text-foreground hover:bg-muted/50",
       },
       size: {
-        sm: "px-6 py-2. 5 text-sm",
+        sm: "px-6 py-2.5 text-sm",
         md: "px-8 py-4 text-base sm:px-10 sm:py-4 sm:text-lg",
         lg: "px-10 py-5 text-lg sm:px-12 sm:py-5 sm:text-xl",
       },
@@ -33,14 +33,13 @@ export interface ButtonProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
   "size"
 > {
-  asChild?: boolean;
   href?: string;
   variant?: ButtonVariants["variant"];
   size?: ButtonVariants["size"];
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild, href, children, ...props }, ref) => {
+  ({ className, variant, size, href, children, ...props }, ref) => {
     if (href) {
       return (
         <Link

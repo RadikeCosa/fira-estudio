@@ -1,32 +1,49 @@
 # Modo mantenimiento
 
-Este documento describe el uso vigente del maintenance mode sin asumir estados actuales de Preview o Production.
+Este documento describe el uso vigente del maintenance mode. No define el alcance normal del producto.
 
-## Que hace
+El contrato de producto vigente esta en [`PRODUCT_SCOPE.md`](./PRODUCT_SCOPE.md).
 
-El maintenance mode permite:
+## Que significa
 
-- mantener el sitio navegable;
-- mostrar un banner informativo;
-- deshabilitar el checkout;
-- evitar cambios de codigo para activar o desactivar el estado.
+Maintenance mode representa una interrupcion temporal del catalogo publico. Puede servir para mostrar un banner cuando el sitio o alguna parte visible requiere una pausa operativa.
+
+No representa el estado normal sin checkout. Fira Estudio debe funcionar como catalogo sin activar maintenance mode.
+
+## Que hace hoy el codigo
+
+El codigo actual permite:
+
+- mostrar un banner informativo con `NEXT_PUBLIC_MAINTENANCE_MODE=true`;
+- personalizar el mensaje con `NEXT_PUBLIC_MAINTENANCE_MESSAGE`;
+- usar `NEXT_PUBLIC_MAINTENANCE_END_DATE` como referencia opcional;
+- bloquear parcialmente checkout mediante flags historicas.
+
+## Limites importantes
+
+- `NEXT_PUBLIC_CHECKOUT_ENABLED` es una flag historica y no define el alcance vigente.
+- `NEXT_PUBLIC_CHECKOUT_ENABLED=false` no es catalog mode.
+- Maintenance mode no debe usarse para comunicar que el e-commerce esta pausado.
+- El catalogo debe poder desplegarse sin Mercado Pago, Resend, service role para carrito/ordenes ni tokens de webhook.
+- La eliminacion o reemplazo de flags historicas sera parte de una fase funcional posterior.
 
 ## Variables involucradas
 
 | Variable | Uso |
 | --- | --- |
 | `NEXT_PUBLIC_MAINTENANCE_MODE` | activa o desactiva el banner |
-| `NEXT_PUBLIC_CHECKOUT_ENABLED` | habilita o bloquea el checkout |
 | `NEXT_PUBLIC_MAINTENANCE_MESSAGE` | mensaje opcional para el banner |
+| `NEXT_PUBLIC_MAINTENANCE_END_DATE` | referencia opcional de fin de mantenimiento |
+| `NEXT_PUBLIC_CHECKOUT_ENABLED` | flag historica de checkout; no define el producto vigente |
 
-## Activacion
+## Activacion temporal
 
 En el entorno que corresponda:
 
 ```bash
 NEXT_PUBLIC_MAINTENANCE_MODE=true
-NEXT_PUBLIC_CHECKOUT_ENABLED=false
-NEXT_PUBLIC_MAINTENANCE_MESSAGE="Mensaje opcional"
+NEXT_PUBLIC_MAINTENANCE_MESSAGE=Estamos actualizando el catalogo.
+NEXT_PUBLIC_MAINTENANCE_END_DATE=
 ```
 
 Despues, hacer redeploy si el entorno lo requiere.
@@ -35,18 +52,20 @@ Despues, hacer redeploy si el entorno lo requiere.
 
 ```bash
 NEXT_PUBLIC_MAINTENANCE_MODE=false
-NEXT_PUBLIC_CHECKOUT_ENABLED=true
 ```
+
+El catalogo deberia quedar operativo sin activar checkout.
 
 ## Consideraciones operativas
 
-- No asumir desde esta doc si Production esta hoy en maintenance mode: eso queda `pendiente de confirmar`.
-- Si se usa en Vercel, coordinarlo con la carga de variables por entorno y el redeploy correspondiente.
-- Si se cambia solo `NEXT_PUBLIC_MAINTENANCE_MESSAGE`, tratarlo igual como cambio de variable publica.
+- No asumir desde esta doc si Preview o Production estan hoy en maintenance mode: queda `pendiente de confirmar`.
+- Si se usa en Vercel, coordinarlo con variables por entorno y redeploy.
+- Si cambia una variable `NEXT_PUBLIC_*`, tratarlo como cambio que requiere rebuild/redeploy.
+- No usar maintenance mode para ocultar deuda funcional de comercio; el aislamiento de carrito, checkout y endpoints comerciales corresponde a una fase funcional posterior.
 
 ## Referencias
 
 - `components/maintenance-banner.tsx`
 - `lib/config/features.ts`
 - [`VERCEL_SETUP.md`](./VERCEL_SETUP.md)
-- Material historico adicional: [`archive/maintenance-mode/`](./archive/maintenance-mode/)
+- material historico adicional: [`archive/maintenance-mode/`](./archive/maintenance-mode/)

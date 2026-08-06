@@ -236,7 +236,6 @@ describe("WebhookQueueProcessor - UUID Extraction", () => {
       const updateCartTotal = vi.fn().mockResolvedValue(undefined);
 
       // Inject mocked CartRepository
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (processor as any).cartRepository = {
         getPaymentLogByPaymentId,
         getOrderById,
@@ -314,7 +313,6 @@ describe("WebhookQueueProcessor - UUID Extraction", () => {
       const updateCartTotal = vi.fn().mockResolvedValue(undefined);
 
       // Inject mocked CartRepository
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (processor as any).cartRepository = {
         getPaymentLogByPaymentId,
         getOrderById,
@@ -385,7 +383,6 @@ describe("WebhookQueueProcessor - UUID Extraction", () => {
       const updateCartTotal = vi.fn().mockResolvedValue(undefined);
 
       // Inject mocked CartRepository
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (processor as any).cartRepository = {
         getPaymentLogByPaymentId,
         getOrderById,
@@ -468,7 +465,6 @@ describe("WebhookQueueProcessor - UUID Extraction", () => {
       const updateCartTotal = vi.fn().mockResolvedValue(undefined);
 
       // Inject mocked CartRepository
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (processor as any).cartRepository = {
         getPaymentLogByPaymentId,
         getOrderById,

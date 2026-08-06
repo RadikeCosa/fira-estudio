@@ -1,9 +1,11 @@
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { ShoppingCart } from "@/components/carrito/ShoppingCart";
 
 import { LAYOUT, SPACING, TYPOGRAPHY } from "@/lib/design/tokens";
 import { combine } from "@/lib/design/tokens";
 import { CARRITO_CONTENT } from "@/lib/content/carrito";
+import { IS_PUBLIC_CHECKOUT_AVAILABLE } from "@/lib/config/features";
 
 export const metadata: Metadata = {
   title: CARRITO_CONTENT.page.title,
@@ -11,6 +13,10 @@ export const metadata: Metadata = {
 };
 
 export default function CarritoPage() {
+  if (!IS_PUBLIC_CHECKOUT_AVAILABLE) {
+    redirect("/productos");
+  }
+
   return (
     <div className={combine("min-h-screen", "bg-background")}>
       {" "}

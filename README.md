@@ -1,44 +1,84 @@
 # Fira Estudio
 
-Fira Estudio es un e-commerce construido con Next.js App Router para publicar un catalogo de textiles artesanales, permitir agregar productos al carrito y completar un checkout integrado con Mercado Pago.
+Fira Estudio es una vidriera digital de productos textiles artesanales. Permite explorar productos, categorias, variantes, materiales e imagenes y contactar al emprendimiento para consultar disponibilidad.
 
-El objetivo de este repositorio es documentar el proyecto con precision tecnica, sin inflar capacidades que el codigo no respalda.
+El contrato vigente del producto esta en [docs/PRODUCT_SCOPE.md](./docs/PRODUCT_SCOPE.md).
 
-## Funcionalidades actuales
+## Estado actual
 
-- Catalogo de productos y categorias con datos desde Supabase.
-- Pagina de detalle con imagenes, variaciones y productos relacionados.
-- Carrito persistente asociado a `session_id`.
-- Checkout con creacion de orden y preferencia de Mercado Pago.
-- Paginas de resultado de checkout: `success`, `failure` y `pending`.
-- Webhook de Mercado Pago con validaciones de seguridad y cola de procesamiento.
-- Email de confirmacion de pedido con Resend.
-- Eventos de Google Analytics 4 para interacciones de ecommerce.
-- Tests de logica y componentes con `node:test` y Vitest.
+El producto publico vigente es un catalogo o vidriera digital. No ofrece carrito, checkout, pagos ni creacion de pedidos online.
 
-## Stack real
+El repositorio todavia conserva infraestructura historica de e-commerce. Esa infraestructura no debe tratarse como parte del producto vigente ni como requisito para desplegar el catalogo.
 
-- Next.js 16
-- React 19
-- TypeScript
-- Tailwind CSS 4
-- Supabase
-- Mercado Pago
-- Resend + React Email
-- Vercel
-- Google Analytics 4
-- Vitest
+Estado local confirmado en la auditoria actual:
+
+- `npm run lint` pasa;
+- `npm run test` pasa;
+- `npm run build` pasa;
+- `git diff --check` pasa.
+
+Estos resultados no confirman por si solos el estado de Supabase remoto, Vercel, dominio, analytics ni variables reales.
+
+## Capacidades publicas vigentes
+
+- Home publica de presentacion.
+- Catalogo de productos y categorias.
+- Detalle de producto con imagenes, descripcion, variantes, materiales, cuidados y tiempos.
+- Disponibilidad o stock como referencia sujeta a consulta.
+- Pagina de contacto.
+- Metadata, sitemap, robots y estructura SEO basica.
+- Diseno responsive con App Router.
+
+## Fuera de alcance
+
+No son funcionalidades publicas vigentes:
+
+- carrito;
+- checkout;
+- pagos;
+- creacion o actualizacion de pedidos online;
+- paginas publicas de resultado de pago;
+- webhooks como parte del flujo publico;
+- emails transaccionales de confirmacion de pedido.
+
+No presentar el sitio como e-commerce en mantenimiento ni como integracion de Mercado Pago pendiente.
+
+## Objetivos tecnicos
+
+El proyecto busca funcionar tambien como portfolio tecnico:
+
+- diseno responsive;
+- accesibilidad;
+- rendimiento;
+- SEO;
+- arquitectura mantenible;
+- uso responsable de Supabase;
+- compatibilidad con Vercel;
+- documentacion verificable y sin promesas externas.
+
+## Stack vigente del catalogo
+
+Dependencias principales instaladas:
+
+- Next.js 16 + React 19;
+- TypeScript;
+- Tailwind CSS 4;
+- Supabase;
+- Vercel Speed Insights;
+- Google Analytics 4 opcional;
+- Vitest + `node:test`.
+
+Para ejecutar el catalogo no deberian ser necesarias integraciones historicas como Mercado Pago, Resend, service role para carrito/ordenes ni tokens de webhook.
 
 ## Arquitectura breve
 
-- `app/`: rutas App Router, paginas publicas y endpoints API.
-- `components/`: UI por dominio (`productos`, `carrito`, `layout`, `ui`).
-- `lib/supabase/`: clientes y queries.
+- `app/`: rutas App Router, paginas publicas y endpoints API existentes.
+- `components/`: UI por dominio (`productos`, `contacto`, `layout`, `ui` y piezas historicas de `carrito`).
+- `lib/supabase/`: clientes y queries del catalogo.
 - `lib/repositories/`: acceso a datos y operaciones de dominio.
-- `lib/mercadopago/`: cliente y utilidades de seguridad para webhooks.
-- `lib/webhooks/`: cola, retries y reconciliacion.
-- `lib/emails/`: template y envio de emails de confirmacion.
-- `docs/`: documentacion operativa y tecnica complementaria.
+- `lib/seo/`: metadata y datos estructurados.
+- `lib/analytics/`: eventos de medicion.
+- `docs/`: documentacion activa, auditorias y material historico.
 
 ## Setup local
 
@@ -50,40 +90,43 @@ npm run dev
 
 Abrir `http://localhost:3000`.
 
-## Variables de entorno
+## Variables necesarias y opcionales
 
 Usar [.env.local.example](./.env.local.example) como referencia. No commitear valores reales.
 
-Variables principales:
+### Requeridas para catalogo
 
 ```bash
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-
-MERCADOPAGO_ACCESS_TOKEN=your-mercadopago-access-token
-MERCADOPAGO_WEBHOOK_SECRET=your-mercadopago-webhook-secret
-MERCADOPAGO_INTEGRATOR_ID=your-mercadopago-integrator-id
-
-RESEND_API_KEY=your-resend-api-key
-RESEND_FROM_EMAIL="Fira Estudio <noreply@example.com>"
-
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
-NEXT_PUBLIC_CONTACT_EMAIL=contacto@example.com
-NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/firaestudio
-
-NEXT_PUBLIC_MAINTENANCE_MODE=false
-NEXT_PUBLIC_CHECKOUT_ENABLED=true
-NEXT_PUBLIC_MAINTENANCE_MESSAGE="Mensaje opcional"
 ```
 
-Adicionalmente, el codigo usa tokens operativos para webhooks y reconciliacion. Esos valores deben configurarse como secretos y no deben documentarse con valores reales.
+### Opcionales para contacto
+
+```bash
+NEXT_PUBLIC_CONTACT_EMAIL=contacto@example.com
+NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
+NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/firaestudio
+```
+
+El canal principal de consulta manual sigue `pendiente de confirmar`.
+
+### Opcionales para analytics y mantenimiento
+
+```bash
+NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+NEXT_PUBLIC_MAINTENANCE_MODE=false
+NEXT_PUBLIC_MAINTENANCE_MESSAGE=Mensaje opcional
+NEXT_PUBLIC_MAINTENANCE_END_DATE=
+NEXT_PUBLIC_CHECKOUT_ENABLED=false
+```
+
+`NEXT_PUBLIC_CHECKOUT_ENABLED` es una flag historica. No define el alcance vigente del producto.
 
 ## Scripts
 
-Solo los scripts existentes en `package.json`:
+Scripts existentes en `package.json`:
 
 ```bash
 npm run dev
@@ -97,35 +140,48 @@ npm run test:watch
 npm run test:coverage
 ```
 
-## Testing y calidad
+## Calidad y validaciones
 
-- `npm run lint`: validacion de ESLint.
-- `npm run test`: ejecuta pruebas de logica y pruebas unitarias.
-- `npm run build`: verificacion de build de produccion.
+Validaciones recomendadas antes de cerrar cambios:
 
-Si se toca checkout, carrito, webhooks o emails, conviene ejecutar como minimo `lint`, `test` y `build`.
+```bash
+git diff --check
+npm run lint
+npm run test
+npm run build
+```
 
-## Entornos
+Si un cambio futuro toca checkout, webhooks, carrito, ordenes o emails, requiere validacion especifica adicional y aprobacion explicita.
+
+## Estado de despliegue
 
 - `local`: desarrollo con `.env.local`.
-- `preview`: despliegues de Vercel Preview.
-- `production`: despliegue principal esperado en Vercel.
+- `preview`: despliegues de validacion en Vercel, `pendiente de confirmar`.
+- `production`: futuro despliegue publico, `pendiente de confirmar`.
 
-El estado operativo concreto de preview y production, incluyendo URLs activas, auth, maintenance mode o credenciales vigentes, queda pendiente de confirmar fuera del repo.
+Queda `pendiente de confirmar` fuera del repo:
 
-## Estado actual y limitaciones
+- proyecto Vercel real;
+- dominio publico;
+- URL final;
+- variables efectivamente cargadas;
+- Supabase remoto, datos, Storage e imagenes;
+- analytics activo;
+- canal oficial de consulta manual.
 
-- La base funcional de carrito, checkout, webhook y emails existe en el codigo.
-- Parte de la documentacion historica del repo todavia esta en proceso de saneamiento.
-- Hay flujos sensibles de pagos y webhooks que requieren especial cuidado antes de cambiar comportamiento.
-- Existen decisiones operativas que no pueden confirmarse solo leyendo el repositorio y deben tratarse como `pendiente de confirmar`.
+## Infraestructura historica suspendida
 
-## Documentacion relacionada
+El repositorio conserva codigo de carrito, checkout, Mercado Pago, ordenes, webhooks, reconciliacion y emails transaccionales. Esa capa existe como infraestructura historica y sensible.
 
+No debe ser necesaria para ejecutar, compilar o desplegar el catalogo. Una eventual reactivacion comercial requerira una nueva decision explicita, auditoria especifica y actualizacion documental.
+
+## Documentacion
+
+- [docs/PRODUCT_SCOPE.md](./docs/PRODUCT_SCOPE.md): contrato canonico de producto.
 - [AGENTS.md](./AGENTS.md): guia canonica para agentes de codigo.
-- [docs/ENVIRONMENTS.md](./docs/ENVIRONMENTS.md): criterios de entornos y manejo de secretos.
-- [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md): proceso de deploy y rollback.
-- [docs/VERCEL_SETUP.md](./docs/VERCEL_SETUP.md): configuracion segura de variables en Vercel.
-- [docs/ORDER_CONFIRMATION_EMAIL.md](./docs/ORDER_CONFIRMATION_EMAIL.md): email de confirmacion.
-- [docs/WEBHOOK_SECURITY.md](./docs/WEBHOOK_SECURITY.md): seguridad del webhook de Mercado Pago.
-- [docs/TESTING_STRATEGY.md](./docs/TESTING_STRATEGY.md): estrategia de pruebas en flujos criticos.
+- [docs/README.md](./docs/README.md): mapa de documentacion activa e historica.
+- [docs/ENVIRONMENTS.md](./docs/ENVIRONMENTS.md): criterios de entornos y variables.
+- [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md): checklist y consideraciones de deploy.
+- [docs/VERCEL_SETUP.md](./docs/VERCEL_SETUP.md): carga segura de variables en Vercel.
+- [docs/MAINTENANCE_MODE.md](./docs/MAINTENANCE_MODE.md): alcance real del maintenance mode.
+- [docs/audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md](./docs/audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md): auditoria base del reinicio.

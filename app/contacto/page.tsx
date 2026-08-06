@@ -8,6 +8,7 @@ import { CONTACTO_CONTENT } from "@/lib/content/contacto";
 export const metadata: Metadata = buildMetadata({
   title: CONTACTO_CONTENT.page.title,
   description: CONTACTO_CONTENT.page.description,
+  url: "/contacto",
 });
 
 export default function ContactoPage() {

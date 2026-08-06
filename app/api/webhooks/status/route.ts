@@ -17,12 +17,19 @@ import { createClient } from "@supabase/supabase-js";
 
 export async function GET(req: NextRequest) {
   try {
+    const configuredToken = process.env.WEBHOOK_STATUS_TOKEN;
+
+    if (!configuredToken) {
+      console.warn(`[Status] Status endpoint is not configured`);
+      return NextResponse.json(
+        { error: "Status endpoint is not configured" },
+        { status: 503 },
+      );
+    }
+
     // Verify authentication
     const authHeader = req.headers.get("authorization");
-    if (
-      !authHeader ||
-      authHeader !== `Bearer ${process.env.WEBHOOK_STATUS_TOKEN}`
-    ) {
+    if (!authHeader || authHeader !== `Bearer ${configuredToken}`) {
       console.warn(`[Status] Unauthorized status request`);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

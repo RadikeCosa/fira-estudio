@@ -9,7 +9,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ customClassName }: HeroSectionProps) {
-  const { title, subtitle, description, cta } = HOME_CONTENT.hero;
+  const { subtitle, description, cta } = HOME_CONTENT.hero;
 
   return (
     <section

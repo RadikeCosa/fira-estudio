@@ -9,6 +9,9 @@ import { cn } from "@/lib/utils";
  */
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const activeSocialLinks = Object.entries(SOCIAL_LINKS).filter(
+    ([, social]) => Boolean(social.href),
+  );
 
   // Mapeo de íconos para redes sociales
   const getIcon = (key: string): React.ReactNode => {
@@ -64,7 +67,7 @@ export function Footer() {
               className={COMPONENTS.footer.socialLinks}
               aria-label="Redes sociales"
             >
-              {Object.entries(SOCIAL_LINKS).map(([key, social]) => (
+              {activeSocialLinks.map(([key, social]) => (
                 <a
                   key={key}
                   href={social.href}

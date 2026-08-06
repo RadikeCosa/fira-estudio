@@ -27,13 +27,26 @@ interface FeaturedProductsProps {
 }
 
 export async function FeaturedProducts({ limit = 4 }: FeaturedProductsProps) {
-  // Fetch featured products from database
-  const productosResult = await getProductos({
-    destacado: true,
-    page: 1,
-    pageSize: limit,
-  });
-  const productosDestacados = productosResult.items;
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    return null;
+  }
+
+  let productosDestacados = [];
+
+  try {
+    const productosResult = await getProductos({
+      destacado: true,
+      page: 1,
+      pageSize: limit,
+    });
+    productosDestacados = productosResult.items;
+  } catch (error) {
+    console.error("Error al cargar productos destacados:", error);
+    return null;
+  }
 
   // Don't render section if no featured products
   if (productosDestacados.length === 0) {

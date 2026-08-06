@@ -22,7 +22,22 @@ const inter = Inter({
   display: "swap",
 });
 
+const metadataBase = (() => {
+  const siteUrl = SITE_CONFIG.url?.trim();
+
+  if (siteUrl) {
+    return new URL(siteUrl);
+  }
+
+  if (process.env.VERCEL_URL) {
+    return new URL(`https://${process.env.VERCEL_URL}`);
+  }
+
+  return new URL("http://localhost:3000");
+})();
+
 export const metadata: Metadata = {
+  metadataBase,
   title: {
     default: SITE_CONFIG.name,
     template: `%s | ${SITE_CONFIG.name}`,
@@ -35,6 +50,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim();
+
   return (
     <html lang="es">
       <body
@@ -45,7 +62,7 @@ export default function RootLayout({
         <main className="grow pt-16">{children}</main>
         <Footer />
         <SpeedInsights />
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID!} />
+        {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
       </body>
     </html>
   );

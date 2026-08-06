@@ -11,6 +11,10 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NextRequest } from "next/server";
 import { POST } from "./route";
 
+const featureFlags = vi.hoisted(() => ({
+  isCheckoutAvailable: true,
+}));
+
 const mockCartRepo = {
   getCartWithItems: vi.fn(),
   validateStock: vi.fn(),
@@ -28,7 +32,9 @@ vi.mock("@/lib/mercadopago/client", () => {
   return {
     client: {},
     Preference: class {
-      constructor(_client: unknown) {}
+      constructor(_client: unknown) {
+        void _client;
+      }
 
       async create(): Promise<{ id: string; init_point: string }> {
         return create();
@@ -52,6 +58,12 @@ vi.mock("@/lib/config/urls", () => ({
 
 vi.mock("@/lib/utils/security-logger", () => ({
   logSecurityEvent: vi.fn(),
+}));
+
+vi.mock("@/lib/config/features", () => ({
+  get IS_PUBLIC_CHECKOUT_AVAILABLE() {
+    return featureFlags.isCheckoutAvailable;
+  },
 }));
 
 function createRequest(ip: string): NextRequest {
@@ -86,6 +98,7 @@ describe("POST /api/checkout/create-preference - Rate Limiting", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     process.env.MERCADOPAGO_ACCESS_TOKEN = "test-token";
+    featureFlags.isCheckoutAvailable = true;
 
     mockCartRepo.getCartWithItems.mockResolvedValue({
       id: "cart-123",
@@ -117,6 +130,19 @@ describe("POST /api/checkout/create-preference - Rate Limiting", () => {
     const response = await POST(createRequest("192.168.10.10"));
 
     expect(response.status).not.toBe(429);
+  });
+
+  it("returns 503 and does not create a preference when checkout is disabled", async () => {
+    featureFlags.isCheckoutAvailable = false;
+
+    const response = await POST(createRequest("192.168.10.12"));
+
+    expect(response.status).toBe(503);
+    const data = await response.json();
+    expect(data.error).toBe("Checkout no disponible");
+    expect(data.code).toBe("CHECKOUT_DISABLED");
+    expect(mockCartRepo.getCartWithItems).not.toHaveBeenCalled();
+    expect(mockCartRepo.createOrderWithItems).not.toHaveBeenCalled();
   });
 
   it("returns 429 on the 6th request from the same IP", async () => {

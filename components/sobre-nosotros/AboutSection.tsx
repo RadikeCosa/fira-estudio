@@ -12,7 +12,7 @@ interface AboutSectionProps {
  * Displays an icon, title, and multiple paragraphs
  * Used for historia and proceso sections
  */
-export function AboutSection({ title, icon, paragraphs }: AboutSectionProps) {
+export function AboutSection({ title, paragraphs }: AboutSectionProps) {
   return (
     <section>
       <div className="mb-10 flex items-center gap-4">

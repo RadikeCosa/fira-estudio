@@ -20,6 +20,13 @@ export const IS_CHECKOUT_ENABLED =
   process.env.NEXT_PUBLIC_CHECKOUT_ENABLED === "true";
 
 /**
+ * Checkout público disponible para navegación y acciones de compra.
+ * Si está en mantenimiento o el flag está apagado, el sitio debe comportarse como catálogo.
+ */
+export const IS_PUBLIC_CHECKOUT_AVAILABLE =
+  !IS_MAINTENANCE_MODE && IS_CHECKOUT_ENABLED;
+
+/**
  * Mensaje de mantenimiento personalizable
  */
 export const MAINTENANCE_MESSAGE =
@@ -37,6 +44,7 @@ if (process.env.NODE_ENV === "development") {
   console.log("[Feature Flags]", {
     IS_MAINTENANCE_MODE,
     IS_CHECKOUT_ENABLED,
+    IS_PUBLIC_CHECKOUT_AVAILABLE,
     MAINTENANCE_MESSAGE,
   });
 }

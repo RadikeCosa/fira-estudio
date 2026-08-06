@@ -19,12 +19,19 @@ import { getWebhookQueueProcessor } from "@/lib/webhooks/queue-processor";
 
 export async function POST(req: NextRequest) {
   try {
+    const configuredToken = process.env.WEBHOOK_QUEUE_PROCESSOR_TOKEN;
+
+    if (!configuredToken) {
+      console.warn(`[Queue] Queue processing endpoint is not configured`);
+      return NextResponse.json(
+        { error: "Queue processing is not configured" },
+        { status: 503 },
+      );
+    }
+
     // Verify authentication
     const authHeader = req.headers.get("authorization");
-    if (
-      !authHeader ||
-      authHeader !== `Bearer ${process.env.WEBHOOK_QUEUE_PROCESSOR_TOKEN}`
-    ) {
+    if (!authHeader || authHeader !== `Bearer ${configuredToken}`) {
       console.warn(`[Queue] Unauthorized queue processing request`);
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }

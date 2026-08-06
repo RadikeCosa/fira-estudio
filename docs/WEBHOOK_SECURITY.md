@@ -1,6 +1,10 @@
 # Pagos y seguridad de webhooks
 
-Este documento resume la parte operativa vigente de Mercado Pago y webhooks. La documentacion historica ampliada fue movida a [`archive/payments-webhooks/`](./archive/payments-webhooks/).
+Este documento resume la capa sensible de Mercado Pago y webhooks existente en el repo.
+
+En la etapa actual de relanzamiento catalogo, esta documentacion debe leerse como referencia tecnica de funcionalidad suspendida, no como camino operativo activo.
+
+La documentacion historica ampliada fue movida a [`archive/payments-webhooks/`](./archive/payments-webhooks/).
 
 ## Alcance
 
@@ -29,7 +33,7 @@ Aplica a:
 ```bash
 MERCADOPAGO_ACCESS_TOKEN=your-mercadopago-access-token
 MERCADOPAGO_WEBHOOK_SECRET=your-mercadopago-webhook-secret
-MERCADOPAGO_INTEGRATOR_ID=your-mercadopago-integrator-id
+MERCADOPAGO_INTEGRATOR_ID=your-integrator-id
 
 WEBHOOK_RECONCILIATION_TOKEN=your-reconciliation-token
 WEBHOOK_QUEUE_PROCESSOR_TOKEN=your-queue-token
@@ -49,9 +53,10 @@ No documentar ni versionar valores reales.
 
 ## Consideraciones operativas
 
-- La URL publica exacta del webhook queda `pendiente de confirmar` fuera del repo.
-- Si se modifican credenciales o URLs, coordinar con `VERCEL_SETUP.md`.
-- Si se revisa o ejecuta SQL relacionado con webhooks, usar como referencia `scripts/sql-code/README.md`.
+- la URL publica exacta del webhook queda `pendiente de confirmar` fuera del repo;
+- si se modifican credenciales o URLs, coordinar con `VERCEL_SETUP.md`;
+- si se revisa o ejecuta SQL relacionado con webhooks, usar como referencia `scripts/sql-code/README.md`;
+- no reactivar esta capa sin autorizacion explicita.
 
 ## Testing y verificacion
 
@@ -60,58 +65,41 @@ No documentar ni versionar valores reales.
 - usar solo credenciales seguras de prueba o un procedimiento operativo autorizado;
 - evitar presentar como confirmados estados de Sandbox o Production que no surjan del repo.
 
+## Resumen de flujo de validacion
+
+Secuencia tecnica resumida de la capa vigente:
+
+1. recibir request en `app/api/checkout/webhook/route.ts`
+2. validar IP de origen si no hay bypass de debug
+3. parsear body
+4. extraer firma y datos necesarios
+5. validar firma y consistencia del evento
+6. recuperar datos del pago
+7. encolar y procesar el evento de forma controlada
+
+Los detalles extendidos, visuales y material de apoyo quedaron en `archive/payments-webhooks/`.
+
+## Monitoreo y logs
+
+Todos los eventos de seguridad deberian observarse en logs del entorno correspondiente.
+
+Referencias de observacion:
+
+- local: consola durante `npm run dev`
+- Vercel: logs de funciones, `pendiente de confirmar`
+- otras integraciones de observabilidad: `pendiente de confirmar`
+
 ## Documentacion relacionada
 
 - [`ORDER_CONFIRMATION_EMAIL.md`](./ORDER_CONFIRMATION_EMAIL.md)
 - [`TESTING_STRATEGY.md`](./TESTING_STRATEGY.md)
 - [`VERCEL_SETUP.md`](./VERCEL_SETUP.md)
 - [`../scripts/sql-code/README.md`](../scripts/sql-code/README.md)
-- Material archivado: [`archive/payments-webhooks/`](./archive/payments-webhooks/)
-    ↓
-[2] Validar IP ∈ {Mercado Pago IPs}  ←─ Si falla: 403 Unauthorized IP
-    ↓
-[3] Parsear JSON body
-    ↓
-[4] Extraer header x-signature
-    ↓
-[5] Parsear x-signature → ts, v1
-    ↓
-[6] Validar timestamp (ahora - ts) < 5 min  ←─ Si falla: 401 Invalid signature
-    ↓
-[7] Reconstruir payload: id={id};type=payment;ts={ts}
-    ↓
-[8] Calcular HMAC-SHA256(secret, payload)
-    ↓
-[9] Comparación timing-safe vs v1  ←─ Si falla: 401 Invalid signature
-    ↓
-[10] Procesamiento del webhook seguro
-     ↓
-     Continuar con lógica de negocios...
-```
+- material archivado: [`archive/payments-webhooks/`](./archive/payments-webhooks/)
 
----
-
-## 🔍 Monitoreo y Logs
-
-Todos los eventos de seguridad se registran:
-
-```log
-[Webhook Security] Request from unauthorized IP: 192.168.1.100
-[Webhook Security] Invalid webhook signature - possible tampering
-[Webhook] Signature validated for payment 12345
-```
-
-Revisar logs en:
-
-- **Local**: Console durante `npm run dev`
-- **Vercel**: Functions → Logs
-- **Sentry** (si está configurado): Errores de webhook
-
----
-
-## 📚 Referencias
+## Referencias
 
 - [Mercado Pago Webhooks](https://www.mercadopago.com.ar/developers/es/docs/webhooks)
-- [Verificación de Webhooks](https://www.mercadopago.com.ar/developers/es/docs/webhooks/additional-info/verifying-webhooks)
+- [Verificacion de Webhooks](https://www.mercadopago.com.ar/developers/es/docs/webhooks/additional-info/verifying-webhooks)
 - [HMAC-SHA256 en Node.js](https://nodejs.org/api/crypto.html#crypto_crypto_createhmac_algorithm_key)
 - [OWASP Webhook Security](https://owasp.org/www-community/attacks/Webhook_Attack)
