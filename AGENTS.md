@@ -8,7 +8,7 @@ Permite explorar productos, categorias, variantes, materiales e imagenes y conta
 
 El contrato vigente del producto esta en `docs/PRODUCT_SCOPE.md`.
 
-La base tecnica del repo sigue incluyendo infraestructura historica de e-commerce: carrito, checkout, Mercado Pago, ordenes, webhooks y emails transaccionales. Esa capa debe tratarse como sensible, historica y fuera del producto publico vigente.
+La infraestructura historica de e-commerce fue retirada del arbol ejecutable principal. Git conserva esa implementacion anterior; no debe tratarse como parte del producto publico vigente.
 
 Este archivo es la guia canonica para agentes de codigo en este repositorio. Si una instruccion secundaria contradice el codigo real o este archivo, prevalecen el codigo real y este archivo.
 
@@ -32,7 +32,7 @@ Este archivo es la guia canonica para agentes de codigo en este repositorio. Si 
 - Google Analytics 4
 - Vitest + `node:test`
 
-Integraciones historicas presentes en el repositorio, no requeridas para el producto vigente:
+Integraciones historicas retiradas del arbol ejecutable principal:
 
 - Mercado Pago
 - Resend + React Email
@@ -73,14 +73,13 @@ No documentar ni sugerir scripts inexistentes.
 - No copiar valores reales a `.md`, ejemplos de `.env` ni comentarios de codigo.
 - No editar `.env` reales salvo pedido explicito del usuario.
 - Si se detecta una credencial versionada, reemplazarla por placeholders seguros en documentacion y marcarla como `requiere rotacion manual`.
-- Asumir sensibles estas variables: Mercado Pago, Supabase service role, Resend, cron/webhook tokens y cualquier secreto de Vercel.
+- Asumir sensibles estas variables si se reintroducen: Mercado Pago, Supabase service role, Resend, cron/webhook tokens y cualquier secreto de Vercel.
 
-## Reglas para Mercado Pago
+## Reglas para comercio historico
 
-- Tratar checkout, webhooks, pagos y ordenes como infraestructura historica sensible.
+- Tratar checkout, webhooks, pagos y ordenes como infraestructura historica sensible retirada del arbol ejecutable principal.
 - No reactivar checkout ni Mercado Pago sin autorizacion explicita del usuario y auditoria especifica.
 - No cambiar comportamiento de checkout, pagos, webhooks o estados de orden sin aprobacion explicita.
-- Mantener `lib/config/urls.ts` como fuente de verdad para URLs de checkout y webhook.
 - No afirmar estados de produccion, credenciales o configuraciones de Mercado Pago que no puedan verificarse desde el repo.
 - Si una mejora afecta pagos, exigir validacion adicional y documentar el riesgo.
 

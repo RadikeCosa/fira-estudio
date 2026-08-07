@@ -14,20 +14,22 @@ Actualizacion Fase 2A: `2026-08-07`
 
 Actualizacion Fase 2B: `2026-08-07`
 
+Actualizacion Fase 2C: `2026-08-07`
+
 Contrato canonico vigente: [`../PRODUCT_SCOPE.md`](../PRODUCT_SCOPE.md)
 
-La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. La actualizacion de Fase 1B bloquea las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico. La actualizacion de Fase 1C retira del runtime publico las rutas API comerciales historicas. La actualizacion de Fase 2A retira la UI historica de carrito y las server actions comerciales de carrito. La actualizacion de Fase 2B retira la flag publica historica de checkout y la configuracion ejecutable de URLs comerciales. No elimina `CartRepository`, Mercado Pago, webhooks, ordenes, emails, SQL ni dependencias.
+La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. La actualizacion de Fase 1B bloquea las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico. La actualizacion de Fase 1C retira del runtime publico las rutas API comerciales historicas. La actualizacion de Fase 2A retira la UI historica de carrito y las server actions comerciales de carrito. La actualizacion de Fase 2B retira la flag publica historica de checkout y la configuracion ejecutable de URLs comerciales. La actualizacion de Fase 2C retira `CartRepository`, Mercado Pago, webhooks, reconciliacion, emails transaccionales, tipos comerciales huerfanos, variables activas y dependencias npm comerciales del arbol ejecutable principal. SQL y documentacion historica quedan pendientes de archivo documental posterior.
 
 ## Resumen Ejecutivo
 
 Fira Estudio conserva una base tecnica historica de e-commerce, pero el objetivo vigente ya no es vender online sino relanzar el proyecto como catalogo/vidriera publica de marca textil artesanal.
 
-El repositorio todavia conserva infraestructura historica de carrito/ordenes, pagos, webhooks y emails. Desde Fase 2A ya no conserva UI ejecutable ni server actions de carrito capaces de reactivar mutaciones desde la superficie publica.
+El repositorio ya no conserva infraestructura comercial ejecutable en el arbol principal. Permanece material historico en documentacion y SQL, pendiente de archivo y limpieza documental posterior.
 
 La opcion recomendada para esta etapa es:
 
 - mantener carrito y checkout fuera del flujo publico;
-- conservar los modulos sensibles de pagos, webhooks, ordenes y emails como funcionalidad suspendida;
+- conservar solo documentacion historica y SQL hasta una fase documental posterior;
 - reordenar la documentacion para que el proyecto no se presente como e-commerce activo;
 - mantener validaciones tecnicas limpias antes de cualquier redeploy.
 
@@ -36,7 +38,7 @@ Estado general al cierre de esta auditoria:
 - documentacion y framing del repo: saneados parcialmente en Fase 0;
 - catalogo y datos: siguen dependiendo de Supabase;
 - carrito/checkout publico: sin UI historica, sin server actions comerciales, sin paginas ni endpoints publicos desde Fase 2A;
-- checkout/pagos internos: siguen presentes como modulos historicos suspendidos;
+- checkout/pagos internos: retirados del arbol ejecutable principal en Fase 2C;
 - deploy: pendiente de validar contra servicios externos;
 - validacion tecnica local al 2026-08-06: `git diff --check`, `npm run lint`, `npm run test` y `npm run build` pasan.
 
@@ -51,8 +53,6 @@ Confirmado desde `package.json`, `next.config.ts`, `tsconfig.json`, `eslint.conf
 - TypeScript
 - Tailwind CSS 4
 - Supabase
-- Mercado Pago
-- Resend + React Email
 - Vercel Speed Insights
 - Google Analytics 4
 - Vitest + `node:test`
@@ -104,19 +104,17 @@ Carrito y checkout:
 
 - la UI historica de carrito fue retirada en Fase 2A;
 - las server actions comerciales de carrito fueron retiradas en Fase 2A;
-- `CartRepository` permanece como infraestructura interna historica suspendida;
+- `CartRepository` fue retirado en Fase 2C;
 - las paginas y APIs publicas de checkout ya fueron retiradas o bloqueadas.
 
 Mercado Pago y webhooks:
 
-- siguen integrados;
-- conservan cola de procesamiento y reconciliacion historicas;
-- ya no tienen configuracion ejecutable de URLs comerciales desde Fase 2B.
+- fueron retirados del arbol ejecutable principal en Fase 2C;
+- queda documentacion historica y SQL pendiente de archivo.
 
 Emails transaccionales:
 
-- siguen presentes con Resend y React Email;
-- se disparan desde el procesamiento de webhooks.
+- fueron retirados del arbol ejecutable principal en Fase 2C.
 
 Analytics:
 
@@ -162,7 +160,8 @@ Actualizacion Fase 0:
 - Fase 1C retiro del runtime publico las rutas API de checkout, webhook, cola, status y reconciliacion comercial;
 - Fase 2A retiro componentes historicos de carrito, `CartIndicator`, server actions de carrito y contenido textual especifico de carrito/checkout;
 - Fase 2B retiro `NEXT_PUBLIC_CHECKOUT_ENABLED`, `IS_CHECKOUT_ENABLED`, `IS_PUBLIC_CHECKOUT_AVAILABLE` y `lib/config/urls.ts` del runtime;
-- no se resolvieron en estas fases `CartRepository`, los modulos internos de pagos, webhooks, ordenes, SQL, dependencias o emails.
+- Fase 2C retiro `CartRepository`, modulos internos de pagos, webhooks, emails, tipos y dependencias comerciales;
+- no se resolvio en estas fases el SQL historico ni la reorganizacion documental archivada.
 
 Hallazgos principales:
 
@@ -205,7 +204,7 @@ Hallazgos principales:
 
 ### Observacion
 
-Para el objetivo catalogo, Fase 1A removio enlaces y CTAs comerciales de la experiencia publica principal. Fase 1B bloqueo las paginas historicas de `/carrito`, `/checkout` y resultados de pago con `notFound()`. Fase 1C retiro las rutas API comerciales historicas de `app/api`. Fase 2A retiro la UI historica de carrito y las server actions comerciales. Fase 2B retiro flags y URLs comerciales ejecutables sin consumidores. La logica interna sensible que permanece en `lib/` debe auditarse antes de cualquier reactivacion futura.
+Para el objetivo catalogo, Fase 1A removio enlaces y CTAs comerciales de la experiencia publica principal. Fase 1B bloqueo las paginas historicas de `/carrito`, `/checkout` y resultados de pago con `notFound()`. Fase 1C retiro las rutas API comerciales historicas de `app/api`. Fase 2A retiro la UI historica de carrito y las server actions comerciales. Fase 2B retiro flags y URLs comerciales ejecutables sin consumidores. Fase 2C retiro la infraestructura comercial interna restante del arbol ejecutable principal.
 
 ## Inventario de Variables de Entorno
 
@@ -232,7 +231,7 @@ Variables detectadas en codigo ejecutable:
 - `NEXT_PUBLIC_MAINTENANCE_MODE`
 - `NEXT_PUBLIC_MAINTENANCE_MESSAGE`
 
-### Variables de e-commerce suspendido
+### Variables de e-commerce retiradas del setup activo
 
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `MERCADOPAGO_ACCESS_TOKEN`
@@ -242,7 +241,7 @@ Variables detectadas en codigo ejecutable:
 - `RESEND_API_KEY`
 - `RESEND_FROM_EMAIL`
 
-### Variables operativas sensibles suspendidas
+### Variables operativas sensibles retiradas del setup activo
 
 - `WEBHOOK_RECONCILIATION_TOKEN`
 - `WEBHOOK_QUEUE_PROCESSOR_TOKEN`
@@ -311,14 +310,14 @@ Sigue `pendiente de confirmar`:
 
 ### Estado confirmado
 
-El codigo sensible de e-commerce sigue parcialmente presente como infraestructura historica:
+El codigo sensible de e-commerce ya no permanece en el arbol ejecutable principal:
 
-- `CartRepository` conserva operaciones sobre carrito, ordenes, payment logs y stock;
-- Mercado Pago, webhooks, cola, reconciliacion y emails transaccionales permanecen en `lib/`;
+- `CartRepository` fue eliminado;
+- `lib/mercadopago/**` fue eliminado;
+- `lib/webhooks/**` fue eliminado;
+- `lib/emails/**` fue eliminado;
 - las paginas `success`, `failure` y `pending` permanecen bloqueadas;
-- webhook con validaciones de firma e IP;
-- cola de webhooks, retries y reconciliacion;
-- email transaccional de confirmacion.
+- SQL historico y documentacion historica quedan pendientes de archivo.
 
 ### Riesgo para el relanzamiento como catalogo
 
@@ -364,16 +363,22 @@ Actualizacion Fase 2B:
 - `NEXT_PUBLIC_CHECKOUT_ENABLED` ya no forma parte del runtime vigente;
 - `IS_CHECKOUT_ENABLED` e `IS_PUBLIC_CHECKOUT_AVAILABLE` ya no existen;
 - `lib/config/urls.ts`, `CHECKOUT_URLS` y `WEBHOOK_URL` ya no existen como configuracion ejecutable;
-- `SUPABASE_SERVICE_ROLE_KEY` queda restringida a `CartRepository` y webhooks historicos.
+- `SUPABASE_SERVICE_ROLE_KEY` quedo restringida a `CartRepository` y webhooks historicos hasta su retiro en Fase 2C.
+
+Actualizacion Fase 2C:
+
+- `CartRepository` ya no existe;
+- `lib/mercadopago/**`, `lib/webhooks/**` y `lib/emails/**` ya no existen;
+- `SUPABASE_SERVICE_ROLE_KEY`, `MERCADOPAGO_*`, `WEBHOOK_*`, `CRON_SECRET` y `RESEND_*` ya no tienen consumidores en `app/`, `components/` ni `lib/`;
+- las dependencias `mercadopago`, `resend` y `@react-email/components` fueron retiradas.
 
 ### Recomendacion
 
 Para esta etapa:
 
 - no reactivar nada de pagos;
-- no borrar todavia `CartRepository`, Mercado Pago, webhooks, emails, SQL ni dependencias sin una fase especifica;
-- revisar modulos internos de comercio y variables residuales en una fase posterior;
-- documentar esa capa como funcionalidad suspendida.
+- mantener el SQL historico sin ejecutar hasta decidir archivo o retiro;
+- archivar o actualizar la documentacion historica que siga describiendo pagos/webhooks/emails como operativos.
 
 ## Diagnostico de Vercel / Redeploy
 

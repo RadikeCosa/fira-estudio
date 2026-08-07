@@ -60,7 +60,7 @@ Production sera el despliegue publico del catalogo. Queda `pendiente de confirma
 - analytics activo;
 - canal oficial de contacto manual.
 
-No presentar Mercado Pago, Resend ni tokens de webhook como requisitos de production para el alcance vigente.
+Mercado Pago, Resend, service role comercial y tokens de webhook ya no forman parte del arbol ejecutable principal ni son requisitos de production para el alcance vigente.
 
 ## Variables requeridas para catalogo
 
@@ -89,9 +89,9 @@ Mantenimiento del catalogo:
 - `NEXT_PUBLIC_MAINTENANCE_MODE`
 - `NEXT_PUBLIC_MAINTENANCE_MESSAGE`
 
-## Variables historicas no requeridas
+## Variables historicas retiradas del setup activo
 
-No son requeridas para deploy del catalogo vigente:
+No son requeridas para deploy del catalogo vigente y no deben cargarse por defecto:
 
 - `SUPABASE_SERVICE_ROLE_KEY`
 - `MERCADOPAGO_ACCESS_TOKEN`
@@ -107,6 +107,8 @@ No son requeridas para deploy del catalogo vigente:
 - `REVALIDATE_SECRET`
 - `WEBHOOK_SKIP_IP_VALIDATION`
 - `WEBHOOK_SKIP_SIGNATURE_VALIDATION`
+
+El SQL historico y la documentacion archivada pueden seguir mencionando estas variables como parte de la implementacion anterior. Eso no las convierte en requisitos vigentes.
 
 Conservarlas en ejemplos solo porque el codigo historico todavia las referencia. No cargarlas por defecto en Vercel para el catalogo.
 

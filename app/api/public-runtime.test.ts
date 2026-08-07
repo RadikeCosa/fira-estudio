@@ -76,7 +76,8 @@ describe("public API runtime surface", () => {
     const pageFiles = findFiles(appDir, "page.tsx").filter(
       (filePath) => !filePath.includes(`${path.sep}app${path.sep}api${path.sep}`),
     );
-    const forbiddenImport = /from ["']@\/lib\/(mercadopago|webhooks|repositories\/(cart|order))/;
+    const forbiddenImport =
+      /from ["']@\/lib\/(mercadopago|webhooks|emails|repositories\/(cart|order))/;
 
     for (const filePath of pageFiles) {
       expect(readFile(filePath)).not.toMatch(forbiddenImport);
@@ -113,6 +114,30 @@ describe("public API runtime surface", () => {
 
     for (const filePath of sourceFiles) {
       expect(readFile(filePath)).not.toMatch(forbiddenCommerceConfig);
+    }
+  });
+
+  it("does not keep historical commerce infrastructure in the executable tree", () => {
+    expect(
+      existsSync(path.join(process.cwd(), "lib/repositories/cart.repository.ts")),
+    ).toBe(false);
+
+    const removedSourceDirs = [
+      "lib/mercadopago",
+      "lib/webhooks",
+      "lib/emails",
+    ];
+
+    for (const removedDir of removedSourceDirs) {
+      expect(findSourceFiles(path.join(process.cwd(), removedDir))).toEqual([]);
+    }
+
+    const sourceFiles = publicRuntimeDirs.flatMap(findSourceFiles);
+    const forbiddenCommerceRuntime =
+      /CartRepository|cart\.repository|mercadopago|MercadoPagoConfig|Preference|Payment|queue-processor|reconciliation-job|Resend|@react-email|sendOrderConfirmationEmail|OrderConfirmationEmail|MERCADOPAGO_|WEBHOOK_|CRON_SECRET|RESEND_|SUPABASE_SERVICE_ROLE_KEY/;
+
+    for (const filePath of sourceFiles) {
+      expect(readFile(filePath)).not.toMatch(forbiddenCommerceRuntime);
     }
   });
 

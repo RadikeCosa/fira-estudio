@@ -8,7 +8,7 @@ El contrato vigente del producto esta en [docs/PRODUCT_SCOPE.md](./docs/PRODUCT_
 
 El producto publico vigente es un catalogo o vidriera digital. No ofrece carrito, checkout, pagos ni creacion de pedidos online.
 
-El repositorio todavia conserva infraestructura historica de e-commerce. Esa infraestructura no debe tratarse como parte del producto vigente ni como requisito para desplegar el catalogo.
+La infraestructura historica de e-commerce fue retirada del arbol ejecutable principal. El historial Git conserva esa implementacion anterior; no debe tratarse como parte del producto vigente ni como requisito para desplegar el catalogo.
 
 Estado local confirmado en la auditoria actual:
 
@@ -68,12 +68,12 @@ Dependencias principales instaladas:
 - Google Analytics 4 opcional;
 - Vitest + `node:test`.
 
-Para ejecutar el catalogo no deberian ser necesarias integraciones historicas como Mercado Pago, Resend, service role para carrito/ordenes ni tokens de webhook.
+Para ejecutar el catalogo no son necesarias integraciones historicas como Mercado Pago, Resend, service role para carrito/ordenes ni tokens de webhook.
 
 ## Arquitectura breve
 
 - `app/`: rutas App Router, paginas publicas y endpoints API existentes.
-- `components/`: UI por dominio (`productos`, `contacto`, `layout`, `ui` y piezas historicas de `carrito`).
+- `components/`: UI por dominio (`productos`, `contacto`, `layout` y `ui`).
 - `lib/supabase/`: clientes y queries del catalogo.
 - `lib/repositories/`: acceso a datos y operaciones de dominio.
 - `lib/seo/`: metadata y datos estructurados.
@@ -118,11 +118,7 @@ El canal principal de consulta manual sigue `pendiente de confirmar`.
 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_MAINTENANCE_MODE=false
 NEXT_PUBLIC_MAINTENANCE_MESSAGE=Mensaje opcional
-NEXT_PUBLIC_MAINTENANCE_END_DATE=
-NEXT_PUBLIC_CHECKOUT_ENABLED=false
 ```
-
-`NEXT_PUBLIC_CHECKOUT_ENABLED` es una flag historica. No define el alcance vigente del producto.
 
 ## Scripts
 
@@ -151,7 +147,7 @@ npm run test
 npm run build
 ```
 
-Si un cambio futuro toca checkout, webhooks, carrito, ordenes o emails, requiere validacion especifica adicional y aprobacion explicita.
+Si un cambio futuro reintroduce checkout, webhooks, carrito, ordenes o emails, requiere validacion especifica adicional y aprobacion explicita.
 
 ## Estado de despliegue
 
@@ -169,11 +165,11 @@ Queda `pendiente de confirmar` fuera del repo:
 - analytics activo;
 - canal oficial de consulta manual.
 
-## Infraestructura historica suspendida
+## Infraestructura historica retirada
 
-El repositorio conserva codigo de carrito, checkout, Mercado Pago, ordenes, webhooks, reconciliacion y emails transaccionales. Esa capa existe como infraestructura historica y sensible.
+El codigo ejecutable de carrito, checkout, Mercado Pago, ordenes, webhooks, reconciliacion y emails transaccionales fue retirado del arbol principal durante el saneamiento historico.
 
-No debe ser necesaria para ejecutar, compilar o desplegar el catalogo. Una eventual reactivacion comercial requerira una nueva decision explicita, auditoria especifica y actualizacion documental.
+No es necesario para ejecutar, compilar o desplegar el catalogo. Una eventual reactivacion comercial requerira una nueva decision explicita, auditoria especifica y actualizacion documental.
 
 ## Documentacion
 

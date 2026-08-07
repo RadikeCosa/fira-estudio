@@ -47,24 +47,21 @@ NEXT_PUBLIC_MAINTENANCE_MESSAGE=Mensaje opcional
 
 GA4 puede postergarse si no hay objetivo de medicion confirmado.
 
-## Variables historicas que no deben cargarse por defecto
+## Variables historicas retiradas del setup activo
 
-No son requisitos del deploy catalogo:
+No son requisitos del deploy catalogo y no deben cargarse por defecto:
 
-```bash
-SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
-MERCADOPAGO_ACCESS_TOKEN=your-mercadopago-access-token
-MERCADOPAGO_WEBHOOK_SECRET=your-mercadopago-webhook-secret
-MERCADOPAGO_INTEGRATOR_ID=your-mercadopago-integrator-id
-MERCADOPAGO_WEBHOOK_URL=https://your-public-site.example/api/checkout/webhook
-RESEND_API_KEY=your-resend-api-key
-RESEND_FROM_EMAIL="Fira Estudio <noreply@example.com>"
-WEBHOOK_RECONCILIATION_TOKEN=your-reconciliation-token
-WEBHOOK_QUEUE_PROCESSOR_TOKEN=your-queue-token
-WEBHOOK_STATUS_TOKEN=your-status-token
-CRON_SECRET=your-cron-secret
-REVALIDATE_SECRET=your-revalidate-secret
-```
+- `SUPABASE_SERVICE_ROLE_KEY`
+- `MERCADOPAGO_ACCESS_TOKEN`
+- `MERCADOPAGO_WEBHOOK_SECRET`
+- `MERCADOPAGO_INTEGRATOR_ID`
+- `MERCADOPAGO_WEBHOOK_URL`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- `WEBHOOK_RECONCILIATION_TOKEN`
+- `WEBHOOK_QUEUE_PROCESSOR_TOKEN`
+- `WEBHOOK_STATUS_TOKEN`
+- `CRON_SECRET`
 
 Si en el futuro se decide reactivar comercio, estas variables deben revisarse en una auditoria especifica antes de cargarse.
 
@@ -85,7 +82,7 @@ Cuando cambian variables `NEXT_PUBLIC_*`:
 - Contacto visible segun el canal definido o marcado `pendiente de confirmar`.
 - Home, `/productos`, un detalle de producto y `/contacto` renderizan.
 - No se presenta carrito, checkout ni pagos como parte del producto publico.
-- Mercado Pago, Resend y tokens de webhook no son necesarios para validar el catalogo.
+- Mercado Pago, Resend, service role comercial y tokens de webhook no son necesarios para validar el catalogo.
 
 ## Checklist de Production
 
