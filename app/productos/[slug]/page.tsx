@@ -81,7 +81,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
       {/* Track product page view */}
       <ProductViewTracker producto={producto} />
 
-      <main className="min-h-screen py-12 md:py-16 lg:py-20 bg-linear-to-b from-white to-muted/30">
+      <section className="min-h-screen py-12 md:py-16 lg:py-20 bg-linear-to-b from-white to-muted/30">
         <div className="container max-w-7xl mx-auto px-4">
           {/* Breadcrumbs */}
           <Breadcrumbs items={breadcrumbItems} />
@@ -115,7 +115,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
             categoriaId={producto.categoria_id}
           />
         </div>
-      </main>
+      </section>
     </>
   );
 }

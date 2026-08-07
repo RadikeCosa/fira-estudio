@@ -3,6 +3,7 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { NAV_LINKS } from "@/lib/constants/navigation";
 import { COMPONENTS, COLORS } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
+import { ActiveNavLinks } from "./ActiveNavLinks";
 import { MobileNav } from "./MobileNav";
 
 /**
@@ -17,8 +18,8 @@ import { MobileNav } from "./MobileNav";
  */
 export function Header() {
   return (
-    <>
-      <nav className={cn(COMPONENTS.header.base, COLORS.border)}>
+    <header className={cn(COMPONENTS.header.base, COLORS.border)}>
+      <nav aria-label="Navegación principal">
         <div className={COMPONENTS.header.container}>
           {/* Logo */}
           <Link href="/" className="hover:opacity-70 transition-opacity">
@@ -32,15 +33,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <div className={COMPONENTS.header.nav}>
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={COMPONENTS.header.navLink}
-              >
-                {link.label}
-              </Link>
-            ))}
+            <ActiveNavLinks links={NAV_LINKS} />
           </div>
 
           {/* Mobile Navigation */}
@@ -55,6 +48,6 @@ export function Header() {
           </div>
         </div>
       </nav>
-    </>
+    </header>
   );
 }

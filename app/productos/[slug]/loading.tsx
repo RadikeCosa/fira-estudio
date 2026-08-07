@@ -3,7 +3,7 @@
  */
 export default function ProductLoading() {
   return (
-    <main className="min-h-screen py-8 md:py-12">
+    <section className="min-h-screen py-8 md:py-12">
       <div className="container max-w-7xl mx-auto px-4">
         <div
           className="
@@ -119,6 +119,6 @@ export default function ProductLoading() {
           </div>
         </div>
       </div>
-    </main>
+    </section>
   );
 }

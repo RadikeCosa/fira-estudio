@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { NavLink } from "@/lib/constants/navigation";
 import { useScrollLock, useEscapeKey } from "@/hooks";
 import { COMPONENTS } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
-
-import { useRef, useEffect } from "react";
+import { isNavLinkActive } from "./ActiveNavLinks";
 
 interface MobileNavProps {
   links: NavLink[];
@@ -20,8 +20,10 @@ export function MobileNav({
   decorativeText,
 }: MobileNavProps): React.ReactElement {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const pathname = usePathname();
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const hasOpenedRef = useRef<boolean>(false);
 
   // Memoiza para evitar recrear la función en cada render
   const closeMenu = useCallback((): void => {
@@ -30,7 +32,13 @@ export function MobileNav({
 
   // Memoiza para evitar recrear la función en cada render
   const toggleMenu = useCallback((): void => {
-    setIsOpen((prev) => !prev);
+    setIsOpen((prev) => {
+      const nextIsOpen = !prev;
+      if (nextIsOpen) {
+        hasOpenedRef.current = true;
+      }
+      return nextIsOpen;
+    });
   }, []);
 
   // Lock body scroll when menu is open
@@ -85,9 +93,9 @@ export function MobileNav({
     };
   }, [isOpen]);
 
-  // Restore focus to hamburger button when menu closes
+  // Restore focus only after the menu was explicitly opened.
   useEffect(() => {
-    if (!isOpen && buttonRef.current) {
+    if (!isOpen && hasOpenedRef.current && buttonRef.current) {
       buttonRef.current.focus();
     }
   }, [isOpen]);
@@ -123,59 +131,64 @@ export function MobileNav({
         />
       </button>
 
-      {/* Overlay/Backdrop (siempre en el DOM) */}
-      <div
-        className={cn(
-          COMPONENTS.mobileNav.overlay,
-          "top-[57px] bg-black/40 backdrop-blur-sm fixed left-0 right-0 z-[40] transition-opacity duration-300 ease-out motion-reduce:transition-none",
-          isOpen
-            ? "opacity-100 pointer-events-auto"
-            : "opacity-0 pointer-events-none",
-        )}
-        onClick={closeMenu}
-        aria-hidden="true"
-      />
+      {isOpen && (
+        <>
+          {/* Overlay/Backdrop */}
+          <div
+            className={cn(
+              COMPONENTS.mobileNav.overlay,
+              "top-[57px] bg-black/40 backdrop-blur-sm fixed left-0 right-0 z-[40] opacity-100 pointer-events-auto transition-opacity duration-300 ease-out motion-reduce:transition-none",
+            )}
+            onClick={closeMenu}
+            aria-hidden="true"
+          />
 
-      {/* Mobile Menu (siempre en el DOM) */}
-      <div
-        ref={menuRef}
-        id="mobile-nav-menu"
-        className={cn(
-          COMPONENTS.mobileNav.mobileMenuAlt,
-          "fixed top-[57px] left-0 right-0 z-[50] h-[calc(100vh-57px)] flex flex-col bg-white/95 shadow-xl transition-transform duration-300 ease-out motion-reduce:transition-none",
-          isOpen ? "translate-x-0" : "translate-x-full",
-          "will-change-transform",
-        )}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Menú de navegación"
-        tabIndex={-1}
-      >
-        {/* Links y decorativo ocupan todo el espacio superior */}
-        <div className="flex-1 flex flex-col justify-between overflow-y-auto">
-          <ul className="flex flex-col gap-2 px-6 pt-6 pb-4">
-            {links.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  onClick={closeMenu}
-                  className={COMPONENTS.mobileNav.menuLink}
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          {/* Decorative text solo si hay espacio suficiente */}
-          {decorativeText && (
-            <div className="px-6 pb-6 pt-2">
-              <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center">
-                {decorativeText}
-              </p>
+          {/* Mobile Menu */}
+          <div
+            ref={menuRef}
+            id="mobile-nav-menu"
+            className={cn(
+              COMPONENTS.mobileNav.mobileMenuAlt,
+              "fixed top-[57px] left-0 right-0 z-[50] h-[calc(100vh-57px)] flex flex-col bg-white/95 shadow-xl translate-x-0 transition-transform duration-300 ease-out motion-reduce:transition-none",
+              "will-change-transform",
+            )}
+            role="dialog"
+            aria-modal="true"
+            aria-label="Menú de navegación"
+            tabIndex={-1}
+          >
+            {/* Links y decorativo ocupan todo el espacio superior */}
+            <div className="flex-1 flex flex-col justify-between overflow-y-auto">
+              <ul className="flex flex-col gap-2 px-6 pt-6 pb-4">
+                {links.map((link) => {
+                  const isActive = isNavLinkActive(pathname, link.href);
+
+                  return (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        onClick={closeMenu}
+                        className={COMPONENTS.mobileNav.menuLink}
+                        aria-current={isActive ? "page" : undefined}
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+              {/* Decorative text solo si hay espacio suficiente */}
+              {decorativeText && (
+                <div className="px-6 pb-6 pt-2">
+                  <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center">
+                    {decorativeText}
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-      </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

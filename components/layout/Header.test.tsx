@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { usePathname } from "next/navigation";
 import type { NavLink } from "@/lib/constants/navigation";
 import { Header } from "./Header";
 
@@ -17,6 +18,10 @@ vi.mock("next/link", () => ({
       {children}
     </a>
   ),
+}));
+
+vi.mock("next/navigation", () => ({
+  usePathname: vi.fn(),
 }));
 
 // Mock Supabase client
@@ -39,6 +44,16 @@ vi.mock("./MobileNav", () => ({
 describe("Header", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(usePathname).mockReturnValue("/");
+  });
+
+  it("renders banner and named primary navigation landmarks", () => {
+    render(<Header />);
+
+    expect(screen.getByRole("banner")).toBeInTheDocument();
+    expect(
+      screen.getByRole("navigation", { name: "Navegación principal" }),
+    ).toBeInTheDocument();
   });
 
   describe("Logo", () => {
@@ -109,6 +124,48 @@ describe("Header", () => {
       expect(productosLink).toBeInTheDocument();
       expect(nosotrosLink).toBeInTheDocument();
       expect(contactoLink).toBeInTheDocument();
+    });
+
+    it("marks the current route with aria-current", () => {
+      vi.mocked(usePathname).mockReturnValue("/contacto");
+
+      render(<Header />);
+
+      const currentLinks = screen
+        .getAllByRole("link")
+        .filter((link) => link.getAttribute("aria-current") === "page");
+
+      expect(currentLinks).toHaveLength(1);
+      expect(currentLinks[0]).toHaveTextContent("Contacto");
+      expect(currentLinks[0]).toHaveAttribute("href", "/contacto");
+    });
+
+    it("marks Productos as active for product detail routes", () => {
+      vi.mocked(usePathname).mockReturnValue("/productos/camino-magnolia");
+
+      render(<Header />);
+
+      const currentLinks = screen
+        .getAllByRole("link")
+        .filter((link) => link.getAttribute("aria-current") === "page");
+
+      expect(currentLinks).toHaveLength(1);
+      expect(currentLinks[0]).toHaveTextContent("Productos");
+      expect(currentLinks[0]).toHaveAttribute("href", "/productos");
+    });
+
+    it("does not mark Inicio active for non-home routes", () => {
+      vi.mocked(usePathname).mockReturnValue("/productos");
+
+      render(<Header />);
+
+      const homeLink = screen.getAllByRole("link", { name: "Inicio" })[0];
+      const productsLink = screen.getAllByRole("link", {
+        name: "Productos",
+      })[0];
+
+      expect(homeLink).not.toHaveAttribute("aria-current");
+      expect(productsLink).toHaveAttribute("aria-current", "page");
     });
 
     it("does not expose cart or checkout links", () => {
@@ -241,7 +298,7 @@ describe("Header", () => {
       render(<Header />);
 
       // Find the desktop nav container
-      const header = document.querySelector("nav");
+      const header = document.querySelector("header");
       const desktopNav = header?.querySelector(".md\\:flex");
 
       expect(desktopNav).toBeInTheDocument();

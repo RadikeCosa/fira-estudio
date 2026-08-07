@@ -5,7 +5,7 @@ import Link from "next/link";
  */
 export default function ProductNotFound() {
   return (
-    <main
+    <section
       className="
       min-h-screen
       flex items-center justify-center
@@ -58,6 +58,6 @@ export default function ProductNotFound() {
           Ver todos los productos
         </Link>
       </div>
-    </main>
+    </section>
   );
 }
