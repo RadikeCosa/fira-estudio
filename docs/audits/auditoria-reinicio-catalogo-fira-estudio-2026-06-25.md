@@ -8,9 +8,11 @@ Actualizacion Fase 1A: `2026-08-06`
 
 Actualizacion Fase 1B: `2026-08-06`
 
+Actualizacion Fase 1C: `2026-08-06`
+
 Contrato canonico vigente: [`../PRODUCT_SCOPE.md`](../PRODUCT_SCOPE.md)
 
-La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. La actualizacion de Fase 1B bloquea las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico. No modifica endpoints, Mercado Pago, webhooks, ordenes ni emails.
+La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. La actualizacion de Fase 1B bloquea las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico. La actualizacion de Fase 1C retira del runtime publico las rutas API comerciales historicas. No elimina modulos internos de Mercado Pago, webhooks, ordenes ni emails.
 
 ## Resumen Ejecutivo
 
@@ -21,7 +23,7 @@ El repositorio todavia conserva superficies de carrito, checkout, pagos y webhoo
 La opcion recomendada para esta etapa es:
 
 - mantener carrito y checkout fuera del flujo publico;
-- conservar el codigo sensible de pagos, webhooks, ordenes y emails como funcionalidad suspendida;
+- conservar los modulos sensibles de pagos, webhooks, ordenes y emails como funcionalidad suspendida;
 - reordenar la documentacion para que el proyecto no se presente como e-commerce activo;
 - mantener validaciones tecnicas limpias antes de cualquier redeploy.
 
@@ -29,7 +31,7 @@ Estado general al cierre de esta auditoria:
 
 - documentacion y framing del repo: saneados parcialmente en Fase 0;
 - catalogo y datos: siguen dependiendo de Supabase;
-- checkout/pagos: siguen presentes en codigo, pero sus paginas publicas historicas responden como inexistentes desde Fase 1B;
+- checkout/pagos: siguen presentes como modulos historicos, pero sin paginas ni endpoints publicos desde Fase 1C;
 - deploy: pendiente de validar contra servicios externos;
 - validacion tecnica local al 2026-08-06: `git diff --check`, `npm run lint`, `npm run test` y `npm run build` pasan.
 
@@ -69,18 +71,21 @@ Rutas historicas presentes en el arbol pero bloqueadas con `notFound()` desde Fa
 - `/checkout/failure`
 - `/test-errors` en produccion
 
-### APIs y superficies sensibles
+### APIs publicas vigentes
 
-Superficie sensible confirmada:
-
-- `app/api/cart/actions.ts`
-- `app/api/checkout/create-preference/route.ts`
-- `app/api/checkout/webhook/route.ts`
-- `app/api/webhooks/process-queue/route.ts`
-- `app/api/webhooks/reconcile/route.ts`
-- `app/api/webhooks/status/route.ts`
 - `app/api/revalidate/route.ts`
 - `app/api/rate-limit/route.ts`
+
+### Superficies sensibles historicas
+
+Superficie sensible retirada del runtime publico en Fase 1C:
+
+- `app/api/cart/actions.ts`
+- `app/api/checkout/create-preference/route.ts` retirado
+- `app/api/checkout/webhook/route.ts` retirado
+- `app/api/webhooks/process-queue/route.ts` retirado
+- `app/api/webhooks/reconcile/route.ts` retirado
+- `app/api/webhooks/status/route.ts` retirado
 
 ### Dependencias funcionales por area
 
@@ -148,7 +153,8 @@ Actualizacion Fase 0:
 - Fase 1A removio datos estructurados comerciales de oferta comprable;
 - Fase 1B bloqueo las paginas publicas historicas de carrito, checkout y resultados de pago con `notFound()`;
 - Fase 1B dejo `/test-errors` fuera de produccion mediante `notFound()`;
-- no se resolvieron en estas fases los endpoints, pagos, webhooks, ordenes o emails.
+- Fase 1C retiro del runtime publico las rutas API de checkout, webhook, cola, status y reconciliacion comercial;
+- no se resolvieron en estas fases los modulos internos de pagos, webhooks, ordenes o emails.
 
 Hallazgos principales:
 
@@ -176,19 +182,22 @@ Hallazgos principales:
 - `/checkout/failure`
 - `/test-errors` en produccion
 
-### APIs sensibles
+### APIs publicas vigentes
+
+- `/api/revalidate`
+- `/api/rate-limit`
+
+### APIs comerciales retiradas del runtime publico
 
 - `/api/checkout/create-preference`
 - `/api/checkout/webhook`
 - `/api/webhooks/process-queue`
 - `/api/webhooks/reconcile`
 - `/api/webhooks/status`
-- `/api/revalidate`
-- `/api/rate-limit`
 
 ### Observacion
 
-Para el objetivo catalogo, Fase 1A removio enlaces y CTAs comerciales de la experiencia publica principal. Fase 1B bloqueo las paginas historicas de `/carrito`, `/checkout` y resultados de pago con `notFound()`. Los endpoints sensibles siguen existiendo y deben aislarse en un patch funcional posterior.
+Para el objetivo catalogo, Fase 1A removio enlaces y CTAs comerciales de la experiencia publica principal. Fase 1B bloqueo las paginas historicas de `/carrito`, `/checkout` y resultados de pago con `notFound()`. Fase 1C retiro las rutas API comerciales historicas de `app/api`. La logica interna sensible sigue existiendo en `lib/` y debe auditarse antes de cualquier reactivacion futura.
 
 ## Inventario de Variables de Entorno
 
@@ -333,13 +342,20 @@ Actualizacion Fase 1B:
 - `/test-errors` no esta disponible en produccion;
 - sitemap y robots no presentan estas rutas como contenido publico.
 
+Actualizacion Fase 1C:
+
+- `/api/checkout/create-preference` ya no existe como ruta publica;
+- `/api/checkout/webhook` ya no existe como ruta publica;
+- `/api/webhooks/process-queue`, `/api/webhooks/reconcile` y `/api/webhooks/status` ya no existen como rutas publicas;
+- `lib/config/urls.ts` queda como configuracion historica suspendida, no como contrato del catalogo.
+
 ### Recomendacion
 
 Para esta etapa:
 
 - no reactivar nada de pagos;
 - no borrar todavia el codigo sensible;
-- revisar endpoints comerciales y URLs de retorno en una fase posterior;
+- revisar modulos internos de comercio, componentes historicos y variables residuales en una fase posterior;
 - documentar esa capa como funcionalidad suspendida.
 
 ## Diagnostico de Vercel / Redeploy
@@ -436,7 +452,7 @@ Estado real de GA4 y configuracion externa: `pendiente de confirmar`.
 
 - estado parcial Fase 1A: header, navegacion, acciones de producto, analytics y schema comercial adaptados a consulta manual;
 - estado parcial Fase 1B: paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico bloqueadas;
-- bloquear o retirar endpoints comerciales del runtime publico;
+- estado parcial Fase 1C: endpoints comerciales historicos retirados del runtime publico;
 - preservar pagos y webhooks como infraestructura historica no operativa.
 
 ### Fase 2 - Experiencia de catalogo y contacto

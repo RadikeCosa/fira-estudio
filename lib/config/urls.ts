@@ -5,6 +5,9 @@
  * - DESARROLLO: localhost:3000 (sin HTTPS)
  * - PRODUCCIÓN: https://fira-estudio.vercel.app/ (HTTPS requerido)
  *
+ * Nota Fase 1C: las URLs comerciales quedan como configuracion historica
+ * suspendida. No representan rutas activas del catalogo publico vigente.
+ *
  * Las variables se detectan automáticamente basadas en NODE_ENV y VERCEL
  */
 
@@ -36,7 +39,8 @@ export function getFullUrl(path: string): string {
 }
 
 /**
- * URLs de retorno para Mercado Pago back_urls
+ * URLs historicas de retorno para Mercado Pago back_urls.
+ * No son requeridas para el runtime publico del catalogo.
  */
 export const CHECKOUT_URLS = {
   success:
@@ -51,7 +55,8 @@ export const CHECKOUT_URLS = {
 };
 
 /**
- * URL del Webhook para notificaciones de Mercado Pago
+ * URL historica del Webhook para notificaciones de Mercado Pago.
+ * La ruta publica fue retirada del runtime del catalogo.
  */
 export const WEBHOOK_URL =
   process.env.MERCADOPAGO_WEBHOOK_URL || getFullUrl("api/checkout/webhook");

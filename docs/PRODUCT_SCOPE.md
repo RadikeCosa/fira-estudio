@@ -33,6 +33,8 @@ Actualizacion Fase 1A: la UI publica visible fue adaptada para no ofrecer carrit
 
 Actualizacion Fase 1B: las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico ya no forman parte del runtime publico vigente. La infraestructura interna de comercio permanece suspendida para auditoria posterior.
 
+Actualizacion Fase 1C: las rutas API publicas historicas de checkout, Mercado Pago, webhooks, cola, status y reconciliacion fueron retiradas del runtime publico. Los modulos internos asociados permanecen como infraestructura historica suspendida.
+
 ## Fuera de alcance vigente
 
 Estas capacidades no forman parte del producto publico actual:
