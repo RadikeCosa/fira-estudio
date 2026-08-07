@@ -1,12 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import type { ProductoCompleto } from "@/lib/types";
-import { addToCart } from "@/app/api/cart/actions";
 import { ProductActions } from "./ProductActions";
-
-vi.mock("@/app/api/cart/actions", () => ({
-  addToCart: vi.fn(),
-}));
 
 vi.mock("@/lib/analytics/gtag", () => ({
   trackProductInquiry: vi.fn(),
@@ -80,7 +75,8 @@ describe("ProductActions", () => {
       "aria-pressed",
       "true",
     );
-    expect(addToCart).not.toHaveBeenCalled();
+    expect(screen.queryByText(/agregar al carrito/i)).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /ver carrito/i })).not.toBeInTheDocument();
   });
 
   it("keeps a safe contact CTA when WhatsApp is not configured", () => {

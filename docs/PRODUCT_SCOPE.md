@@ -35,6 +35,8 @@ Actualizacion Fase 1B: las paginas publicas historicas de carrito, checkout, res
 
 Actualizacion Fase 1C: las rutas API publicas historicas de checkout, Mercado Pago, webhooks, cola, status y reconciliacion fueron retiradas del runtime publico. Los modulos internos asociados permanecen como infraestructura historica suspendida.
 
+Actualizacion Fase 2A: los componentes historicos de carrito, el indicador de carrito, las server actions comerciales de carrito y el contenido textual especifico de carrito/checkout fueron retirados del arbol ejecutable. Permanecen suspendidos `CartRepository`, Mercado Pago, webhooks, emails transaccionales, service role, SQL historico y dependencias para saneamiento posterior.
+
 ## Fuera de alcance vigente
 
 Estas capacidades no forman parte del producto publico actual:
@@ -62,11 +64,11 @@ Hasta cerrar esa decision, la documentacion no debe prometer un canal operativo 
 
 ## Infraestructura historica
 
-El repositorio conserva infraestructura historica de e-commerce: carrito, checkout, Mercado Pago, ordenes, webhooks y emails transaccionales.
+El repositorio conserva infraestructura historica de e-commerce: repositorio de carrito/ordenes, Mercado Pago, webhooks, emails transaccionales, SQL y dependencias asociadas.
 
 Esa infraestructura puede mantenerse temporalmente para referencia tecnica, pero debe quedar fuera de las superficies publicas y no debe ser necesaria para el despliegue del catalogo.
 
-No debe reactivarse comercio mediante una modificacion accidental de variables.
+No debe reactivarse comercio mediante una modificacion accidental de variables. Desde Fase 2A ya no quedan componentes ni server actions de carrito en el arbol ejecutable del catalogo.
 
 ## Reactivacion comercial futura
 
@@ -98,4 +100,4 @@ El proyecto debe demostrar buenas practicas en:
 - Proyecto Vercel, dominio y variables reales por entorno.
 - Estado real de Supabase remoto, datos, Storage e imagenes.
 - Analytics activo y objetivo de medicion.
-- Estrategia funcional para retirar o aislar la superficie comercial publica en una fase posterior.
+- Estrategia para retirar o archivar `CartRepository`, Mercado Pago, webhooks, emails, SQL historico y dependencias comerciales.

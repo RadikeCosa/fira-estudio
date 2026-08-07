@@ -10,15 +10,17 @@ Actualizacion Fase 1B: `2026-08-06`
 
 Actualizacion Fase 1C: `2026-08-06`
 
+Actualizacion Fase 2A: `2026-08-07`
+
 Contrato canonico vigente: [`../PRODUCT_SCOPE.md`](../PRODUCT_SCOPE.md)
 
-La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. La actualizacion de Fase 1B bloquea las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico. La actualizacion de Fase 1C retira del runtime publico las rutas API comerciales historicas. No elimina modulos internos de Mercado Pago, webhooks, ordenes ni emails.
+La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. La actualizacion de Fase 1B bloquea las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico. La actualizacion de Fase 1C retira del runtime publico las rutas API comerciales historicas. La actualizacion de Fase 2A retira la UI historica de carrito y las server actions comerciales de carrito. No elimina `CartRepository`, Mercado Pago, webhooks, ordenes, emails, SQL ni dependencias.
 
 ## Resumen Ejecutivo
 
 Fira Estudio conserva una base tecnica historica de e-commerce, pero el objetivo vigente ya no es vender online sino relanzar el proyecto como catalogo/vidriera publica de marca textil artesanal.
 
-El repositorio todavia conserva superficies de carrito, checkout, pagos y webhooks. El flag `NEXT_PUBLIC_CHECKOUT_ENABLED=false` no alcanza por si solo para un relanzamiento seguro como catalogo, porque solo bloquea una parte del flujo y no elimina toda la superficie asociada a compra.
+El repositorio todavia conserva infraestructura historica de carrito/ordenes, pagos, webhooks y emails. Desde Fase 2A ya no conserva UI ejecutable ni server actions de carrito capaces de reactivar mutaciones desde la superficie publica.
 
 La opcion recomendada para esta etapa es:
 
@@ -31,7 +33,8 @@ Estado general al cierre de esta auditoria:
 
 - documentacion y framing del repo: saneados parcialmente en Fase 0;
 - catalogo y datos: siguen dependiendo de Supabase;
-- checkout/pagos: siguen presentes como modulos historicos, pero sin paginas ni endpoints publicos desde Fase 1C;
+- carrito/checkout publico: sin UI historica, sin server actions comerciales, sin paginas ni endpoints publicos desde Fase 2A;
+- checkout/pagos internos: siguen presentes como modulos historicos suspendidos;
 - deploy: pendiente de validar contra servicios externos;
 - validacion tecnica local al 2026-08-06: `git diff --check`, `npm run lint`, `npm run test` y `npm run build` pasan.
 
@@ -78,9 +81,9 @@ Rutas historicas presentes en el arbol pero bloqueadas con `notFound()` desde Fa
 
 ### Superficies sensibles historicas
 
-Superficie sensible retirada del runtime publico en Fase 1C:
+Superficie sensible retirada del runtime publico en Fase 1C y Fase 2A:
 
-- `app/api/cart/actions.ts`
+- `app/api/cart/actions.ts` retirado en Fase 2A
 - `app/api/checkout/create-preference/route.ts` retirado
 - `app/api/checkout/webhook/route.ts` retirado
 - `app/api/webhooks/process-queue/route.ts` retirado
@@ -97,9 +100,10 @@ Catalogo publico:
 
 Carrito y checkout:
 
-- usan server actions y `CartRepository`;
-- dependen de `SUPABASE_SERVICE_ROLE_KEY`;
-- exponen rutas publicas y API de preferencia de pago.
+- la UI historica de carrito fue retirada en Fase 2A;
+- las server actions comerciales de carrito fueron retiradas en Fase 2A;
+- `CartRepository` permanece como infraestructura interna historica suspendida;
+- las paginas y APIs publicas de checkout ya fueron retiradas o bloqueadas.
 
 Mercado Pago y webhooks:
 
@@ -154,7 +158,8 @@ Actualizacion Fase 0:
 - Fase 1B bloqueo las paginas publicas historicas de carrito, checkout y resultados de pago con `notFound()`;
 - Fase 1B dejo `/test-errors` fuera de produccion mediante `notFound()`;
 - Fase 1C retiro del runtime publico las rutas API de checkout, webhook, cola, status y reconciliacion comercial;
-- no se resolvieron en estas fases los modulos internos de pagos, webhooks, ordenes o emails.
+- Fase 2A retiro componentes historicos de carrito, `CartIndicator`, server actions de carrito y contenido textual especifico de carrito/checkout;
+- no se resolvieron en estas fases `CartRepository`, los modulos internos de pagos, webhooks, ordenes, SQL, dependencias o emails.
 
 Hallazgos principales:
 
@@ -197,7 +202,7 @@ Hallazgos principales:
 
 ### Observacion
 
-Para el objetivo catalogo, Fase 1A removio enlaces y CTAs comerciales de la experiencia publica principal. Fase 1B bloqueo las paginas historicas de `/carrito`, `/checkout` y resultados de pago con `notFound()`. Fase 1C retiro las rutas API comerciales historicas de `app/api`. La logica interna sensible sigue existiendo en `lib/` y debe auditarse antes de cualquier reactivacion futura.
+Para el objetivo catalogo, Fase 1A removio enlaces y CTAs comerciales de la experiencia publica principal. Fase 1B bloqueo las paginas historicas de `/carrito`, `/checkout` y resultados de pago con `notFound()`. Fase 1C retiro las rutas API comerciales historicas de `app/api`. Fase 2A retiro la UI historica de carrito y las server actions comerciales. La logica interna sensible que permanece en `lib/` debe auditarse antes de cualquier reactivacion futura.
 
 ## Inventario de Variables de Entorno
 
@@ -308,12 +313,11 @@ Sigue `pendiente de confirmar`:
 
 ### Estado confirmado
 
-El codigo sensible de e-commerce sigue presente y funcionalmente conectado:
+El codigo sensible de e-commerce sigue parcialmente presente como infraestructura historica:
 
-- carrito persistente por `session_id`;
-- checkout con creacion de orden;
-- creacion de preferencia de Mercado Pago;
-- paginas `success`, `failure` y `pending`;
+- `CartRepository` conserva operaciones sobre carrito, ordenes, payment logs y stock;
+- Mercado Pago, webhooks, cola, reconciliacion y emails transaccionales permanecen en `lib/`;
+- las paginas `success`, `failure` y `pending` permanecen bloqueadas;
 - webhook con validaciones de firma e IP;
 - cola de webhooks, retries y reconciliacion;
 - email transaccional de confirmacion.
@@ -349,13 +353,21 @@ Actualizacion Fase 1C:
 - `/api/webhooks/process-queue`, `/api/webhooks/reconcile` y `/api/webhooks/status` ya no existen como rutas publicas;
 - `lib/config/urls.ts` queda como configuracion historica suspendida, no como contrato del catalogo.
 
+Actualizacion Fase 2A:
+
+- `app/api/cart/actions.ts` ya no existe;
+- `components/carrito/**` ya no existe;
+- `components/layout/CartIndicator.tsx` ya no existe;
+- `lib/content/carrito.ts` y `lib/content/checkout.ts` ya no existen;
+- se reduce el riesgo de reactivacion accidental desde UI publica o server actions comerciales.
+
 ### Recomendacion
 
 Para esta etapa:
 
 - no reactivar nada de pagos;
-- no borrar todavia el codigo sensible;
-- revisar modulos internos de comercio, componentes historicos y variables residuales en una fase posterior;
+- no borrar todavia `CartRepository`, Mercado Pago, webhooks, emails, SQL ni dependencias sin una fase especifica;
+- revisar modulos internos de comercio y variables residuales en una fase posterior;
 - documentar esa capa como funcionalidad suspendida.
 
 ## Diagnostico de Vercel / Redeploy

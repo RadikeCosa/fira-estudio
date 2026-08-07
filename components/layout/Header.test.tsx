@@ -28,11 +28,6 @@ vi.mock("@/lib/supabase/client", () => ({
   },
 }));
 
-// Mock CartIndicator component
-vi.mock("./CartIndicator", () => ({
-  CartIndicator: () => <div data-testid="cart-indicator">Cart</div>,
-}));
-
 // Mock MobileNav component
 vi.mock("./MobileNav", () => ({
   MobileNav: ({ links }: { links: NavLink[] }) => {

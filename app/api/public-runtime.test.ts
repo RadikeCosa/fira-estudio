@@ -4,6 +4,12 @@ import { describe, expect, it } from "vitest";
 
 const appDir = path.join(process.cwd(), "app");
 const apiDir = path.join(appDir, "api");
+const componentsDir = path.join(process.cwd(), "components");
+const publicRuntimeDirs = [
+  appDir,
+  componentsDir,
+  path.join(process.cwd(), "lib"),
+];
 
 function findFiles(dir: string, fileName: string): string[] {
   if (!existsSync(dir)) return [];
@@ -22,6 +28,23 @@ function readFile(filePath: string): string {
   return readFileSync(filePath, "utf8");
 }
 
+function findSourceFiles(dir: string): string[] {
+  if (!existsSync(dir)) return [];
+
+  const entries = readdirSync(dir);
+  return entries.flatMap((entry) => {
+    const fullPath = path.join(dir, entry);
+    if (statSync(fullPath).isDirectory()) {
+      return findSourceFiles(fullPath);
+    }
+
+    const isSourceFile = /\.(ts|tsx)$/.test(entry);
+    const isTestFile = /\.test\.(ts|tsx)$/.test(entry);
+
+    return isSourceFile && !isTestFile ? [fullPath] : [];
+  });
+}
+
 describe("public API runtime surface", () => {
   it("only exposes catalog support API routes", () => {
     const routes = findFiles(apiDir, "route.ts").map((filePath) =>
@@ -36,6 +59,7 @@ describe("public API runtime surface", () => {
 
   it("does not expose historical commerce API routes", () => {
     const removedRoutes = [
+      "app/api/cart/actions.ts",
       "app/api/checkout/create-preference/route.ts",
       "app/api/checkout/webhook/route.ts",
       "app/api/webhooks/process-queue/route.ts",
@@ -56,6 +80,35 @@ describe("public API runtime surface", () => {
 
     for (const filePath of pageFiles) {
       expect(readFile(filePath)).not.toMatch(forbiddenImport);
+    }
+  });
+
+  it("does not keep historical cart UI components in the executable tree", () => {
+    expect(findSourceFiles(path.join(process.cwd(), "components/carrito"))).toEqual(
+      [],
+    );
+    expect(
+      existsSync(path.join(process.cwd(), "components/layout/CartIndicator.tsx")),
+    ).toBe(false);
+  });
+
+  it("keeps public runtime free of cart actions and historical cart UI imports", () => {
+    const sourceFiles = publicRuntimeDirs.flatMap(findSourceFiles);
+    const forbiddenRuntimeReferences =
+      /app\/api\/cart\/actions|components\/carrito|CartIndicator|AddToCartButton|CheckoutForm/;
+
+    for (const filePath of sourceFiles) {
+      expect(readFile(filePath)).not.toMatch(forbiddenRuntimeReferences);
+    }
+  });
+
+  it("keeps public UI free of cart and checkout links or add-to-cart copy", () => {
+    const uiFiles = [appDir, componentsDir].flatMap(findSourceFiles);
+    const forbiddenUiReferences =
+      /href=["'{`][^"'}`]*(\/carrito|\/checkout)|Agregar al carrito/i;
+
+    for (const filePath of uiFiles) {
+      expect(readFile(filePath)).not.toMatch(forbiddenUiReferences);
     }
   });
 });
