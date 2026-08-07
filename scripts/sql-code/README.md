@@ -4,6 +4,8 @@ Este directorio conserva SQL de referencia. No es una guia operativa de deploy d
 
 No se ejecuto SQL durante el saneamiento documental. El estado real de Supabase remoto, tablas, datos, policies, Storage y funciones queda `pendiente de confirmar`.
 
+La auditoria estatica y la checklist read-only para inventario remoto estan en [`../../docs/audits/supabase-sql-catalog-audit-2026-08-07.md`](../../docs/audits/supabase-sql-catalog-audit-2026-08-07.md).
+
 ## Archivos
 
 | Archivo | Clasificacion | Recomendacion |
@@ -76,4 +78,4 @@ Cuando se confirme Supabase real, conviene crear archivos nuevos y separados:
 - `catalog-schema.sql`: solo objetos vigentes de catalogo/contacto.
 - `archive/ecommerce-schema.sql`: snapshot historico de carrito, ordenes, pagos y webhooks.
 
-Esa separacion debe hacerse con auditoria SQL especifica y sin ejecutar cambios destructivos por defecto.
+Esa separacion debe hacerse despues de un inventario remoto read-only y sin ejecutar cambios destructivos por defecto.

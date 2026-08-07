@@ -43,6 +43,8 @@ Actualizacion Fase 2C: `CartRepository`, Mercado Pago, webhooks, reconciliacion,
 
 Actualizacion Fase 2D: la documentacion comercial historica fue movida a `docs/archive/ecommerce/` y el SQL restante fue reclasificado como referencia mixta, no como guia de ejecucion para el catalogo. El estado real de Supabase remoto sigue `pendiente de confirmar`.
 
+Actualizacion auditoria Supabase/SQL 2026-08-07: el codigo vigente solo consume Supabase para lectura de catalogo (`categorias`, `productos`, `variaciones`, `imagenes_producto`). `consultas` existe en SQL versionado pero no tiene consumidor runtime actual. El estado remoto de Supabase sigue `pendiente de confirmar`.
+
 ## Fuera de alcance vigente
 
 Estas capacidades no forman parte del producto publico actual:

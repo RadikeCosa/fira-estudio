@@ -30,6 +30,7 @@ Estos documentos siguen siendo utiles para mantener el catalogo:
 ## Auditorias
 
 - [`audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md`](./audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md): auditoria base del reinicio. Conserva hallazgos funcionales aun no resueltos.
+- [`audits/supabase-sql-catalog-audit-2026-08-07.md`](./audits/supabase-sql-catalog-audit-2026-08-07.md): auditoria estatica de SQL/Supabase y checklist read-only para inventario remoto.
 
 ## Material historico de e-commerce
 
