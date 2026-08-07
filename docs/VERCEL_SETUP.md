@@ -23,10 +23,7 @@ Cargar por entorno:
 NEXT_PUBLIC_SITE_URL=https://your-public-site.example
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
-NEXT_PUBLIC_CHECKOUT_ENABLED=false
 ```
-
-`NEXT_PUBLIC_CHECKOUT_ENABLED=false` se conserva por compatibilidad con el codigo actual, pero no es catalog mode. El alcance vigente lo define `PRODUCT_SCOPE.md`.
 
 ## Variables opcionales
 
@@ -46,7 +43,6 @@ Analytics y mantenimiento:
 NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_MAINTENANCE_MODE=false
 NEXT_PUBLIC_MAINTENANCE_MESSAGE=Mensaje opcional
-NEXT_PUBLIC_MAINTENANCE_END_DATE=
 ```
 
 GA4 puede postergarse si no hay objetivo de medicion confirmado.
@@ -61,9 +57,6 @@ MERCADOPAGO_ACCESS_TOKEN=your-mercadopago-access-token
 MERCADOPAGO_WEBHOOK_SECRET=your-mercadopago-webhook-secret
 MERCADOPAGO_INTEGRATOR_ID=your-mercadopago-integrator-id
 MERCADOPAGO_WEBHOOK_URL=https://your-public-site.example/api/checkout/webhook
-NEXT_PUBLIC_CHECKOUT_SUCCESS_URL=https://your-public-site.example/checkout/success
-NEXT_PUBLIC_CHECKOUT_FAILURE_URL=https://your-public-site.example/checkout/failure
-NEXT_PUBLIC_CHECKOUT_PENDING_URL=https://your-public-site.example/checkout/pending
 RESEND_API_KEY=your-resend-api-key
 RESEND_FROM_EMAIL="Fira Estudio <noreply@example.com>"
 WEBHOOK_RECONCILIATION_TOKEN=your-reconciliation-token

@@ -12,9 +12,11 @@ Actualizacion Fase 1C: `2026-08-06`
 
 Actualizacion Fase 2A: `2026-08-07`
 
+Actualizacion Fase 2B: `2026-08-07`
+
 Contrato canonico vigente: [`../PRODUCT_SCOPE.md`](../PRODUCT_SCOPE.md)
 
-La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. La actualizacion de Fase 1B bloquea las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico. La actualizacion de Fase 1C retira del runtime publico las rutas API comerciales historicas. La actualizacion de Fase 2A retira la UI historica de carrito y las server actions comerciales de carrito. No elimina `CartRepository`, Mercado Pago, webhooks, ordenes, emails, SQL ni dependencias.
+La actualizacion de Fase 0 registra saneamiento documental. La actualizacion de Fase 1A adapta la UI publica visible para consulta manual. La actualizacion de Fase 1B bloquea las paginas publicas historicas de carrito, checkout, resultados de pago y diagnostico tecnico. La actualizacion de Fase 1C retira del runtime publico las rutas API comerciales historicas. La actualizacion de Fase 2A retira la UI historica de carrito y las server actions comerciales de carrito. La actualizacion de Fase 2B retira la flag publica historica de checkout y la configuracion ejecutable de URLs comerciales. No elimina `CartRepository`, Mercado Pago, webhooks, ordenes, emails, SQL ni dependencias.
 
 ## Resumen Ejecutivo
 
@@ -108,8 +110,8 @@ Carrito y checkout:
 Mercado Pago y webhooks:
 
 - siguen integrados;
-- usan URLs de retorno y webhook desde `lib/config/urls.ts`;
-- tienen cola de procesamiento, reconciliacion y endpoints operativos.
+- conservan cola de procesamiento y reconciliacion historicas;
+- ya no tienen configuracion ejecutable de URLs comerciales desde Fase 2B.
 
 Emails transaccionales:
 
@@ -159,6 +161,7 @@ Actualizacion Fase 0:
 - Fase 1B dejo `/test-errors` fuera de produccion mediante `notFound()`;
 - Fase 1C retiro del runtime publico las rutas API de checkout, webhook, cola, status y reconciliacion comercial;
 - Fase 2A retiro componentes historicos de carrito, `CartIndicator`, server actions de carrito y contenido textual especifico de carrito/checkout;
+- Fase 2B retiro `NEXT_PUBLIC_CHECKOUT_ENABLED`, `IS_CHECKOUT_ENABLED`, `IS_PUBLIC_CHECKOUT_AVAILABLE` y `lib/config/urls.ts` del runtime;
 - no se resolvieron en estas fases `CartRepository`, los modulos internos de pagos, webhooks, ordenes, SQL, dependencias o emails.
 
 Hallazgos principales:
@@ -202,7 +205,7 @@ Hallazgos principales:
 
 ### Observacion
 
-Para el objetivo catalogo, Fase 1A removio enlaces y CTAs comerciales de la experiencia publica principal. Fase 1B bloqueo las paginas historicas de `/carrito`, `/checkout` y resultados de pago con `notFound()`. Fase 1C retiro las rutas API comerciales historicas de `app/api`. Fase 2A retiro la UI historica de carrito y las server actions comerciales. La logica interna sensible que permanece en `lib/` debe auditarse antes de cualquier reactivacion futura.
+Para el objetivo catalogo, Fase 1A removio enlaces y CTAs comerciales de la experiencia publica principal. Fase 1B bloqueo las paginas historicas de `/carrito`, `/checkout` y resultados de pago con `notFound()`. Fase 1C retiro las rutas API comerciales historicas de `app/api`. Fase 2A retiro la UI historica de carrito y las server actions comerciales. Fase 2B retiro flags y URLs comerciales ejecutables sin consumidores. La logica interna sensible que permanece en `lib/` debe auditarse antes de cualquier reactivacion futura.
 
 ## Inventario de Variables de Entorno
 
@@ -228,8 +231,6 @@ Variables detectadas en codigo ejecutable:
 
 - `NEXT_PUBLIC_MAINTENANCE_MODE`
 - `NEXT_PUBLIC_MAINTENANCE_MESSAGE`
-- `NEXT_PUBLIC_MAINTENANCE_END_DATE`
-- `NEXT_PUBLIC_CHECKOUT_ENABLED`
 
 ### Variables de e-commerce suspendido
 
@@ -238,9 +239,6 @@ Variables detectadas en codigo ejecutable:
 - `MERCADOPAGO_WEBHOOK_SECRET`
 - `MERCADOPAGO_INTEGRATOR_ID`
 - `MERCADOPAGO_WEBHOOK_URL`
-- `NEXT_PUBLIC_CHECKOUT_SUCCESS_URL`
-- `NEXT_PUBLIC_CHECKOUT_FAILURE_URL`
-- `NEXT_PUBLIC_CHECKOUT_PENDING_URL`
 - `RESEND_API_KEY`
 - `RESEND_FROM_EMAIL`
 
@@ -324,7 +322,7 @@ El codigo sensible de e-commerce sigue parcialmente presente como infraestructur
 
 ### Riesgo para el relanzamiento como catalogo
 
-El flag `NEXT_PUBLIC_CHECKOUT_ENABLED=false` no alcanza para relanzamiento seguro como catalogo porque:
+Antes de Fase 2B, el flag historico `NEXT_PUBLIC_CHECKOUT_ENABLED=false` no alcanzaba para relanzamiento seguro como catalogo porque:
 
 - no elimina `/carrito`;
 - no elimina `/checkout`;
@@ -351,7 +349,7 @@ Actualizacion Fase 1C:
 - `/api/checkout/create-preference` ya no existe como ruta publica;
 - `/api/checkout/webhook` ya no existe como ruta publica;
 - `/api/webhooks/process-queue`, `/api/webhooks/reconcile` y `/api/webhooks/status` ya no existen como rutas publicas;
-- `lib/config/urls.ts` queda como configuracion historica suspendida, no como contrato del catalogo.
+- las URLs comerciales seguian pendientes de saneamiento hasta Fase 2B.
 
 Actualizacion Fase 2A:
 
@@ -360,6 +358,13 @@ Actualizacion Fase 2A:
 - `components/layout/CartIndicator.tsx` ya no existe;
 - `lib/content/carrito.ts` y `lib/content/checkout.ts` ya no existen;
 - se reduce el riesgo de reactivacion accidental desde UI publica o server actions comerciales.
+
+Actualizacion Fase 2B:
+
+- `NEXT_PUBLIC_CHECKOUT_ENABLED` ya no forma parte del runtime vigente;
+- `IS_CHECKOUT_ENABLED` e `IS_PUBLIC_CHECKOUT_AVAILABLE` ya no existen;
+- `lib/config/urls.ts`, `CHECKOUT_URLS` y `WEBHOOK_URL` ya no existen como configuracion ejecutable;
+- `SUPABASE_SERVICE_ROLE_KEY` queda restringida a `CartRepository` y webhooks historicos.
 
 ### Recomendacion
 

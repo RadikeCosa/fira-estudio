@@ -37,6 +37,8 @@ Actualizacion Fase 1C: las rutas API publicas historicas de checkout, Mercado Pa
 
 Actualizacion Fase 2A: los componentes historicos de carrito, el indicador de carrito, las server actions comerciales de carrito y el contenido textual especifico de carrito/checkout fueron retirados del arbol ejecutable. Permanecen suspendidos `CartRepository`, Mercado Pago, webhooks, emails transaccionales, service role, SQL historico y dependencias para saneamiento posterior.
 
+Actualizacion Fase 2B: la flag publica historica de checkout y la configuracion ejecutable de URLs comerciales fueron retiradas del runtime. `CartRepository` se conserva temporalmente porque todavia sostiene webhooks y emails historicos que se sanearan como bloque separado.
+
 ## Fuera de alcance vigente
 
 Estas capacidades no forman parte del producto publico actual:
@@ -68,7 +70,7 @@ El repositorio conserva infraestructura historica de e-commerce: repositorio de 
 
 Esa infraestructura puede mantenerse temporalmente para referencia tecnica, pero debe quedar fuera de las superficies publicas y no debe ser necesaria para el despliegue del catalogo.
 
-No debe reactivarse comercio mediante una modificacion accidental de variables. Desde Fase 2A ya no quedan componentes ni server actions de carrito en el arbol ejecutable del catalogo.
+No debe reactivarse comercio mediante una modificacion accidental de variables. Desde Fase 2A ya no quedan componentes ni server actions de carrito en el arbol ejecutable del catalogo, y desde Fase 2B ya no queda flag publica de checkout ni configuracion ejecutable de URLs comerciales.
 
 ## Reactivacion comercial futura
 

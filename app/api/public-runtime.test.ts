@@ -102,6 +102,20 @@ describe("public API runtime surface", () => {
     }
   });
 
+  it("does not keep historical checkout feature flags or URL config in runtime code", () => {
+    expect(existsSync(path.join(process.cwd(), "lib/config/urls.ts"))).toBe(
+      false,
+    );
+
+    const sourceFiles = publicRuntimeDirs.flatMap(findSourceFiles);
+    const forbiddenCommerceConfig =
+      /IS_CHECKOUT_ENABLED|IS_PUBLIC_CHECKOUT_AVAILABLE|NEXT_PUBLIC_CHECKOUT_ENABLED|CHECKOUT_URLS|WEBHOOK_URL/;
+
+    for (const filePath of sourceFiles) {
+      expect(readFile(filePath)).not.toMatch(forbiddenCommerceConfig);
+    }
+  });
+
   it("keeps public UI free of cart and checkout links or add-to-cart copy", () => {
     const uiFiles = [appDir, componentsDir].flatMap(findSourceFiles);
     const forbiddenUiReferences =

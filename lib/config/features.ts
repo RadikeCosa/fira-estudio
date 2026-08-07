@@ -7,44 +7,21 @@
 
 /**
  * Determina si el sitio está en modo mantenimiento
- * En mantenimiento: se deshabilita el checkout pero el sitio sigue visible
  */
 export const IS_MAINTENANCE_MODE =
   process.env.NEXT_PUBLIC_MAINTENANCE_MODE === "true";
-
-/**
- * Determina si el checkout está habilitado
- * Útil para deshabilitar compras sin poner todo el sitio en mantenimiento
- */
-export const IS_CHECKOUT_ENABLED =
-  process.env.NEXT_PUBLIC_CHECKOUT_ENABLED === "true";
-
-/**
- * Checkout público disponible para navegación y acciones de compra.
- * Si está en mantenimiento o el flag está apagado, el sitio debe comportarse como catálogo.
- */
-export const IS_PUBLIC_CHECKOUT_AVAILABLE =
-  !IS_MAINTENANCE_MODE && IS_CHECKOUT_ENABLED;
 
 /**
  * Mensaje de mantenimiento personalizable
  */
 export const MAINTENANCE_MESSAGE =
   process.env.NEXT_PUBLIC_MAINTENANCE_MESSAGE ||
-  "Estamos realizando mejoras en nuestro sistema de pagos. Pronto volveremos a estar operativos.";
-
-/**
- * Fecha estimada de fin de mantenimiento (opcional)
- */
-export const MAINTENANCE_END_DATE =
-  process.env.NEXT_PUBLIC_MAINTENANCE_END_DATE || null;
+  "Estamos actualizando el catalogo. El sitio puede mostrar informacion temporalmente incompleta.";
 
 // Log en desarrollo para debugging
 if (process.env.NODE_ENV === "development") {
   console.log("[Feature Flags]", {
     IS_MAINTENANCE_MODE,
-    IS_CHECKOUT_ENABLED,
-    IS_PUBLIC_CHECKOUT_AVAILABLE,
     MAINTENANCE_MESSAGE,
   });
 }

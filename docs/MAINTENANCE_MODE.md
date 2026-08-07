@@ -16,16 +16,12 @@ El codigo actual permite:
 
 - mostrar un banner informativo con `NEXT_PUBLIC_MAINTENANCE_MODE=true`;
 - personalizar el mensaje con `NEXT_PUBLIC_MAINTENANCE_MESSAGE`;
-- usar `NEXT_PUBLIC_MAINTENANCE_END_DATE` como referencia opcional;
-- bloquear parcialmente checkout mediante flags historicas.
 
 ## Limites importantes
 
-- `NEXT_PUBLIC_CHECKOUT_ENABLED` es una flag historica y no define el alcance vigente.
-- `NEXT_PUBLIC_CHECKOUT_ENABLED=false` no es catalog mode.
 - Maintenance mode no debe usarse para comunicar que el e-commerce esta pausado.
 - El catalogo debe poder desplegarse sin Mercado Pago, Resend, service role para carrito/ordenes ni tokens de webhook.
-- La eliminacion o reemplazo de flags historicas sera parte de una fase funcional posterior.
+- Las flags historicas de checkout ya no forman parte del runtime vigente.
 
 ## Variables involucradas
 
@@ -33,8 +29,6 @@ El codigo actual permite:
 | --- | --- |
 | `NEXT_PUBLIC_MAINTENANCE_MODE` | activa o desactiva el banner |
 | `NEXT_PUBLIC_MAINTENANCE_MESSAGE` | mensaje opcional para el banner |
-| `NEXT_PUBLIC_MAINTENANCE_END_DATE` | referencia opcional de fin de mantenimiento |
-| `NEXT_PUBLIC_CHECKOUT_ENABLED` | flag historica de checkout; no define el producto vigente |
 
 ## Activacion temporal
 
@@ -43,7 +37,6 @@ En el entorno que corresponda:
 ```bash
 NEXT_PUBLIC_MAINTENANCE_MODE=true
 NEXT_PUBLIC_MAINTENANCE_MESSAGE=Estamos actualizando el catalogo.
-NEXT_PUBLIC_MAINTENANCE_END_DATE=
 ```
 
 Despues, hacer redeploy si el entorno lo requiere.

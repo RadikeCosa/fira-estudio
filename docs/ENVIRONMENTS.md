@@ -88,13 +88,6 @@ Mantenimiento del catalogo:
 
 - `NEXT_PUBLIC_MAINTENANCE_MODE`
 - `NEXT_PUBLIC_MAINTENANCE_MESSAGE`
-- `NEXT_PUBLIC_MAINTENANCE_END_DATE`
-
-Flag historica:
-
-- `NEXT_PUBLIC_CHECKOUT_ENABLED`
-
-`NEXT_PUBLIC_CHECKOUT_ENABLED` no define el alcance vigente. Debe quedar `false` mientras exista el codigo comercial historico, pero no reemplaza el aislamiento funcional que se hara en una fase posterior.
 
 ## Variables historicas no requeridas
 
@@ -105,9 +98,6 @@ No son requeridas para deploy del catalogo vigente:
 - `MERCADOPAGO_WEBHOOK_SECRET`
 - `MERCADOPAGO_INTEGRATOR_ID`
 - `MERCADOPAGO_WEBHOOK_URL`
-- `NEXT_PUBLIC_CHECKOUT_SUCCESS_URL`
-- `NEXT_PUBLIC_CHECKOUT_FAILURE_URL`
-- `NEXT_PUBLIC_CHECKOUT_PENDING_URL`
 - `RESEND_API_KEY`
 - `RESEND_FROM_EMAIL`
 - `WEBHOOK_RECONCILIATION_TOKEN`
