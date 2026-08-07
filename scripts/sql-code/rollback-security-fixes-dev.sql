@@ -3,6 +3,8 @@
 -- ============================================================================
 -- Use this script only in local/dev environments if you need to temporarily
 -- revert the hardening changes applied by run-all-security-fixes.sql.
+-- Catalog restart note: this is historical/dev-only SQL and is not part of the
+-- current catalog deploy path.
 
 BEGIN;
 

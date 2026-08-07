@@ -1,5 +1,8 @@
 -- WARNING: This schema is for context only and is not meant to be run.
 -- Table order and constraints may not be valid for execution.
+-- Catalog restart note: this snapshot is mixed. It includes catalog/contact
+-- objects and historical e-commerce objects removed from the executable app.
+-- Do not run it as a catalog deploy migration.
 
 CREATE TABLE public.cart_items (
   id uuid NOT NULL DEFAULT gen_random_uuid(),

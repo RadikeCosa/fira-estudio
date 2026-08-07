@@ -23,7 +23,7 @@ Estos documentos siguen siendo utiles para mantener el catalogo:
 - [`METADATA_STANDARD.md`](./METADATA_STANDARD.md): metadata y SEO.
 - [`STYLE_MANAGEMENT.md`](./STYLE_MANAGEMENT.md): sistema visual y tokens.
 - [`CACHING_ARCHITECTURE.md`](./CACHING_ARCHITECTURE.md): caching y revalidacion.
-- [`TESTING_STRATEGY.md`](./TESTING_STRATEGY.md): estrategia de validacion; revisar drift si menciona flujos comerciales.
+- [`TESTING_STRATEGY.md`](./TESTING_STRATEGY.md): estrategia de validacion del catalogo vigente.
 - [`error-boundaries.md`](./error-boundaries.md): manejo de errores.
 - [`../lib/cache/README.md`](../lib/cache/README.md): utilidades de cache.
 
@@ -31,16 +31,15 @@ Estos documentos siguen siendo utiles para mantener el catalogo:
 
 - [`audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md`](./audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md): auditoria base del reinicio. Conserva hallazgos funcionales aun no resueltos.
 
-## Infraestructura historica suspendida
+## Material historico de e-commerce
 
-Estos documentos describen piezas que existen en el repositorio, pero no forman parte del producto publico vigente:
+La documentacion historica de carrito, checkout, Mercado Pago, webhooks, emails transaccionales y arquitectura comercial retirada quedo archivada en:
 
-- [`WEBHOOK_SECURITY.md`](./WEBHOOK_SECURITY.md): pagos y webhooks.
-- [`ORDER_CONFIRMATION_EMAIL.md`](./ORDER_CONFIRMATION_EMAIL.md): emails transaccionales de pedidos.
-- [`MAINTENANCE_MODE.md`](./MAINTENANCE_MODE.md): maintenance mode; no debe usarse como catalog mode.
-- [`../scripts/sql-code/README.md`](../scripts/sql-code/README.md): SQL de referencia e hardening; no prueba estado remoto activo.
+- [`archive/ecommerce/README.md`](./archive/ecommerce/README.md)
 
-Recomendacion futura: archivar o separar fisicamente la documentacion de comercio cuando se implemente el aislamiento funcional.
+Ese material no debe usarse como fuente operativa para el catalogo vigente.
+
+El directorio [`../scripts/sql-code/`](../scripts/sql-code/) conserva SQL mixto de catalogo e historia comercial. Su README clasifica el contenido y no prueba estado remoto activo de Supabase.
 
 ## Material historico o secundario
 

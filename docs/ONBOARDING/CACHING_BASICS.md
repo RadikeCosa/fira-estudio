@@ -297,10 +297,11 @@ Total = 200ms + (10ms * 99) = 1.19 segundos ✓ Mucho más rápido
 
 ```typescript
 // ✗ NO cachear
-export async function getUserCart(userId: string) {
+export async function getPrivateDrafts(userId: string) {
   const supabase = await createClient();
-  return supabase.from("carrito").select("*").eq("user_id", userId);
-  // Cada usuario debe ver SU carrito, no el de otro
+  // Ejemplo conceptual, no tabla vigente del proyecto.
+  return supabase.from("borradores_privados").select("*").eq("user_id", userId);
+  // Cada usuario debe ver SUS datos privados, no los de otro
 }
 
 // ✓ SÍ cachear

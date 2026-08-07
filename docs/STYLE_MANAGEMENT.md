@@ -290,7 +290,7 @@ export function Button({
 
 ```typescript
 <Button variant="primary" size="md">
-  Agregar al carrito
+  Consultar disponibilidad
 </Button>
 ```
 

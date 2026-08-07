@@ -37,6 +37,8 @@ Integraciones historicas retiradas del arbol ejecutable principal:
 - Mercado Pago
 - Resend + React Email
 
+La documentacion historica relacionada esta en `docs/archive/ecommerce/` y no debe tratarse como runbook vigente.
+
 ## Fuente de verdad
 
 Usar este orden de prioridad al analizar o documentar el proyecto:

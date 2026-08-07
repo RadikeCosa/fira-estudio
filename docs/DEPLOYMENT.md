@@ -104,7 +104,7 @@ El procedimiento operativo exacto depende de la configuracion real del proyecto 
 - contacto visible segun el canal definido para esta etapa;
 - no presentar carrito o checkout como parte del relanzamiento publico;
 - `/carrito` y `/checkout` deben quedar fuera del flujo publico;
-- checkout y webhooks solo se revisan mediante un procedimiento seguro y autorizado.
+- cualquier reintroduccion de checkout, pagos o webhooks requiere una auditoria separada y autorizacion explicita.
 
 ## Smoke tests de catalogo
 
@@ -121,7 +121,6 @@ Despues de un futuro deploy listo para validar:
 
 ## Riesgos a tener en cuenta
 
-- checkout, pagos y webhooks son areas sensibles: cualquier cambio ahi requiere validacion mas estricta;
+- checkout, pagos y webhooks fueron retirados del arbol ejecutable principal y cualquier reintroduccion requiere validacion especifica;
 - el catalogo no debe depender de flags comerciales para evitar compra online;
-- para catalogo sin venta online hace falta mantener carrito y checkout fuera del flujo publico;
 - la configuracion real de Preview y Production no debe asumirse solo por documentacion historica.

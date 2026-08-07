@@ -1,7 +1,7 @@
 # Seguridad del Webhook - Resumen Visual
 
 > Documento archivado.
-> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+> Referencia historica resumida en [`../ecommerce/webhooks/WEBHOOK_SECURITY.md`](../ecommerce/webhooks/WEBHOOK_SECURITY.md).
 
 ## 🔒 Capas de Seguridad
 
@@ -246,8 +246,8 @@ Resultado: 401 Unauthorized - Timestamp too old
 | `lib/mercadopago/webhook-security.ts`      | Funciones de validación        |
 | `lib/mercadopago/webhook-security.test.ts` | Tests unitarios (18 casos)     |
 | `app/api/checkout/webhook/route.ts`        | Endpoint del webhook           |
-| `docs/WEBHOOK_SECURITY.md`                 | Guía completa de configuración |
-| `docs/WEBHOOK_SECURITY.md`                 | Referencia operativa vigente   |
+| `docs/archive/ecommerce/webhooks/WEBHOOK_SECURITY.md`                 | Guia historica de configuracion |
+| `docs/archive/ecommerce/webhooks/WEBHOOK_SECURITY.md`                 | Referencia historica   |
 
 ---
 

@@ -1,7 +1,7 @@
 # Webhook Reconciliation Implementation - COMPLETE ✅
 
 > Documento archivado.
-> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+> Referencia historica resumida en [`../ecommerce/webhooks/WEBHOOK_SECURITY.md`](../ecommerce/webhooks/WEBHOOK_SECURITY.md).
 
 **Status:** IMPLEMENTED - Queue-based processing with reconciliation  
 **Date:** 2026-02-04  

@@ -1,7 +1,7 @@
 # Guía Paso a Paso: Configurar Webhook en Mercado Pago
 
 > Documento archivado.
-> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+> Referencia historica resumida en [`../ecommerce/webhooks/WEBHOOK_SECURITY.md`](../ecommerce/webhooks/WEBHOOK_SECURITY.md).
 
 **Fecha:** 4 de febrero de 2026
 
@@ -364,4 +364,4 @@ Una vez confirmado que los webhooks funcionan:
 
 ---
 
-**¿Necesitas ayuda?** Revisa [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md) para la referencia tecnica vigente.
+**¿Necesitas ayuda?** Revisa [`../ecommerce/webhooks/WEBHOOK_SECURITY.md`](../ecommerce/webhooks/WEBHOOK_SECURITY.md) para la referencia historica.

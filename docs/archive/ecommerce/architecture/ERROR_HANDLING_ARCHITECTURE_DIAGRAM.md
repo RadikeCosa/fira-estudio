@@ -1,5 +1,7 @@
 # Error Handling Architecture Diagram
 
+> Archivo historico: incluye clases y ejemplos comerciales retirados del arbol ejecutable principal.
+
 ## Error Class Hierarchy
 
 ```

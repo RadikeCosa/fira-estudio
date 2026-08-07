@@ -11,6 +11,7 @@ Este directorio preserva material historico, educativo o supersedido.
 ## Secciones archivadas
 
 - `blog-carrito-mercadopago/`: serie educativa sobre carrito, checkout y Mercado Pago.
+- `ecommerce/`: documentacion historica de pagos, webhooks, emails, checkout y arquitectura comercial retirada.
 - `maintenance-mode/`: visuales, quickstarts y resumentes historicos de maintenance mode.
 - `payments-webhooks/`: guias extendidas, quick references y material de reconciliacion desplazado por docs activas mas chicas.
 - `operations/`: documentos operativos viejos o redundantes.

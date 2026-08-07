@@ -166,7 +166,7 @@ Actualizacion Fase 0:
 Hallazgos principales:
 
 - parte de la documentacion historica y archivada sigue tratando pagos, webhooks y emails como superficie operativa;
-- `docs/WEBHOOK_SECURITY.md`, `docs/ORDER_CONFIRMATION_EMAIL.md` y material archivado deben considerarse infraestructura historica suspendida;
+- `docs/archive/ecommerce/` conserva documentacion comercial historica; no debe considerarse infraestructura operativa vigente;
 - maintenance mode ya no debe tratarse como catalog mode;
 - la documentacion activa debe enlazar a `PRODUCT_SCOPE.md` para evitar duplicar el contrato.
 

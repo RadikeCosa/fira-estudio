@@ -180,4 +180,5 @@ No es necesario para ejecutar, compilar o desplegar el catalogo. Una eventual re
 - [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md): checklist y consideraciones de deploy.
 - [docs/VERCEL_SETUP.md](./docs/VERCEL_SETUP.md): carga segura de variables en Vercel.
 - [docs/MAINTENANCE_MODE.md](./docs/MAINTENANCE_MODE.md): alcance real del maintenance mode.
+- [docs/archive/ecommerce/README.md](./docs/archive/ecommerce/README.md): material historico de e-commerce, no operativo.
 - [docs/audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md](./docs/audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md): auditoria base del reinicio.

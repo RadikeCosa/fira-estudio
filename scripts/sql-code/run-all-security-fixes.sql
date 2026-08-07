@@ -2,7 +2,9 @@
 -- RUN ALL SECURITY FIXES (ONE-SHOT) - SUPABASE
 -- ============================================================================
 -- This script applies all reported security remediations in one execution.
--- Safe to run more than once.
+-- Catalog restart note: this is mixed historical SQL. It touches the active-ish
+-- consultas table and historical e-commerce/webhook objects. Do not run it for
+-- the catalog without a dedicated SQL audit.
 
 BEGIN;
 

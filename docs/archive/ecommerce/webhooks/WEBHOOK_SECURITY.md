@@ -1,10 +1,10 @@
 # Pagos y seguridad de webhooks
 
-Este documento resume la capa sensible de Mercado Pago y webhooks existente en el repo.
+> Archivo historico: describe una capa de Mercado Pago y webhooks retirada del arbol ejecutable principal. No usar como guia operativa vigente.
 
-En la etapa actual de relanzamiento catalogo, esta documentacion debe leerse como referencia tecnica de funcionalidad suspendida, no como camino operativo activo.
+Este documento resume la capa sensible de Mercado Pago y webhooks que existia en el repo antes del reinicio como catalogo.
 
-La documentacion historica ampliada fue movida a [`archive/payments-webhooks/`](./archive/payments-webhooks/).
+La documentacion historica ampliada esta en [`../../payments-webhooks/`](../../payments-webhooks/).
 
 ## Alcance
 
@@ -91,11 +91,11 @@ Referencias de observacion:
 
 ## Documentacion relacionada
 
-- [`ORDER_CONFIRMATION_EMAIL.md`](./ORDER_CONFIRMATION_EMAIL.md)
-- [`TESTING_STRATEGY.md`](./TESTING_STRATEGY.md)
-- [`VERCEL_SETUP.md`](./VERCEL_SETUP.md)
-- [`../scripts/sql-code/README.md`](../scripts/sql-code/README.md)
-- material archivado: [`archive/payments-webhooks/`](./archive/payments-webhooks/)
+- [`../emails/ORDER_CONFIRMATION_EMAIL.md`](../emails/ORDER_CONFIRMATION_EMAIL.md)
+- [`../testing/CHECKOUT_TESTING_STRATEGY.md`](../testing/CHECKOUT_TESTING_STRATEGY.md)
+- [`../../../VERCEL_SETUP.md`](../../../VERCEL_SETUP.md)
+- [`../../../../scripts/sql-code/README.md`](../../../../scripts/sql-code/README.md)
+- material archivado: [`../../payments-webhooks/`](../../payments-webhooks/)
 
 ## Referencias
 

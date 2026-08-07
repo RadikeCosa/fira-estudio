@@ -1,5 +1,7 @@
 # Error Handling Quick Reference
 
+> Archivo historico: contiene snippets para endpoints comerciales retirados del arbol ejecutable principal.
+
 **Quick copy-paste patterns for implementing AppError in new endpoints**
 
 ---

@@ -74,19 +74,11 @@
 
 ---
 
-#### 5️⃣ **Analytics** - Entender qué hacen tus usuarios
+#### Material de analytics historico
 
-- **Archivo:** [ANALYTICS_BASICS.md](ANALYTICS_BASICS.md)
-- **Para:** Si no sabes qué es Google Analytics o GA4
-- **Tiempo:** 8 minutos
-- **Includes:**
-  - Qué es analytics (analogía tienda física)
-  - 7 eventos que rastreamos (add_to_cart, view_cart, remove_from_cart, etc.)
-  - Cómo funcionan los tracking helpers
-  - Cómo verificar en Real-time dashboard
-  - Cómo leer el dashboard de GA4
+El onboarding anterior de GA4 estaba centrado en eventos comerciales (`add_to_cart`, `view_cart`, `purchase`) y quedo archivado en [`../archive/ecommerce/analytics/ANALYTICS_BASICS.md`](../archive/ecommerce/analytics/ANALYTICS_BASICS.md).
 
-**¿Cuándo leer?** Cuando agregues un nuevo componente con interacción o cuando necesites entender por qué ciertos eventos no se registran.
+Para el catalogo vigente, revisar el codigo real de `lib/analytics/` y la estrategia activa en [`../TESTING_STRATEGY.md`](../TESTING_STRATEGY.md).
 
 ---
 
@@ -102,9 +94,8 @@ DÍA 1:
 DÍA 2:
 3. CACHING_BASICS.md (15 min) - Optimizar velocidad
 4. METADATA_BASICS.md (10 min) - SEO y redes sociales
-5. ANALYTICS_BASICS.md (8 min) - Entender usuarios
 
-Total: ~78 minutos
+Total: ~70 minutos
 ```
 
 Después: Abre código real (app/, lib/) y experimenta.
@@ -139,8 +130,8 @@ Eso es suficiente para empezar. Lees los otros cuando los necesites.
 "¿Por qué mi página no aparece bien en Google?"
 → METADATA_BASICS.md
 
-"¿Cómo sé si la gente está comprando?"
-→ ANALYTICS_BASICS.md
+"¿Cómo valido analytics del catalogo?"
+→ Revisar lib/analytics/ y docs/TESTING_STRATEGY.md
 ```
 
 ```
@@ -157,7 +148,7 @@ Después de leer los basics, puedes profundizar:
 | **Datos** | DATA_AND_QUERIES.md | [docs/CACHING_ARCHITECTURE.md](../CACHING_ARCHITECTURE.md) |
 | **Caching** | CACHING_BASICS.md | [docs/CACHING_ARCHITECTURE.md](../CACHING_ARCHITECTURE.md) |
 | **Metadata/SEO** | METADATA_BASICS.md | [docs/METADATA_STANDARD.md](../METADATA_STANDARD.md) |
-| **Analytics** | ANALYTICS_BASICS.md | `lib/analytics/` y eventos instrumentados en codigo |
+| **Analytics** | - | `lib/analytics/` y eventos instrumentados en codigo |
 | **Errores** | (cubierto en DATA_AND_QUERIES) | [docs/error-boundaries.md](../error-boundaries.md) |
 | **Design System** | (cubierto en PROJECT_STRUCTURE) | [docs/STYLE_MANAGEMENT.md](../STYLE_MANAGEMENT.md) |
 
@@ -173,9 +164,7 @@ Sí. Si solo necesitas entender caching, lee CACHING_BASICS.md. Pero los tres te
 
 - CACHING_BASICS.md: 10-15 minutos
 - METADATA_BASICS.md: 10 minutos
-- ANALYTICS_BASICS.md: 8 minutos
-
-Total beginner path: ~30 minutos
+Total beginner path: ~25 minutos
 
 ### "¿Necesito código?"
 
@@ -203,8 +192,7 @@ Después de leer los 3 documentos, deberías poder:
 - [ ] Explicar qué es cache sin mirar notas
 - [ ] Saber cuándo cachear un query y cuándo no
 - [ ] Usar `buildMetadata()` en una página
-- [ ] Agregar `trackAddToCart()` en un componente
-- [ ] Verificar que GA4 registre eventos en production
+- [ ] Verificar que GA4 registre eventos de catalogo cuando este configurado
 - [ ] Entender por qué `npm run dev` no cachea
 - [ ] Compartir un link en WhatsApp y que se vea bien
 
@@ -214,7 +202,7 @@ Después de leer los 3 documentos, deberías poder:
 
 1. **Abre CACHING_BASICS.md** ← Empieza aquí
 2. Después lee METADATA_BASICS.md
-3. Después lee ANALYTICS_BASICS.md
+3. Revisa `lib/analytics/` si vas a tocar medicion
 4. Abre la documentación avanzada si necesitas más detalles
 5. ¡Comienza a codear!
 
@@ -225,8 +213,8 @@ Después de leer los 3 documentos, deberías poder:
 Si agregás un nuevo miembro al equipo:
 
 1. Mándalo a esta carpeta
-2. Pídele que lea los 3 .md en orden
-3. En ~30 minutos va a entender los pilares principales
+2. Pídele que lea los docs vigentes en orden
+3. En ~25 minutos va a entender los pilares principales
 4. Después, pair programming con tasks del proyecto
 
 ---

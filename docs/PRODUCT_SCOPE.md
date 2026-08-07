@@ -41,6 +41,8 @@ Actualizacion Fase 2B: la flag publica historica de checkout y la configuracion 
 
 Actualizacion Fase 2C: `CartRepository`, Mercado Pago, webhooks, reconciliacion, emails transaccionales, tipos comerciales huerfanos, variables historicas activas y dependencias npm comerciales fueron retirados del arbol ejecutable principal. La evidencia tecnica queda en Git y en documentacion historica pendiente de archivar.
 
+Actualizacion Fase 2D: la documentacion comercial historica fue movida a `docs/archive/ecommerce/` y el SQL restante fue reclasificado como referencia mixta, no como guia de ejecucion para el catalogo. El estado real de Supabase remoto sigue `pendiente de confirmar`.
+
 ## Fuera de alcance vigente
 
 Estas capacidades no forman parte del producto publico actual:
@@ -68,9 +70,9 @@ Hasta cerrar esa decision, la documentacion no debe prometer un canal operativo 
 
 ## Infraestructura historica
 
-El repositorio conserva documentacion y SQL historico de e-commerce, pero ya no conserva codigo ejecutable principal de carrito, ordenes, Mercado Pago, webhooks, emails transaccionales ni dependencias asociadas.
+El repositorio conserva documentacion archivada y SQL historico de e-commerce, pero ya no conserva codigo ejecutable principal de carrito, ordenes, Mercado Pago, webhooks, emails transaccionales ni dependencias asociadas.
 
-Esa infraestructura puede mantenerse temporalmente para referencia tecnica, pero debe quedar fuera de las superficies publicas y no debe ser necesaria para el despliegue del catalogo.
+Esa infraestructura puede mantenerse temporalmente para referencia tecnica, pero debe quedar fuera de las superficies publicas y no debe ser necesaria para el despliegue del catalogo. La documentacion archivada no debe usarse como runbook de production.
 
 No debe reactivarse comercio mediante una modificacion accidental de variables. Desde Fase 2C tampoco quedan repositorios, integraciones de pago, webhooks, emails transaccionales ni dependencias comerciales instaladas para sostener un flujo de compra.
 
@@ -104,4 +106,4 @@ El proyecto debe demostrar buenas practicas en:
 - Proyecto Vercel, dominio y variables reales por entorno.
 - Estado real de Supabase remoto, datos, Storage e imagenes.
 - Analytics activo y objetivo de medicion.
-- Estrategia para archivar o reescribir documentacion y SQL historico comercial.
+- Decision futura sobre si dividir SQL mixto en `catalog-schema.sql` y un archivo historico comercial separado.

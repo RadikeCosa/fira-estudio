@@ -54,7 +54,7 @@ El catalogo deberia quedar operativo sin activar checkout.
 - No asumir desde esta doc si Preview o Production estan hoy en maintenance mode: queda `pendiente de confirmar`.
 - Si se usa en Vercel, coordinarlo con variables por entorno y redeploy.
 - Si cambia una variable `NEXT_PUBLIC_*`, tratarlo como cambio que requiere rebuild/redeploy.
-- No usar maintenance mode para ocultar deuda funcional de comercio; el aislamiento de carrito, checkout y endpoints comerciales corresponde a una fase funcional posterior.
+- No usar maintenance mode para ocultar deuda funcional de comercio; carrito, checkout y endpoints comerciales ya no forman parte del arbol ejecutable principal.
 
 ## Referencias
 

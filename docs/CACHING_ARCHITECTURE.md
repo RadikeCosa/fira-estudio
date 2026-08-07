@@ -467,10 +467,10 @@ export async function POST(request: Request) {
 }
 ```
 
-### Pattern 3: Invalidar con webhook
+### Pattern 3: Invalidar desde endpoint externo autorizado
 
 ```typescript
-// app/api/webhooks/supabase/route.ts
+// app/api/revalidate/route.ts
 
 export async function POST(request: Request) {
   const event = await request.json();

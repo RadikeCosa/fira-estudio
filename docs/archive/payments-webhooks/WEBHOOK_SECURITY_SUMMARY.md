@@ -1,7 +1,7 @@
 # 🔐 Seguridad del Webhook de Mercado Pago - Resumen Ejecutivo
 
 > Documento archivado.
-> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+> Referencia historica resumida en [`../ecommerce/webhooks/WEBHOOK_SECURITY.md`](../ecommerce/webhooks/WEBHOOK_SECURITY.md).
 
 ## ✅ Problema Resuelto
 
@@ -74,13 +74,13 @@ function validateWebhookSignature(headers, rawBody, paymentId, timestamp);
    - Tests para firmas válidas/inválidas
    - Tests para IPs autorizadas/no autorizadas
 
-3. **`docs/WEBHOOK_SECURITY.md`** (Guía completa)
+3. **`docs/archive/ecommerce/webhooks/WEBHOOK_SECURITY.md`** (Guia historica)
    - Cómo obtener webhook secret
    - Flujo de seguridad explicado
    - Testing en desarrollo
    - Deployment en Vercel
 
-4. **`docs/WEBHOOK_SECURITY.md`** (documentacion vigente)
+4. **`docs/archive/ecommerce/webhooks/WEBHOOK_SECURITY.md`** (documentacion historica)
    - Resumen de implementación
    - Configuración requerida
    - Testing y deployment
@@ -239,8 +239,8 @@ curl -X POST http://localhost:3000/api/checkout/webhook \
 
 | Documento                                                  | Contenido                                       |
 | ---------------------------------------------------------- | ----------------------------------------------- |
-| [WEBHOOK_SECURITY.md](./WEBHOOK_SECURITY.md)               | Guía completa de configuración y funcionamiento |
-| [WEBHOOK_SECURITY.md](../../WEBHOOK_SECURITY.md) | Documentacion vigente de seguridad              |
+| [WEBHOOK_SECURITY.md](../ecommerce/webhooks/WEBHOOK_SECURITY.md)               | Guia historica de configuracion y funcionamiento |
+| [WEBHOOK_SECURITY.md](../ecommerce/webhooks/WEBHOOK_SECURITY.md) | Documentacion historica de seguridad              |
 | [WEBHOOK_SECURITY_VISUAL.md](./WEBHOOK_SECURITY_VISUAL.md) | Diagramas visuales y flujos                     |
 
 ---
@@ -304,8 +304,8 @@ Los rangos CIDR pueden cambiar. **Verificar periódicamente:**
 Files created:
   + lib/mercadopago/webhook-security.ts (140 líneas)
   + lib/mercadopago/webhook-security.test.ts (200 líneas)
-  + docs/WEBHOOK_SECURITY.md (completo)
-  + docs/WEBHOOK_SECURITY.md (vigente)
+  + docs/archive/ecommerce/webhooks/WEBHOOK_SECURITY.md (completo)
+  + docs/archive/ecommerce/webhooks/WEBHOOK_SECURITY.md (historico)
   + docs/WEBHOOK_SECURITY_VISUAL.md (completo)
 
 Files modified:

@@ -1,5 +1,7 @@
 # Order Confirmation Email
 
+> Archivo historico: describe emails transaccionales de pedidos retirados del arbol ejecutable principal. No usar como guia de setup vigente.
+
 This document describes the order confirmation email feature for Fira Estudio.
 
 ## Overview
@@ -59,7 +61,7 @@ Add to your `.env.local`:
 ```bash
 # Resend API Key (required)
 # Get from: https://resend.com/api-keys
-RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxx
+RESEND_API_KEY=your-resend-api-key
 
 # Optional: Custom sender email
 # Must be verified in Resend dashboard

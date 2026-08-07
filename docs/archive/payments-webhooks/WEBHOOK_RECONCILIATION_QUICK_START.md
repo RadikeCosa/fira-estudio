@@ -1,7 +1,7 @@
 # Webhook Reconciliation - Quick Integration Guide
 
 > Documento archivado.
-> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+> Referencia historica resumida en [`../ecommerce/webhooks/WEBHOOK_SECURITY.md`](../ecommerce/webhooks/WEBHOOK_SECURITY.md).
 
 **Estimated Integration Time:** 30 minutes  
 **Complexity:** Medium  

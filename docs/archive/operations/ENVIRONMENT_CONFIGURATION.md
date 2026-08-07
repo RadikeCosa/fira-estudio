@@ -52,10 +52,12 @@ MERCADOPAGO_INTEGRATOR_ID=dev_... (tu ID de integrador)
 
 ```
 MERCADOPAGO_ACCESS_TOKEN = [copiar de credentials.json]
-MERCADOPAGO_INTEGRATOR_ID = dev_24c65fb163bf11ea96500242ac130004
+MERCADOPAGO_INTEGRATOR_ID = dev_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 ```
 
 **Nota:** Las URLs de checkout NO necesitas configurarlas en Vercel. Se generan automáticamente desde `VERCEL_URL`.
+
+**Seguridad:** este documento es historico. Si algun identificador real de Mercado Pago fue versionado en el pasado, tratarlo como `requiere rotacion manual`.
 
 ## Archivos Modificados
 

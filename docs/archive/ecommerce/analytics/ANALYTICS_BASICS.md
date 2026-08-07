@@ -1,5 +1,7 @@
 # 📊 Analytics para Beginners - GA4 en 5 Minutos
 
+> Archivo historico: este onboarding describe eventos comerciales retirados del producto vigente. No usar como guia activa de analytics para el catalogo.
+
 No necesitas experiencia en analytics. Este documento explica **qué es GA4** y **cómo usarlo** en Fira Estudio.
 
 ---

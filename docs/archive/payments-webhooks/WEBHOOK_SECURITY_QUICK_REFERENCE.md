@@ -1,7 +1,7 @@
 # 🔐 Webhook Security - Quick Reference
 
 > Documento archivado.
-> La referencia operativa vigente es [`../../WEBHOOK_SECURITY.md`](../../WEBHOOK_SECURITY.md).
+> Referencia historica resumida en [`../ecommerce/webhooks/WEBHOOK_SECURITY.md`](../ecommerce/webhooks/WEBHOOK_SECURITY.md).
 
 ## 📋 Checklist Pre-Deployment
 
@@ -130,7 +130,7 @@ MERCADOPAGO_INTEGRATOR_ID=integrator_id...
 | `lib/mercadopago/webhook-security.ts`      | Funciones de validación |
 | `app/api/checkout/webhook/route.ts`        | Endpoint (modificado)   |
 | `lib/mercadopago/webhook-security.test.ts` | Tests                   |
-| `docs/WEBHOOK_SECURITY.md`                 | Guía completa           |
+| `docs/archive/ecommerce/webhooks/WEBHOOK_SECURITY.md`                 | Guia historica           |
 
 ---
 
@@ -217,8 +217,8 @@ if (!isSignatureValid) {
 
 ## 📚 Documentación Completa
 
-- [WEBHOOK_SECURITY.md](./WEBHOOK_SECURITY.md) - Guía técnica
-- [WEBHOOK_SECURITY.md](../../WEBHOOK_SECURITY.md) - Referencia vigente
+- [WEBHOOK_SECURITY.md](../ecommerce/webhooks/WEBHOOK_SECURITY.md) - Guía técnica
+- [WEBHOOK_SECURITY.md](../ecommerce/webhooks/WEBHOOK_SECURITY.md) - Referencia historica
 - [WEBHOOK_SECURITY_VISUAL.md](./WEBHOOK_SECURITY_VISUAL.md) - Diagramas
 - [WEBHOOK_SECURITY_SUMMARY.md](./WEBHOOK_SECURITY_SUMMARY.md) - Resumen ejecutivo
 
