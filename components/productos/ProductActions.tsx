@@ -5,10 +5,14 @@ import { useMemo, useState } from "react";
 import { WhatsAppButton } from "@/components/productos/WhatsAppButton";
 import { BUTTONS, CART_LAYOUT } from "@/lib/design/tokens";
 import { formatPrice } from "@/lib/utils";
-import { ProductoCompleto } from "@/lib/types";
+import type { ProductoCompleto } from "@/lib/types";
 
 interface ProductActionsProps {
   producto: ProductoCompleto;
+}
+
+function buildOptionId(prefix: string, value: string): string {
+  return `${prefix}-${value.replace(/[^a-zA-Z0-9_-]+/g, "-")}`;
 }
 
 /**
@@ -26,6 +30,10 @@ export function ProductActions({ producto }: ProductActionsProps) {
     () => producto.variaciones || [],
     [producto.variaciones],
   );
+  const activeVariations = useMemo(
+    () => variations.filter((variation) => variation.activo),
+    [variations],
+  );
   const sizes = useMemo(
     () => [...new Set(variations.map((variation) => variation.tamanio))],
     [variations],
@@ -34,12 +42,20 @@ export function ProductActions({ producto }: ProductActionsProps) {
     () => [...new Set(variations.map((variation) => variation.color))],
     [variations],
   );
+  const activeSizes = useMemo(
+    () => [...new Set(activeVariations.map((variation) => variation.tamanio))],
+    [activeVariations],
+  );
+  const activeColors = useMemo(
+    () => [...new Set(activeVariations.map((variation) => variation.color))],
+    [activeVariations],
+  );
   const resolvedSelectedSize =
-    selectedSize ?? (sizes.length === 1 ? sizes[0] : null);
+    selectedSize ?? (activeSizes.length === 1 ? activeSizes[0] : null);
   const resolvedSelectedColor =
-    selectedColor ?? (colors.length === 1 ? colors[0] : null);
+    selectedColor ?? (activeColors.length === 1 ? activeColors[0] : null);
 
-  const variation = variations.find((currentVariation) => {
+  const variation = activeVariations.find((currentVariation) => {
     const sizeMatch = resolvedSelectedSize
       ? currentVariation.tamanio === resolvedSelectedSize
       : sizes.length === 0;
@@ -50,23 +66,56 @@ export function ProductActions({ producto }: ProductActionsProps) {
     return sizeMatch && colorMatch;
   });
 
-  const hasVariations = sizes.length > 0 || colors.length > 0;
-  const hasAnyStock = variations.some(
-    (currentVariation) => currentVariation.stock > 0,
-  );
   const displayPrice = variation?.precio ?? producto.precio_desde;
+  const radioGroupName = `product-${producto.id}`;
 
-  let availabilityLabel = "Disponibilidad sujeta a consulta";
-  if (variation) {
-    availabilityLabel =
-      variation.stock > 0
-        ? `${variation.stock} disponible${variation.stock === 1 ? "" : "s"}`
-        : "Sin stock inmediato";
-  } else if (!hasVariations && hasAnyStock) {
-    availabilityLabel = "Disponibilidad sujeta a consulta";
-  } else if (!hasAnyStock) {
-    availabilityLabel = "Consultar disponibilidad";
-  }
+  const isSizeSelectable = (size: string): boolean =>
+    activeVariations.some(
+      (currentVariation) =>
+        currentVariation.tamanio === size &&
+        (!resolvedSelectedColor ||
+          currentVariation.color === resolvedSelectedColor),
+    );
+
+  const isColorSelectable = (color: string): boolean =>
+    activeVariations.some(
+      (currentVariation) =>
+        currentVariation.color === color &&
+        (!resolvedSelectedSize ||
+          currentVariation.tamanio === resolvedSelectedSize),
+    );
+
+  const handleSizeChange = (size: string): void => {
+    setSelectedSize(size);
+    if (
+      selectedColor &&
+      !activeVariations.some(
+        (currentVariation) =>
+          currentVariation.tamanio === size &&
+          currentVariation.color === selectedColor,
+      )
+    ) {
+      setSelectedColor(null);
+    }
+  };
+
+  const handleColorChange = (color: string): void => {
+    setSelectedColor(color);
+    if (
+      selectedSize &&
+      !activeVariations.some(
+        (currentVariation) =>
+          currentVariation.color === color &&
+          currentVariation.tamanio === selectedSize,
+      )
+    ) {
+      setSelectedSize(null);
+    }
+  };
+
+  const availabilityLabel = variation
+    ? "Disponibilidad a consultar para esta variante"
+    : "Disponibilidad a consultar";
 
   return (
     <div
@@ -85,49 +134,103 @@ export function ProductActions({ producto }: ProductActionsProps) {
       )}
 
       {sizes.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Tamaño</p>
-          <div className="flex flex-wrap gap-2">
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-medium">Tamaño</legend>
+          <div
+            className="flex flex-wrap gap-2"
+            role="radiogroup"
+            aria-label="Tamaño"
+          >
             {sizes.map((size) => {
               const isSelected = resolvedSelectedSize === size;
+              const isDisabled = !isSizeSelectable(size);
+              const id = buildOptionId(`${radioGroupName}-size`, size);
 
               return (
-                <button
+                <label
                   key={size}
-                  type="button"
-                  onClick={() => setSelectedSize(size)}
-                  aria-pressed={isSelected}
-                  className={isSelected ? BUTTONS.primary : BUTTONS.secondary}
+                  htmlFor={id}
+                  className={
+                    (isSelected ? BUTTONS.primary : BUTTONS.secondary) +
+                    " inline-flex cursor-pointer items-center gap-2 focus-within:ring-2 focus-within:ring-foreground focus-within:ring-offset-2" +
+                    (isDisabled
+                      ? " cursor-not-allowed opacity-50"
+                      : " hover:border-foreground/60")
+                  }
                 >
+                  <input
+                    id={id}
+                    type="radio"
+                    name={`${radioGroupName}-size`}
+                    value={size}
+                    checked={isSelected}
+                    disabled={isDisabled}
+                    onChange={() => handleSizeChange(size)}
+                    className="sr-only"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className={
+                      "h-2.5 w-2.5 rounded-full border border-current " +
+                      (isSelected ? "bg-current" : "bg-transparent")
+                    }
+                  />
                   {size}
-                </button>
+                </label>
               );
             })}
           </div>
-        </div>
+        </fieldset>
       )}
 
       {colors.length > 0 && (
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Color</p>
-          <div className="flex flex-wrap gap-2">
+        <fieldset className="space-y-2">
+          <legend className="text-sm font-medium">Color</legend>
+          <div
+            className="flex flex-wrap gap-2"
+            role="radiogroup"
+            aria-label="Color"
+          >
             {colors.map((color) => {
               const isSelected = resolvedSelectedColor === color;
+              const isDisabled = !isColorSelectable(color);
+              const id = buildOptionId(`${radioGroupName}-color`, color);
 
               return (
-                <button
+                <label
                   key={color}
-                  type="button"
-                  onClick={() => setSelectedColor(color)}
-                  aria-pressed={isSelected}
-                  className={isSelected ? BUTTONS.primary : BUTTONS.secondary}
+                  htmlFor={id}
+                  className={
+                    (isSelected ? BUTTONS.primary : BUTTONS.secondary) +
+                    " inline-flex cursor-pointer items-center gap-2 focus-within:ring-2 focus-within:ring-foreground focus-within:ring-offset-2" +
+                    (isDisabled
+                      ? " cursor-not-allowed opacity-50"
+                      : " hover:border-foreground/60")
+                  }
                 >
+                  <input
+                    id={id}
+                    type="radio"
+                    name={`${radioGroupName}-color`}
+                    value={color}
+                    checked={isSelected}
+                    disabled={isDisabled}
+                    onChange={() => handleColorChange(color)}
+                    className="sr-only"
+                  />
+                  <span
+                    aria-hidden="true"
+                    className={
+                      "h-2.5 w-2.5 rounded-full border border-current " +
+                      (isSelected ? "bg-current" : "bg-transparent")
+                    }
+                  />
                   {color}
-                </button>
+                </label>
               );
             })}
           </div>
-        </div>
+        </fieldset>
       )}
 
       <div className="space-y-2 rounded-lg border border-border/70 bg-white/80 p-4">

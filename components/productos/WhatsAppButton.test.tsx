@@ -69,10 +69,11 @@ describe("WhatsAppButton", () => {
       const message = buildProductInquiryMessage(mockProducto);
 
       expect(message).toBe(
-        "Hola, queria consultar por Mantel Floral. ¿Esta disponible?",
+        "Hola, quería consultar por Mantel Floral. ¿Está disponible para coordinar?",
       );
       expect(message).not.toContain("comprarlo");
       expect(message).not.toContain("pagar");
+      expect(message).not.toContain("stock");
     });
 
     it("builds a concise product inquiry message with variation", () => {
@@ -82,7 +83,7 @@ describe("WhatsAppButton", () => {
       );
 
       expect(message).toBe(
-        "Hola, queria consultar por Mantel Floral, variante 150x200cm / Rojo. ¿Esta disponible?",
+        "Hola, quería consultar por Mantel Floral, variante 150x200cm / Rojo. ¿Está disponible para coordinar?",
       );
     });
 
@@ -125,9 +126,10 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("¿Esta disponible?");
+      expect(decodedMessage).toContain("¿Está disponible para coordinar?");
       expect(decodedMessage).not.toContain("disponible en stock");
       expect(decodedMessage).not.toContain("a pedido");
+      expect(decodedMessage).not.toContain("stock");
     });
 
     it("does not invent production status when stock = 0", () => {
@@ -141,9 +143,10 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("¿Esta disponible?");
+      expect(decodedMessage).toContain("¿Está disponible para coordinar?");
       expect(decodedMessage).not.toContain("a pedido");
       expect(decodedMessage).not.toContain("disponible en stock");
+      expect(decodedMessage).not.toContain("stock");
     });
 
     it("asks for general information when no variation selected", () => {
@@ -152,7 +155,7 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("queria consultar");
+      expect(decodedMessage).toContain("quería consultar");
       expect(decodedMessage).toContain("Mantel Floral");
     });
   });

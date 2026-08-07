@@ -21,7 +21,7 @@ export function buildProductInquiryMessage(
     ? `, variante ${variacion.tamanio} / ${variacion.color}`
     : "";
 
-  return `Hola, queria consultar por ${producto.nombre}${variantLabel}. ¿Esta disponible?`;
+  return `Hola, quería consultar por ${producto.nombre}${variantLabel}. ¿Está disponible para coordinar?`;
 }
 
 /**
