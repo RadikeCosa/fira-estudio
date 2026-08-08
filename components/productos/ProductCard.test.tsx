@@ -100,7 +100,7 @@ describe("ProductCard", () => {
     );
     expect(image).toHaveAttribute(
       "src",
-      expect.stringContaining("producto-sin-imagen"),
+      expect.stringContaining("placeholder-image.jpeg"),
     );
   });
 

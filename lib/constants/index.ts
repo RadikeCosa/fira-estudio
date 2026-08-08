@@ -58,7 +58,7 @@ export const STORAGE = {
   /** Ruta para placeholders */
   placeholdersPath: "/images/placeholders",
   /** URL de producto placeholder */
-  productPlaceholder: "/images/placeholders/producto-sin-imagen.jpg",
+  productPlaceholder: "/images/placeholders/placeholder-image.jpeg",
 } as const;
 
 /** Configuración de Supabase Storage (para cuando migres) */
