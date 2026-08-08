@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { Producto } from "@/lib/types";
+import type { Categoria, Producto } from "@/lib/types";
 import { formatPrice, getImageUrl, getProductImageAlt } from "@/lib/utils";
 
 interface ProductCardProps {
-  producto: Producto;
+  producto: Producto & { categoria?: Pick<Categoria, "nombre"> | null };
   imagenPrincipal?: string;
   imagenAlt?: string | null;
 }
@@ -18,8 +18,11 @@ export function ProductCard({
   const imageAlt = getProductImageAlt(producto.nombre, imagenAlt);
   const precioFormateado =
     producto.precio_desde != null
-      ? `Desde ${formatPrice(producto.precio_desde)}`
+      ? `Precio de referencia desde ${formatPrice(producto.precio_desde)}`
       : null;
+  const contextItems = [producto.categoria?.nombre, producto.material]
+    .filter(Boolean)
+    .slice(0, 2);
 
   return (
     <Link
@@ -92,7 +95,7 @@ export function ProductCard({
       </div>
 
       {/* Información del Producto */}
-      <div className="p-5">
+      <div className="flex min-h-[168px] flex-col p-5">
         <h3
           className="
             mb-2
@@ -107,11 +110,21 @@ export function ProductCard({
           {producto.nombre}
         </h3>
 
+        {contextItems.length > 0 && (
+          <p className="mb-3 text-sm text-muted-foreground">
+            {contextItems.join(" · ")}
+          </p>
+        )}
+
         {precioFormateado && (
           <p className="text-sm font-semibold text-muted-foreground">
             {precioFormateado}
           </p>
         )}
+
+        <span className="mt-auto inline-flex min-h-11 items-center text-sm font-semibold text-foreground">
+          Ver detalle
+        </span>
       </div>
     </Link>
   );

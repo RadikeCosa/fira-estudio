@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ImagenProducto } from "@/lib/types";
@@ -9,6 +9,7 @@ import { getImageAlt, getImageUrl } from "@/lib/utils";
 
 interface ProductGalleryProps {
   imagenes: ImagenProducto[];
+  productName: string;
 }
 
 /**
@@ -23,7 +24,7 @@ interface ProductGalleryProps {
  *
  * @param imagenes - Array de imágenes del producto ordenadas
  */
-export function ProductGallery({ imagenes }: ProductGalleryProps) {
+export function ProductGallery({ imagenes, productName }: ProductGalleryProps) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   // Si no hay imágenes, crear array con placeholder
@@ -35,7 +36,7 @@ export function ProductGallery({ imagenes }: ProductGalleryProps) {
             id: "placeholder",
             producto_id: "",
             url: STORAGE.productPlaceholder,
-            alt_text: "Imagen del producto",
+            alt_text: null,
             orden: 0,
             es_principal: true,
           },
@@ -44,6 +45,10 @@ export function ProductGallery({ imagenes }: ProductGalleryProps) {
   const imagenActual = imagenesAMostrar[currentIndex];
   const totalImagenes = imagenesAMostrar.length;
   const hayMultiplesImagenes = totalImagenes > 1;
+  const mainImageAlt = getImageAlt(
+    imagenActual.alt_text,
+    currentIndex === 0 ? productName : `${productName}, imagen ${currentIndex + 1}`,
+  );
 
   /**
    * Navega a la imagen anterior
@@ -66,26 +71,27 @@ export function ProductGallery({ imagenes }: ProductGalleryProps) {
     setCurrentIndex(index);
   };
 
-  /**
-   * Maneja la navegación con teclado (flechas izquierda/derecha)
-   */
-  useEffect(() => {
+  const handleGalleryKeyDown = (
+    event: React.KeyboardEvent<HTMLDivElement>,
+  ): void => {
     if (!hayMultiplesImagenes) return;
 
-    const handleKeyDown = (e: KeyboardEvent): void => {
-      if (e.key === "ArrowLeft") {
-        setCurrentIndex((prev) => Math.max(prev - 1, 0));
-      } else if (e.key === "ArrowRight") {
-        setCurrentIndex((prev) => Math.min(prev + 1, totalImagenes - 1));
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [hayMultiplesImagenes, totalImagenes]);
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      handlePrevious();
+    } else if (event.key === "ArrowRight") {
+      event.preventDefault();
+      handleNext();
+    }
+  };
 
   return (
-    <div className="space-y-4 w-full">
+    <div
+      className="space-y-4 w-full"
+      onKeyDown={handleGalleryKeyDown}
+      role="region"
+      aria-label={`Galería de imágenes de ${productName}`}
+    >
       {/* Imagen principal con controles de navegación */}
       <div
         className="
@@ -101,7 +107,7 @@ export function ProductGallery({ imagenes }: ProductGalleryProps) {
       >
         <Image
           src={getImageUrl(imagenActual.url)}
-          alt={getImageAlt(imagenActual.alt_text, "Imagen del producto")}
+          alt={mainImageAlt}
           width={800}
           height={800}
           priority
@@ -242,7 +248,7 @@ export function ProductGallery({ imagenes }: ProductGalleryProps) {
             >
               <Image
                 src={getImageUrl(imagen.url)}
-                alt={getImageAlt(imagen.alt_text, `Miniatura ${index + 1}`)}
+                alt=""
                 width={200}
                 height={200}
                 loading="lazy"

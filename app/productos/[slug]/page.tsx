@@ -94,7 +94,10 @@ export default async function ProductPage({ params }: ProductPageProps) {
           >
             {/* Columna izquierda: Galería de imágenes */}
             <div className="w-full">
-              <ProductGallery imagenes={producto.imagenes} />
+              <ProductGallery
+                imagenes={producto.imagenes}
+                productName={producto.nombre}
+              />
             </div>
 
             {/* Columna derecha: Información y acciones */}

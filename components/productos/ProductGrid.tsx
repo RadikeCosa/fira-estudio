@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { ProductoCompleto } from "@/lib/types";
 import { ERROR_MESSAGES } from "@/lib/constants";
 import { getPrincipalImage } from "@/lib/utils";
@@ -15,8 +16,10 @@ export function ProductGrid({ productos }: ProductGridProps) {
         className="
           flex
           min-h-[400px]
+          flex-col
           items-center
           justify-center
+          gap-4
           rounded-lg
           border border-border
           bg-muted/30
@@ -27,6 +30,12 @@ export function ProductGrid({ productos }: ProductGridProps) {
         <p className="text-lg text-muted-foreground">
           {ERROR_MESSAGES.noProducts}
         </p>
+        <Link
+          href="/productos"
+          className="inline-flex min-h-11 items-center rounded-lg border border-border px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2"
+        >
+          Ver todos los productos
+        </Link>
       </div>
     );
   }

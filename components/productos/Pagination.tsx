@@ -41,38 +41,51 @@ export function Pagination({
 
   const previousHref = buildHref(Math.max(1, page - 1));
   const nextHref = buildHref(page + 1);
+  const disabledButtonClass = cn(
+    COMPONENTS.pagination.button,
+    COMPONENTS.pagination.buttonDisabled,
+  );
+  const activeButtonClass = cn(
+    COMPONENTS.pagination.button,
+    COMPONENTS.pagination.buttonActive,
+  );
 
   return (
-    <nav aria-label="Paginación" className={COMPONENTS.pagination.nav}>
-      <Link
-        href={previousHref}
-        aria-disabled={!hasPreviousPage}
-        className={cn(
-          COMPONENTS.pagination.button,
-          hasPreviousPage 
-            ? COMPONENTS.pagination.buttonActive 
-            : COMPONENTS.pagination.buttonDisabled
-        )}
-      >
-        Anterior
-      </Link>
+    <nav
+      aria-label="Paginación"
+      className="flex flex-wrap items-center justify-center gap-3 sm:gap-4"
+    >
+      {hasPreviousPage ? (
+        <Link
+          href={previousHref}
+          aria-label="Ir a la página anterior"
+          className={activeButtonClass}
+        >
+          Anterior
+        </Link>
+      ) : (
+        <span className={disabledButtonClass} aria-hidden="true">
+          Anterior
+        </span>
+      )}
 
-      <span className={COMPONENTS.pagination.pageInfo}>
+      <span className={COMPONENTS.pagination.pageInfo} aria-current="page">
         Página {page} de {displayTotalPages}
       </span>
 
-      <Link
-        href={nextHref}
-        aria-disabled={!hasNextPage}
-        className={cn(
-          COMPONENTS.pagination.button,
-          hasNextPage 
-            ? COMPONENTS.pagination.buttonActive 
-            : COMPONENTS.pagination.buttonDisabled
-        )}
-      >
-        Siguiente
-      </Link>
+      {hasNextPage ? (
+        <Link
+          href={nextHref}
+          aria-label="Ir a la página siguiente"
+          className={activeButtonClass}
+        >
+          Siguiente
+        </Link>
+      ) : (
+        <span className={disabledButtonClass} aria-hidden="true">
+          Siguiente
+        </span>
+      )}
     </nav>
   );
 }

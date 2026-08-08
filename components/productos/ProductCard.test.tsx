@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ProductCard } from "./ProductCard";
-import type { Producto } from "@/lib/types";
+import type { Producto, Categoria } from "@/lib/types";
 
 describe("ProductCard", () => {
   const mockProducto: Producto = {
@@ -18,12 +18,23 @@ describe("ProductCard", () => {
     cuidados: "Lavar a mano",
     created_at: "2024-01-01T00:00:00Z",
   };
+  const mockCategoria: Pick<Categoria, "nombre"> = { nombre: "Manteles" };
 
   it("renders product information correctly", () => {
     render(<ProductCard producto={mockProducto} />);
 
     expect(screen.getByText("Mantel Floral")).toBeInTheDocument();
-    expect(screen.getByText(/Desde \$/)).toBeInTheDocument();
+    expect(screen.getByText(/Precio de referencia desde \$/)).toBeInTheDocument();
+  });
+
+  it("renders lightweight context when category and material are available", () => {
+    render(
+      <ProductCard
+        producto={{ ...mockProducto, categoria: mockCategoria }}
+      />,
+    );
+
+    expect(screen.getByText("Manteles · Algodón 100%")).toBeInTheDocument();
   });
 
   it("renders image with correct alt text", () => {
@@ -50,7 +61,7 @@ describe("ProductCard", () => {
   it("formats price correctly with peso sign", () => {
     render(<ProductCard producto={mockProducto} />);
 
-    const priceElement = screen.getByText(/Desde \$ 15\.000/);
+    const priceElement = screen.getByText(/Precio de referencia desde \$ 15\.000/);
     expect(priceElement).toBeInTheDocument();
   });
 
@@ -78,7 +89,7 @@ describe("ProductCard", () => {
     const productoSinPrecio = { ...mockProducto, precio_desde: null };
     render(<ProductCard producto={productoSinPrecio} />);
 
-    expect(screen.queryByText(/Desde \$/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Precio de referencia/)).not.toBeInTheDocument();
   });
 
   it("uses placeholder image when no imagenPrincipal provided", () => {
@@ -98,5 +109,14 @@ describe("ProductCard", () => {
 
     const link = screen.getByRole("link");
     expect(link).toHaveClass("group");
+    expect(screen.getByText("Ver detalle")).toBeInTheDocument();
+    expect(screen.queryByRole("button")).not.toBeInTheDocument();
+  });
+
+  it("does not break when optional context is missing", () => {
+    render(<ProductCard producto={{ ...mockProducto, material: null }} />);
+
+    expect(screen.getByText("Mantel Floral")).toBeInTheDocument();
+    expect(screen.queryByText(/·/)).not.toBeInTheDocument();
   });
 });
