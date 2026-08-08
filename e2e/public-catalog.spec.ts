@@ -26,6 +26,20 @@ async function getFirstProductLink(page: Page) {
     .first();
 }
 
+async function expectLoadedImage(locator: ReturnType<Page["locator"]>) {
+  await expect(locator).toBeVisible();
+  await expect
+    .poll(async () =>
+      locator.evaluate(
+        (img) =>
+          img instanceof HTMLImageElement &&
+          img.complete &&
+          img.naturalWidth > 0,
+      ),
+    )
+    .toBe(true);
+}
+
 test.describe("public catalog responsive surfaces", () => {
   for (const viewport of VIEWPORTS) {
     test(`has no horizontal overflow at ${viewport.name}`, async ({ page }) => {
@@ -67,20 +81,7 @@ test("catalog listing and optional product detail are navigable", async ({
   }
 
   const firstProduct = await getFirstProductLink(page);
-  if ((await firstProduct.count()) === 0) {
-    const emptyStateLink = page.getByRole("link", {
-      name: "Ver todos los productos",
-    });
-    const loadingError = page.getByRole("heading", {
-      name: "Error al cargar datos",
-    });
-    const globalError = page.getByRole("heading", {
-      name: "Algo salió mal",
-    });
-
-    await expect(emptyStateLink.or(loadingError).or(globalError)).toBeVisible();
-    return;
-  }
+  await expect(firstProduct).toBeVisible();
 
   await firstProduct.click();
   await expect(page).toHaveURL(/\/productos\/[^/?#]+/);
@@ -97,4 +98,69 @@ test("catalog listing and optional product detail are navigable", async ({
   await expect(
     page.getByRole("link", { name: /consultar por este producto/i }),
   ).toBeVisible();
+});
+
+test("real Supabase catalog data renders catalog, filter, detail, gallery, and inquiry context", async ({
+  page,
+}) => {
+  await page.goto("/productos");
+  await expect(page.getByRole("main")).toBeVisible();
+
+  await expect(page.locator("main a").filter({ hasText: "Ver detalle" })).toHaveCount(
+    8,
+  );
+  await expect(page.getByText("Camino de Mesa Magnolia")).toBeVisible();
+
+  await page.getByRole("tab", { name: "Caminos de Mesa" }).click();
+  await expect(page).toHaveURL(/categoria=caminos-de-mesa/);
+  await expect(page.getByRole("tab", { name: "Caminos de Mesa" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+  await expect(page.locator("main a").filter({ hasText: "Ver detalle" })).toHaveCount(
+    1,
+  );
+
+  await page.goto("/productos/camino-mesa-magnolia");
+  await expect(page.getByRole("heading", { name: "Camino de Mesa Magnolia" })).toBeVisible();
+  await expectLoadedImage(page.locator("main img").first());
+  await expect(page.getByText("Disponibilidad a consultar")).toBeVisible();
+  await expect(page.getByText(/^Material:/)).toBeVisible();
+
+  await page.getByRole("tab", { name: /Ver imagen 2/i }).click();
+  await expect(page.getByRole("tab", { name: /Ver imagen 2/i })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
+
+  const sizeOption = page.getByRole("radio", { name: "270x140" });
+  await sizeOption.focus();
+  await page.keyboard.press("Space");
+  await expect(sizeOption).toBeChecked();
+
+  const colorOption = page.getByRole("radio", {
+    name: "Crudo con Estampado Chocolate",
+  });
+  await colorOption.focus();
+  await page.keyboard.press("Space");
+  await expect(colorOption).toBeChecked();
+  const inquiry = page.getByRole("link", {
+    name: /consultar por este producto/i,
+  });
+  await expect(inquiry).toBeVisible();
+
+  const href = await inquiry.getAttribute("href");
+  expect(href).toBeTruthy();
+
+  if (href?.startsWith("/contacto")) {
+    await page.goto(href);
+    await expect(page.getByLabel(/mensaje/i)).toHaveValue(
+      /Camino de Mesa Magnolia, variante 270x140 \/ Crudo con Estampado Chocolate/,
+    );
+  } else {
+    const decodedHref = decodeURIComponent(href ?? "");
+    expect(decodedHref).toContain("Camino de Mesa Magnolia");
+    expect(decodedHref).toContain("270x140 / Crudo con Estampado Chocolate");
+    expect(decodedHref).not.toMatch(/precio|stock|\$/i);
+  }
 });
