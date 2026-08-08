@@ -6,6 +6,7 @@ interface ContactFormActionsProps {
   rateLimitMessage: string;
   isRateLimited: boolean;
   isContactAvailable: boolean;
+  unavailableMessage: string;
   submitHelperText: string;
 }
 
@@ -15,15 +16,14 @@ export function ContactFormActions({
   rateLimitMessage,
   isRateLimited,
   isContactAvailable,
+  unavailableMessage,
   submitHelperText,
 }: ContactFormActionsProps) {
   const statusMessage =
     rateLimitMessage ||
-    (!isContactAvailable
-      ? "El formulario por email no está disponible en este momento."
-      : isRateLimited
-        ? "Límite de mensajes alcanzado. Esperá unos minutos."
-        : null);
+    (!isContactAvailable ? unavailableMessage : isRateLimited
+      ? "Límite de mensajes alcanzado. Esperá unos minutos."
+      : null);
   const helperMessage = isContactAvailable
     ? submitHelperText
     : "Por ahora podés escribirnos desde los canales de contacto disponibles.";

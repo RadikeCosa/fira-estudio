@@ -4,24 +4,13 @@ import Link from "next/link";
 import { MessageCircle } from "lucide-react";
 import type { Producto, Variacion } from "@/lib/types";
 import { WHATSAPP } from "@/lib/constants";
+import { buildProductInquiryMessage } from "@/lib/contact/whatsapp";
 import { trackProductInquiry } from "@/lib/analytics/gtag";
-import { useRateLimit } from "@/hooks/useRateLimit";
 import { cn } from "@/lib/utils";
 
 interface WhatsAppButtonProps {
   producto: Producto;
   variacion?: Variacion;
-}
-
-export function buildProductInquiryMessage(
-  producto: Producto,
-  variacion?: Variacion,
-): string {
-  const variantLabel = variacion
-    ? `, variante ${variacion.tamanio} / ${variacion.color}`
-    : "";
-
-  return `Hola, quería consultar por ${producto.nombre}${variantLabel}. ¿Está disponible para coordinar?`;
 }
 
 export function buildContactFallbackHref(
@@ -43,60 +32,17 @@ export function buildContactFallbackHref(
  * Genera un mensaje pre-formateado con la información del producto
  * y lo abre en una nueva pestaña de WhatsApp
  *
- * Incluye rate limiting: máximo 5 clicks por minuto
- *
  * @param producto - Producto sobre el que se consulta
  * @param variacion - Variación seleccionada (opcional)
  */
 export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
-  // Rate limiting: 5 clicks per minute
-  const { isRateLimited, recordAction, timeUntilReset } = useRateLimit({
-    maxActions: 5,
-    windowMs: 60000,
-    key: "whatsapp_clicks",
-  });
-
   const whatsappUrl = WHATSAPP.getUrl(
     buildProductInquiryMessage(producto, variacion),
   );
 
-  const handleClick = (e: React.MouseEvent) => {
-    // Check rate limit
-    if (isRateLimited) {
-      e.preventDefault();
-      const seconds = Math.ceil(timeUntilReset / 1000);
-      // Note: Consider replacing with toast notification for better UX
-      // For now, using alert() for simplicity (no dependencies required)
-      alert(
-        `Por favor, esperá un momento antes de volver a consultar.\nDisponible en ${seconds} segundo${seconds !== 1 ? "s" : ""}.`,
-      );
-      return;
-    }
-
-    // Record the action
-    const success = recordAction();
-
-    // Double-check if we just hit the limit
-    if (!success || isRateLimited) {
-      e.preventDefault();
-      const seconds = Math.ceil(timeUntilReset / 1000);
-      alert(
-        `Por favor, esperá un momento antes de volver a consultar.\nDisponible en ${seconds} segundo${seconds !== 1 ? "s" : ""}.`,
-      );
-      return;
-    }
-
+  const handleClick = () => {
     // Track product inquiry intent without sending the message body.
     trackProductInquiry(producto, variacion, "whatsapp");
-  };
-
-  // Format countdown message
-  const getButtonText = (): string => {
-    if (isRateLimited && timeUntilReset > 0) {
-      const seconds = Math.ceil(timeUntilReset / 1000);
-      return `Disponible en ${seconds}s`;
-    }
-    return "Consultar por este producto";
   };
 
   if (!whatsappUrl) {
@@ -132,21 +78,14 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
         "px-8 py-4 rounded-xl font-semibold text-base shadow-lg",
         "transition-all duration-300",
         "focus:outline-none focus:ring-2 focus:ring-offset-2",
-        isRateLimited
-          ? "bg-linear-to-r from-gray-400 to-gray-300 cursor-not-allowed text-white focus:ring-gray-400"
-          : "bg-linear-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white hover:shadow-xl hover:scale-[1.02] focus:ring-green-500",
+        "bg-linear-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white hover:shadow-xl hover:scale-[1.02] focus:ring-green-500",
       )}
-      aria-disabled={isRateLimited}
     >
       <MessageCircle
-        className={cn(
-          "w-5 h-5",
-          !isRateLimited &&
-            "motion-safe:transition-transform motion-safe:group-hover:rotate-12",
-        )}
+        className="w-5 h-5 motion-safe:transition-transform motion-safe:group-hover:rotate-12"
         aria-hidden="true"
       />
-      <span>{getButtonText()}</span>
+      <span>Consultar por este producto</span>
     </a>
   );
 }

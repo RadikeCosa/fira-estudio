@@ -80,6 +80,8 @@ Contacto:
 - `NEXT_PUBLIC_WHATSAPP_NUMBER`
 - `NEXT_PUBLIC_INSTAGRAM_URL`
 
+WhatsApp es el canal principal de consulta manual. `NEXT_PUBLIC_WHATSAPP_NUMBER` debe cargarse en Vercel Preview y Production con codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. La configuracion efectiva queda `pendiente de realizar manualmente`.
+
 Analytics:
 
 - `NEXT_PUBLIC_GA_MEASUREMENT_ID`

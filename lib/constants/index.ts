@@ -1,3 +1,5 @@
+import { buildWhatsappUrl, getWhatsappNumber } from "@/lib/contact/whatsapp";
+
 /**
  * Constantes globales del proyecto
  * Centraliza valores que se usan en múltiples lugares
@@ -35,8 +37,7 @@ export const WHATSAPP = {
    * Si no esta configurado, no se genera enlace funcional.
    */
   get number(): string | undefined {
-    const trimmed = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.trim();
-    return trimmed || undefined;
+    return getWhatsappNumber();
   },
 
   /**
@@ -46,8 +47,7 @@ export const WHATSAPP = {
    * @returns URL completa de WhatsApp o null si no hay numero configurado
    */
   getUrl: (message: string): string | null => {
-    if (!WHATSAPP.number) return null;
-    return `https://wa.me/${WHATSAPP.number}?text=${encodeURIComponent(message)}`;
+    return buildWhatsappUrl(message);
   },
 } as const;
 

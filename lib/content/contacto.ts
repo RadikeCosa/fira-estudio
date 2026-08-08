@@ -20,6 +20,7 @@ export interface ContactContent {
   info: {
     title: string;
     items: {
+      whatsapp: { title: string; label: string };
       email: { title: string; value: string };
       instagram: { title: string; handle: string };
     };
@@ -61,12 +62,16 @@ export const CONTACTO_CONTENT: ContactContent = {
         placeholder: "Contanos sobre tu consulta...",
       },
     },
-    submitButton: "Abrir correo",
-    submitHelperText: "Al continuar, abriremos tu aplicación de correo con el mensaje preparado",
+    submitButton: "Consultar por WhatsApp",
+    submitHelperText: "Al continuar, abriremos WhatsApp con tu consulta preparada",
   },
   info: {
     title: "Información de Contacto",
     items: {
+      whatsapp: {
+        title: "WhatsApp",
+        label: "Canal principal de consulta",
+      },
       email: {
         title: "Email",
         value: "contacto@firaestudio.com",

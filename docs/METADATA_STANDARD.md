@@ -227,7 +227,7 @@ export async function generateMetadata({ params }) {
       logo: `${SITE_CONFIG.url}/logo.png`,
       sameAs: [
         "https://www.instagram.com/firaestu",
-        "https://wa.me/549123456789",
+        "https://wa.me/549XXXXXXXXXX",
       ],
       address: {
         "@type": "PostalAddress",

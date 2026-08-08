@@ -18,6 +18,7 @@ describe("ContactForm", () => {
   beforeEach(() => {
     process.env.NEXT_PUBLIC_CONTACT_EMAIL = "contacto@firaestudio.com";
     process.env.NEXT_PUBLIC_INSTAGRAM_URL = "https://instagram.com/firaestudio";
+    delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
 
     // Clear localStorage before each test
     localStorage.clear();
@@ -266,24 +267,62 @@ describe("ContactForm", () => {
     );
   });
 
-  it("announces when the email contact channel is unavailable", () => {
+  it("announces when no contact channel is available", () => {
     delete process.env.NEXT_PUBLIC_CONTACT_EMAIL;
 
     render(<ContactForm />);
 
     const message = screen.getByText(
-      /El formulario por email no está disponible en este momento/i,
+      /El canal de contacto no está disponible en este momento/i,
     );
 
     expect(message).toHaveAttribute("aria-live", "polite");
-    expect(screen.getByRole("button", { name: "Email no disponible" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Contacto no disponible" }),
+    ).toBeDisabled();
+  });
+
+  it("uses WhatsApp as the primary action when configured", async () => {
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = "5492999123456";
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+
+    render(<ContactForm />);
+
+    expect(
+      screen.getByRole("button", { name: "Consultar por WhatsApp" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/abriremos WhatsApp con tu consulta preparada/i),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText(/Nombre/)).not.toHaveAttribute("required");
+    expect(screen.getByLabelText(/Email/)).not.toHaveAttribute("required");
+    expect(screen.getByLabelText(/Mensaje/)).toHaveValue(
+      "Hola, quería hacer una consulta sobre los productos de Fira Estudio.",
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Consultar por WhatsApp" }),
+    );
+
+    await vi.waitFor(() => {
+      expect(openSpy).toHaveBeenCalledTimes(1);
+    });
+
+    const callArgs = openSpy.mock.calls[0][0] as string;
+    expect(callArgs).toMatch(/^https:\/\/wa\.me\/5492999123456\?text=/);
+    expect(decodeURIComponent(callArgs)).toContain(
+      "Hola, quería hacer una consulta sobre los productos de Fira Estudio.",
+    );
+    expect(decodeURIComponent(callArgs)).not.toContain("contacto@");
+
+    openSpy.mockRestore();
   });
 
   it("prefills the message with product context", () => {
     render(<ContactForm initialContext={{ producto: "Camino Magnolia" }} />);
 
     expect(screen.getByLabelText(/Mensaje/)).toHaveValue(
-      "Hola, quería consultar por Camino Magnolia.",
+      "Hola, quería consultar por Camino Magnolia. ¿Está disponible?",
     );
   });
 
@@ -298,14 +337,16 @@ describe("ContactForm", () => {
     );
 
     expect(screen.getByLabelText(/Mensaje/)).toHaveValue(
-      "Hola, quería consultar por Camino Magnolia, variante 140x40 / Natural.",
+      "Hola, quería consultar por Camino Magnolia, variante 140x40 / Natural. ¿Está disponible?",
     );
   });
 
-  it("keeps the message empty when no product context is provided", () => {
+  it("prefills a general inquiry when no product context is provided", () => {
     render(<ContactForm />);
 
-    expect(screen.getByLabelText(/Mensaje/)).toHaveValue("");
+    expect(screen.getByLabelText(/Mensaje/)).toHaveValue(
+      "Hola, quería hacer una consulta sobre los productos de Fira Estudio.",
+    );
   });
 
   it("does not overwrite user text after editing the prefilled message", () => {
@@ -327,6 +368,12 @@ describe("ContactForm", () => {
 });
 
 describe("ContactInfo", () => {
+  beforeEach(() => {
+    process.env.NEXT_PUBLIC_CONTACT_EMAIL = "contacto@firaestudio.com";
+    process.env.NEXT_PUBLIC_INSTAGRAM_URL = "https://instagram.com/firaestudio";
+    delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  });
+
   it("renders contact information title", () => {
     render(<ContactInfo />);
     expect(screen.getByText("Información de Contacto")).toBeInTheDocument();
@@ -334,6 +381,9 @@ describe("ContactInfo", () => {
 
   it("renders all contact items", () => {
     render(<ContactInfo />);
+
+    // Check WhatsApp
+    expect(screen.getByText("WhatsApp")).toBeInTheDocument();
 
     // Check email
     expect(screen.getByText("Email")).toBeInTheDocument();
@@ -366,7 +416,19 @@ describe("ContactInfo", () => {
   });
 
   it("renders ContactInfoItem components with correct props", () => {
+    process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = "5492999123456";
+
     render(<ContactInfo />);
+
+    const whatsappElement = screen
+      .getByText("WhatsApp")
+      .parentElement?.querySelector("a");
+    expect(whatsappElement).toHaveAttribute(
+      "href",
+      expect.stringMatching(/^https:\/\/wa\.me\/5492999123456\?text=/),
+    );
+    expect(whatsappElement).toHaveAttribute("target", "_blank");
+    expect(whatsappElement).toHaveAttribute("rel", "noopener noreferrer");
 
     // Email should be a link
     const emailElement = screen
@@ -390,9 +452,13 @@ describe("ContactInfo", () => {
   it("shows clear fallback text when contact envs are missing", () => {
     delete process.env.NEXT_PUBLIC_CONTACT_EMAIL;
     delete process.env.NEXT_PUBLIC_INSTAGRAM_URL;
+    delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
 
     render(<ContactInfo />);
 
+    expect(
+      screen.getByText(/WhatsApp no disponible por el momento/),
+    ).toBeInTheDocument();
     expect(
       screen.getByText(/Email no disponible por el momento/),
     ).toBeInTheDocument();

@@ -1,25 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import {
-  buildContactFallbackHref,
-  buildProductInquiryMessage,
-  WhatsAppButton,
-} from "./WhatsAppButton";
+import { buildContactFallbackHref, WhatsAppButton } from "./WhatsAppButton";
+import { buildProductInquiryMessage } from "@/lib/contact/whatsapp";
 import type { Producto, Variacion } from "@/lib/types";
 import { trackProductInquiry } from "@/lib/analytics/gtag";
 
 // Mock the analytics module
 vi.mock("@/lib/analytics/gtag", () => ({
   trackProductInquiry: vi.fn(),
-}));
-
-// Mock useRateLimit hook
-vi.mock("@/hooks/useRateLimit", () => ({
-  useRateLimit: () => ({
-    isRateLimited: false,
-    recordAction: () => true,
-    timeUntilReset: 0,
-  }),
 }));
 
 describe("WhatsAppButton", () => {
@@ -70,7 +58,7 @@ describe("WhatsAppButton", () => {
       const message = buildProductInquiryMessage(mockProducto);
 
       expect(message).toBe(
-        "Hola, quería consultar por Mantel Floral. ¿Está disponible para coordinar?",
+        "Hola, quería consultar por Mantel Floral. ¿Está disponible?",
       );
       expect(message).not.toContain("comprarlo");
       expect(message).not.toContain("pagar");
@@ -84,7 +72,7 @@ describe("WhatsAppButton", () => {
       );
 
       expect(message).toBe(
-        "Hola, quería consultar por Mantel Floral, variante 150x200cm / Rojo. ¿Está disponible para coordinar?",
+        "Hola, quería consultar por Mantel Floral, variante 150x200cm / Rojo. ¿Está disponible?",
       );
     });
 
@@ -127,7 +115,7 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("¿Está disponible para coordinar?");
+      expect(decodedMessage).toContain("¿Está disponible?");
       expect(decodedMessage).not.toContain("disponible en stock");
       expect(decodedMessage).not.toContain("a pedido");
       expect(decodedMessage).not.toContain("stock");
@@ -144,7 +132,7 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
       const decodedMessage = decodeURIComponent(href);
 
-      expect(decodedMessage).toContain("¿Está disponible para coordinar?");
+      expect(decodedMessage).toContain("¿Está disponible?");
       expect(decodedMessage).not.toContain("a pedido");
       expect(decodedMessage).not.toContain("disponible en stock");
       expect(decodedMessage).not.toContain("stock");
@@ -168,6 +156,21 @@ describe("WhatsAppButton", () => {
       const href = link?.getAttribute("href") || "";
 
       expect(href).toMatch(/^https:\/\/wa\.me\/5492999123456\?text=/);
+    });
+
+    it("encodes the WhatsApp message correctly", () => {
+      const { container } = render(
+        <WhatsAppButton
+          producto={mockProducto}
+          variacion={mockVariacionEnStock}
+        />,
+      );
+      const link = container.querySelector("a");
+      const href = link?.getAttribute("href") || "";
+
+      expect(href).toContain(
+        "text=Hola%2C%20quer%C3%ADa%20consultar%20por%20Mantel%20Floral%2C%20variante%20150x200cm%20%2F%20Rojo.%20%C2%BFEst%C3%A1%20disponible%3F",
+      );
     });
 
     it("opens in new tab with proper security attributes", () => {
@@ -208,6 +211,26 @@ describe("WhatsAppButton", () => {
       );
       expect(screen.getByRole("status")).toHaveTextContent(
         "WhatsApp no está configurado",
+      );
+      expect(link.getAttribute("href")).not.toContain("wa.me");
+    });
+
+    it.each([
+      ["empty", "   "],
+      ["plus sign", "+5492999123456"],
+      ["spaces", "549 299 9123456"],
+      ["hyphens", "549-299-9123456"],
+    ])("uses a safe contact fallback when WhatsApp number has %s", (_, value) => {
+      process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = value;
+
+      render(<WhatsAppButton producto={mockProducto} />);
+
+      const link = screen.getByRole("link", {
+        name: /consultar por este producto/i,
+      });
+      expect(link).toHaveAttribute(
+        "href",
+        "/contacto?producto=Mantel+Floral",
       );
       expect(link.getAttribute("href")).not.toContain("wa.me");
     });

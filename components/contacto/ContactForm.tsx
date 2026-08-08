@@ -9,8 +9,14 @@ import {
   PUBLIC_CONTACT_CHANNELS,
   SOCIAL_LINKS,
 } from "@/lib/constants/navigation";
+import {
+  buildGeneralInquiryMessage,
+  buildProductInquiryMessageFromParts,
+  buildWhatsappUrl,
+} from "@/lib/contact/whatsapp";
 import { useRateLimit } from "@/hooks/useRateLimit";
 import {
+  VALIDATION_LIMITS,
   sanitizeText,
   validateContactForm,
   type ContactFormData,
@@ -32,10 +38,9 @@ interface ContactFormProps {
 }
 
 function buildInitialMessage(context?: ContactProductContext): string | undefined {
-  if (!context) return undefined;
+  if (!context) return buildGeneralInquiryMessage();
 
-  const variantLabel = context.variante ? `, variante ${context.variante}` : "";
-  return `Hola, quería consultar por ${context.producto}${variantLabel}.`;
+  return buildProductInquiryMessageFromParts(context.producto, context.variante);
 }
 
 // TODO: Reemplazar window.open(mailtoUrl) por llamada a una API interna (server action o route handler)
@@ -45,9 +50,13 @@ function buildInitialMessage(context?: ContactProductContext): string | undefine
 export function ContactForm({ initialContext }: ContactFormProps) {
   const { form } = CONTACTO_CONTENT;
   const [initialMessage] = useState(() => buildInitialMessage(initialContext));
+  const isWhatsappContactAvailable = Boolean(SOCIAL_LINKS.whatsapp.href);
   const isEmailContactAvailable = Boolean(
     PUBLIC_CONTACT_CHANNELS.emailAddress && SOCIAL_LINKS.email.href,
   );
+  const isContactAvailable =
+    isWhatsappContactAvailable || isEmailContactAvailable;
+  const primaryChannel = isWhatsappContactAvailable ? "whatsapp" : "email";
 
   // Rate limiting: 3 submissions per 5 minutes
   const { isRateLimited, recordAction, timeUntilReset } = useRateLimit({
@@ -80,9 +89,9 @@ export function ContactForm({ initialContext }: ContactFormProps) {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!isEmailContactAvailable || !SOCIAL_LINKS.email.href) {
+    if (!isContactAvailable) {
       setRateLimitMessage(
-        "El canal de contacto por email no está disponible en este momento.",
+        "El canal de contacto no está disponible en este momento.",
       );
       return;
     }
@@ -141,6 +150,42 @@ export function ContactForm({ initialContext }: ContactFormProps) {
         }));
         return;
       }
+    }
+
+    if (primaryChannel === "whatsapp") {
+      const rawMessage = rawData.mensaje;
+      const message = sanitizeText(rawMessage);
+
+      if (message.length < VALIDATION_LIMITS.mensaje.min) {
+        setErrors({
+          mensaje: `El mensaje debe tener al menos ${VALIDATION_LIMITS.mensaje.min} caracteres`,
+        });
+        mensajeRef.current?.focus();
+        return;
+      }
+
+      setErrors({});
+      recordAction();
+      setIsSubmitting(true);
+
+      const whatsappUrl = buildWhatsappUrl(message);
+      if (!whatsappUrl) {
+        setIsSubmitting(false);
+        setRateLimitMessage(
+          "El canal de WhatsApp no está disponible en este momento.",
+        );
+        return;
+      }
+
+      window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+
+      timeoutRef.current = setTimeout(() => {
+        setIsSubmitting(false);
+        if (formElement) {
+          formElement.reset();
+        }
+      }, 1000);
+      return;
     }
 
     // Sanitize data (convert empty telefono to undefined)
@@ -228,18 +273,25 @@ ${data.mensaje}
 
   // Get button text based on state
   const getButtonText = (): string => {
-    if (!isEmailContactAvailable) {
-      return "Email no disponible";
+    if (!isContactAvailable) {
+      return "Contacto no disponible";
     }
     if (isSubmitting) {
-      return "Abriendo correo...";
+      return primaryChannel === "whatsapp"
+        ? "Abriendo WhatsApp..."
+        : "Abriendo correo...";
     }
     if (isRateLimited) {
       const seconds = Math.ceil(timeUntilReset / 1000);
       return `Disponible en ${seconds}s`;
     }
-    return form.submitButton;
+    return primaryChannel === "whatsapp" ? form.submitButton : "Abrir correo";
   };
+
+  const helperText =
+    primaryChannel === "whatsapp"
+      ? form.submitHelperText
+      : "Al continuar, abriremos tu aplicación de correo con el mensaje preparado";
 
   return (
     <Card hover={false}>
@@ -249,8 +301,9 @@ ${data.mensaje}
         <ContactFormFields
           form={form}
           errors={errors}
-          disabled={isSubmitting || isRateLimited || !isEmailContactAvailable}
+          disabled={isSubmitting || isRateLimited || !isContactAvailable}
           initialMessage={initialMessage}
+          requireIdentityFields={primaryChannel === "email"}
           nombreRef={nombreRef}
           emailRef={emailRef}
           telefonoRef={telefonoRef}
@@ -259,11 +312,12 @@ ${data.mensaje}
 
         <ContactFormActions
           buttonText={getButtonText()}
-          disabled={isSubmitting || isRateLimited || !isEmailContactAvailable}
+          disabled={isSubmitting || isRateLimited || !isContactAvailable}
           rateLimitMessage={rateLimitMessage}
           isRateLimited={isRateLimited}
-          isContactAvailable={isEmailContactAvailable}
-          submitHelperText={form.submitHelperText}
+          isContactAvailable={isContactAvailable}
+          unavailableMessage="El canal de contacto no está disponible en este momento."
+          submitHelperText={helperText}
         />
       </form>
     </Card>

@@ -26,6 +26,7 @@ Estos resultados no confirman por si solos el estado de Supabase remoto, Vercel,
 - Detalle de producto con imagenes, descripcion, variantes, materiales, cuidados y tiempos.
 - Disponibilidad o stock como referencia sujeta a consulta.
 - Pagina de contacto.
+- Consulta principal por WhatsApp cuando `NEXT_PUBLIC_WHATSAPP_NUMBER` esta configurado.
 - Metadata, sitemap, robots y estructura SEO basica.
 - Diseno responsive con App Router.
 
@@ -111,7 +112,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
 NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/firaestudio
 ```
 
-El canal principal de consulta manual sigue `pendiente de confirmar`.
+WhatsApp es el canal principal de consulta manual. `NEXT_PUBLIC_WHATSAPP_NUMBER` debe usar codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. Email e Instagram son canales secundarios cuando esten configurados.
 
 ### Opcionales para analytics y mantenimiento
 
@@ -171,7 +172,7 @@ Queda `pendiente de confirmar` fuera del repo:
 - variables efectivamente cargadas;
 - Supabase remoto, datos, Storage e imagenes;
 - analytics activo;
-- canal oficial de consulta manual.
+- variables de contacto efectivamente cargadas en Vercel Preview y Production.
 
 ## Infraestructura historica retirada
 

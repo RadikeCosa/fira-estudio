@@ -29,7 +29,7 @@ Ademas, para la etapa catalogo:
 - confirmar si Supabase remoto ya esta reactivado;
 - confirmar datos y rutas de imagenes;
 - confirmar variables reales por entorno;
-- confirmar canal de contacto, idealmente con `NEXT_PUBLIC_CONTACT_EMAIL` y/o `NEXT_PUBLIC_INSTAGRAM_URL`;
+- confirmar `NEXT_PUBLIC_WHATSAPP_NUMBER` como canal principal de consulta manual;
 - confirmar proyecto Vercel y dominio, ambos `pendiente de confirmar` hasta validacion externa.
 
 ## Deploy esperado
@@ -58,7 +58,9 @@ NEXT_PUBLIC_MAINTENANCE_MODE
 NEXT_PUBLIC_MAINTENANCE_MESSAGE
 ```
 
-Para una experiencia publica completa del modo catalogo, conviene cargar al menos `NEXT_PUBLIC_CONTACT_EMAIL` o `NEXT_PUBLIC_INSTAGRAM_URL`.
+Para una experiencia publica completa del modo catalogo, cargar `NEXT_PUBLIC_WHATSAPP_NUMBER` en Vercel Preview y Production. El formato esperado es codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. La carga efectiva en Vercel queda `pendiente de realizar manualmente`.
+
+`NEXT_PUBLIC_CONTACT_EMAIL` y `NEXT_PUBLIC_INSTAGRAM_URL` siguen siendo canales secundarios opcionales.
 Search Console se prepara/configura en deploy. GA4 queda opcional y puede postergarse si todavia no hay un objetivo claro de medicion.
 
 ## Variables suspendidas que no deberian ser necesarias para catalogo

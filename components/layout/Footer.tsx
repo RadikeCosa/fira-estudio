@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Instagram, Mail } from "lucide-react";
+import { Instagram, Mail, MessageCircle } from "lucide-react";
 import { SITE_CONFIG } from "@/lib/constants";
 import { NAV_LINKS, SOCIAL_LINKS } from "@/lib/constants/navigation";
 import { COMPONENTS, COLORS } from "@/lib/design/tokens";
@@ -20,6 +20,8 @@ export function Footer() {
         return <Instagram className="w-6 h-6" aria-hidden="true" />;
       case "email":
         return <Mail className="w-6 h-6" aria-hidden="true" />;
+      case "whatsapp":
+        return <MessageCircle className="w-6 h-6" aria-hidden="true" />;
       default:
         return null;
     }

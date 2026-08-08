@@ -1,4 +1,4 @@
-import { Mail, Instagram } from "lucide-react";
+import { Mail, Instagram, MessageCircle } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { ContactInfoItem } from "@/components/ui/ContactInfoItem";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
@@ -9,6 +9,9 @@ import {
 
 export function ContactInfo() {
   const { info, horarios } = CONTACTO_CONTENT;
+  const whatsappContent = PUBLIC_CONTACT_CHANNELS.whatsappNumber
+    ? info.items.whatsapp.label
+    : "WhatsApp no disponible por el momento";
   const emailContent =
     PUBLIC_CONTACT_CHANNELS.emailAddress || "Email no disponible por el momento";
   const instagramContent = PUBLIC_CONTACT_CHANNELS.instagramUrl
@@ -24,6 +27,14 @@ export function ContactInfo() {
         </h2>
 
         <div className="space-y-6">
+          <ContactInfoItem
+            icon={MessageCircle}
+            title={info.items.whatsapp.title}
+            content={whatsappContent}
+            href={SOCIAL_LINKS.whatsapp.href}
+            external
+          />
+
           <ContactInfoItem
             icon={Mail}
             title={info.items.email.title}

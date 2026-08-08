@@ -35,7 +35,9 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
 NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/firaestudio
 ```
 
-El canal principal de consulta manual sigue `pendiente de confirmar`.
+WhatsApp es el canal principal de consulta manual. Cargar `NEXT_PUBLIC_WHATSAPP_NUMBER` en Preview y Production con codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. La configuracion efectiva queda `pendiente de realizar manualmente`.
+
+Email e Instagram son canales secundarios opcionales.
 
 Analytics y mantenimiento:
 
@@ -79,7 +81,7 @@ Cuando cambian variables `NEXT_PUBLIC_*`:
 
 - Variables minimas de catalogo cargadas.
 - `NEXT_PUBLIC_SITE_URL` apunta a la URL esperada del preview o a la URL publica que se quiera validar.
-- Contacto visible segun el canal definido o marcado `pendiente de confirmar`.
+- Contacto visible con WhatsApp como canal principal si `NEXT_PUBLIC_WHATSAPP_NUMBER` fue cargada.
 - Home, `/productos`, un detalle de producto y `/contacto` renderizan.
 - No se presenta carrito, checkout ni pagos como parte del producto publico.
 - Mercado Pago, Resend, service role comercial y tokens de webhook no son necesarios para validar el catalogo.
@@ -90,7 +92,7 @@ Cuando cambian variables `NEXT_PUBLIC_*`:
 - Proyecto Vercel y entorno production confirmados.
 - Variables minimas cargadas sin valores reales en documentacion.
 - Supabase remoto, datos, Storage e imagenes confirmados fuera del repo.
-- Canal de contacto manual confirmado.
+- `NEXT_PUBLIC_WHATSAPP_NUMBER` cargada y validada manualmente como canal principal.
 - Analytics activo o postergado con decision explicita.
 - Smoke tests publicos completados.
 - Cualquier credencial historica versionada tratada como `requiere rotacion manual`.

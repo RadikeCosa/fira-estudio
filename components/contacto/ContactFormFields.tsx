@@ -13,6 +13,7 @@ interface ContactFormFieldsProps {
   telefonoRef: Ref<HTMLInputElement>;
   mensajeRef: Ref<HTMLTextAreaElement>;
   initialMessage?: string;
+  requireIdentityFields?: boolean;
 }
 
 export function ContactFormFields({
@@ -24,6 +25,7 @@ export function ContactFormFields({
   telefonoRef,
   mensajeRef,
   initialMessage,
+  requireIdentityFields = true,
 }: ContactFormFieldsProps) {
   return (
     <>
@@ -52,7 +54,7 @@ export function ContactFormFields({
         error={errors.nombre}
         maxLength={VALIDATION_LIMITS.nombre.max}
         disabled={disabled}
-        required
+        required={requireIdentityFields}
       />
 
       <Input
@@ -65,7 +67,7 @@ export function ContactFormFields({
         error={errors.email}
         maxLength={VALIDATION_LIMITS.email.max}
         disabled={disabled}
-        required
+        required={requireIdentityFields}
       />
 
       <Input

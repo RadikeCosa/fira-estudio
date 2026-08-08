@@ -1,3 +1,9 @@
+import {
+  buildGeneralInquiryMessage,
+  buildWhatsappUrl,
+  getWhatsappNumber,
+} from "@/lib/contact/whatsapp";
+
 /**
  * Navigation constants for the application
  * Centralized navigation links and social media links
@@ -26,6 +32,9 @@ export const PUBLIC_CONTACT_CHANNELS = {
   get instagramUrl() {
     return getPublicValue(process.env.NEXT_PUBLIC_INSTAGRAM_URL);
   },
+  get whatsappNumber() {
+    return getWhatsappNumber();
+  },
 } as const;
 
 /**
@@ -43,6 +52,13 @@ export const NAV_LINKS: NavLink[] = [
  * Uses environment variables for URLs to allow easy configuration
  */
 export const SOCIAL_LINKS = {
+  get whatsapp() {
+    return {
+      label: "WhatsApp",
+      href: buildWhatsappUrl(buildGeneralInquiryMessage()) ?? undefined,
+      ariaLabel: "WhatsApp",
+    };
+  },
   get instagram() {
     return {
       label: "Instagram",

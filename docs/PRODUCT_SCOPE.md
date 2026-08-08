@@ -66,9 +66,9 @@ La informacion de productos puede incluir precio, stock o disponibilidad observa
 
 ## Contacto manual
 
-El contacto manual es la accion principal posterior a la exploracion del catalogo. El canal definitivo sigue `pendiente de confirmar` entre WhatsApp, email o formulario.
+El contacto manual es la accion principal posterior a la exploracion del catalogo. WhatsApp es el canal principal de consulta de Fira Estudio.
 
-Hasta cerrar esa decision, la documentacion no debe prometer un canal operativo especifico fuera de lo que el codigo y las variables reales permitan verificar.
+El sitio debe usar `NEXT_PUBLIC_WHATSAPP_NUMBER` como fuente de verdad para construir enlaces `wa.me`. El valor debe tener codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. Email e Instagram pueden mantenerse como canales secundarios cuando esten configurados.
 
 ## Infraestructura historica
 
@@ -103,7 +103,7 @@ El proyecto debe demostrar buenas practicas en:
 
 ## Decisiones pendientes
 
-- Canal principal de consulta manual.
+- Configuracion efectiva de `NEXT_PUBLIC_WHATSAPP_NUMBER` en Vercel Preview y Production.
 - URL final del sitio.
 - Proyecto Vercel, dominio y variables reales por entorno.
 - Estado real de Supabase remoto, datos, Storage e imagenes.
