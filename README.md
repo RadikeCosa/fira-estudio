@@ -66,7 +66,8 @@ Dependencias principales instaladas:
 - Supabase;
 - Vercel Speed Insights;
 - Google Analytics 4 opcional;
-- Vitest + `node:test`.
+- Vitest + `node:test`;
+- Playwright para validaciones e2e del catalogo publico.
 
 Para ejecutar el catalogo no son necesarias integraciones historicas como Mercado Pago, Resend, service role para carrito/ordenes ni tokens de webhook.
 
@@ -130,6 +131,7 @@ npm run build
 npm run start
 npm run lint
 npm run test
+npm run test:e2e
 npm run test:node
 npm run test:unit
 npm run test:watch
@@ -145,6 +147,12 @@ git diff --check
 npm run lint
 npm run test
 npm run build
+```
+
+Para revisar navegacion real, responsive, foco y overflow del catalogo publico:
+
+```bash
+npm run test:e2e
 ```
 
 Si un cambio futuro reintroduce checkout, webhooks, carrito, ordenes o emails, requiere validacion especifica adicional y aprobacion explicita.

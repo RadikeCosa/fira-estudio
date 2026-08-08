@@ -9,6 +9,7 @@
     "lint": "eslint",
     "test": "npm run test:node && npm run test:unit",
     "test:node": "sh -c 'files=$(find app lib components -type f -name \"*.node.test.ts\" | sort); if [ -n \"$files\" ]; then node --test --import tsx $files; else echo \"No node:test files found\"; fi'",
+    "test:e2e": "playwright test",
     "test:unit": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -27,6 +28,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.62.1",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.1",

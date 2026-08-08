@@ -21,6 +21,12 @@ npm run test
 npm run build
 ```
 
+Para validaciones de navegador real del catalogo publico:
+
+```bash
+npm run test:e2e
+```
+
 Para cambios documentales o de saneamiento, sumar:
 
 ```bash
@@ -40,6 +46,19 @@ La suite debe priorizar:
 - queries de Supabase usadas por catalogo, con datos remotos reales `pendiente de confirmar`;
 - estados de error, empty states y compatibilidad con build de Next.js;
 - accesibilidad basica en componentes visibles.
+- recorridos e2e de alto valor en navegador real: home, productos, navegacion mobile, contacto y overflow responsive.
+
+## E2E con Playwright
+
+Playwright cubre integracion publica y comportamiento que depende de navegador real:
+
+- carga de home, listado y contacto;
+- navegacion publica y menu mobile con foco;
+- overflow horizontal en viewports representativos;
+- formulario de contacto con errores accesibles y contexto desde query params;
+- detalle de producto cuando hay datos reales disponibles.
+
+No reemplaza Vitest ni Testing Library. No cubre checkout, pagos, ordenes, webhooks ni datos remotos de Supabase como estado confirmado.
 
 ## Regresiones a bloquear
 

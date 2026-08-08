@@ -31,6 +31,7 @@ Este archivo es la guia canonica para agentes de codigo en este repositorio. Si 
 - Vercel
 - Google Analytics 4
 - Vitest + `node:test`
+- Playwright para e2e publico
 
 Integraciones historicas retiradas del arbol ejecutable principal:
 
@@ -61,6 +62,7 @@ npm run build
 npm run start
 npm run lint
 npm run test
+npm run test:e2e
 npm run test:node
 npm run test:unit
 npm run test:watch
@@ -105,6 +107,7 @@ Nunca presentar staging o produccion como hechos confirmados solo por una doc hi
 
 - Antes de cerrar cambios, validar como minimo que la documentacion siga alineada con `package.json` y los archivos reales.
 - Si se toca documentacion de comandos, entornos o integraciones, revisar que no haya scripts inexistentes, paths rotos ni secretos visibles.
+- Usar `npm run test:e2e` para cambios que dependan de navegador real, responsive, foco o navegacion publica.
 - Si un cambio futuro afecta checkout, webhooks, carrito o emails, priorizar tambien `npm run lint`, `npm run test` y `npm run build` cuando el alcance incluya codigo.
 - Separar saneamiento documental de cambios funcionales.
 
