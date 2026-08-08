@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useId } from "react";
 import { cn } from "@/lib/utils";
 import { COMPONENTS } from "@/lib/design/tokens";
 
@@ -9,12 +9,31 @@ export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextArea
 }
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ label, error, helperText, className, required, ...props }, ref) => {
+  (
+    {
+      label,
+      error,
+      helperText,
+      className,
+      required,
+      "aria-describedby": ariaDescribedBy,
+      ...props
+    },
+    ref,
+  ) => {
+    const generatedId = useId();
+    const textareaId = props.id ?? generatedId;
+    const errorId = error ? `${textareaId}-error` : undefined;
+    const helperId = helperText ? `${textareaId}-helper` : undefined;
+    const describedBy = [ariaDescribedBy, helperId, errorId]
+      .filter(Boolean)
+      .join(" ") || undefined;
+
     return (
       <div>
         {label && (
           <label
-            htmlFor={props.id}
+            htmlFor={textareaId}
             className="mb-2 block text-sm font-semibold text-foreground"
           >
             {label}
@@ -25,8 +44,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         )}
 
         <textarea
+          {...props}
           ref={ref}
+          id={textareaId}
           required={required}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={describedBy}
           className={cn(
             COMPONENTS.input.base,
             COMPONENTS.input.placeholder,
@@ -41,17 +64,21 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               ),
             className,
           )}
-          {...props}
         />
 
-        {error && (
-          <p className={cn("mt-2 text-sm", COMPONENTS.error.message)}>
-            {error}
+        {helperText && (
+          <p id={helperId} className="mt-2 text-sm text-muted-foreground">
+            {helperText}
           </p>
         )}
 
-        {helperText && !error && (
-          <p className="mt-2 text-sm text-muted-foreground">{helperText}</p>
+        {error && (
+          <p
+            id={errorId}
+            className={cn("mt-2 text-sm", COMPONENTS.error.message)}
+          >
+            {error}
+          </p>
         )}
       </div>
     );

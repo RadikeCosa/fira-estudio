@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { MessageCircle } from "lucide-react";
-import { Producto, Variacion } from "@/lib/types";
+import type { Producto, Variacion } from "@/lib/types";
 import { WHATSAPP } from "@/lib/constants";
 import { trackProductInquiry } from "@/lib/analytics/gtag";
 import { useRateLimit } from "@/hooks/useRateLimit";
@@ -22,6 +22,19 @@ export function buildProductInquiryMessage(
     : "";
 
   return `Hola, quería consultar por ${producto.nombre}${variantLabel}. ¿Está disponible para coordinar?`;
+}
+
+export function buildContactFallbackHref(
+  producto: Producto,
+  variacion?: Variacion,
+): string {
+  const params = new URLSearchParams({ producto: producto.nombre });
+
+  if (variacion) {
+    params.set("variante", `${variacion.tamanio} / ${variacion.color}`);
+  }
+
+  return `/contacto?${params.toString()}`;
 }
 
 /**
@@ -90,7 +103,7 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
     return (
       <div className="space-y-2">
         <Link
-          href="/contacto"
+          href={buildContactFallbackHref(producto, variacion)}
           className={cn(
             "group inline-flex w-full items-center justify-center gap-3",
             "rounded-xl bg-foreground px-8 py-4 text-base font-semibold text-background shadow-lg",

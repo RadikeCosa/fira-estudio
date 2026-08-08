@@ -178,7 +178,7 @@ describe("ProductActions", () => {
 
     expect(
       screen.getByRole("link", { name: /consultar por este producto/i }),
-    ).toHaveAttribute("href", "/contacto");
+    ).toHaveAttribute("href", "/contacto?producto=Camino+Magnolia");
     expect(screen.queryByText(/agregar al carrito/i)).not.toBeInTheDocument();
   });
 });

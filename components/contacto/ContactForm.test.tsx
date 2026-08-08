@@ -44,11 +44,11 @@ describe("ContactForm", () => {
     expect(screen.getByLabelText(/Mensaje/)).toBeInTheDocument();
 
     // Check submit button
-    expect(screen.getByText("Enviar consulta")).toBeInTheDocument();
+    expect(screen.getByText("Abrir correo")).toBeInTheDocument();
 
     // Check helper text
     expect(
-      screen.getByText(/Al enviar, abriremos tu correo/),
+      screen.getByText(/abriremos tu aplicación de correo/),
     ).toBeInTheDocument();
   });
 
@@ -89,7 +89,7 @@ describe("ContactForm", () => {
     });
 
     // Submit form
-    const submitButton = screen.getByText("Enviar consulta");
+    const submitButton = screen.getByText("Abrir correo");
     fireEvent.click(submitButton);
 
     // Wait for async operations to complete
@@ -124,7 +124,7 @@ describe("ContactForm", () => {
     });
 
     // Submit form
-    fireEvent.click(screen.getByText("Enviar consulta"));
+    fireEvent.click(screen.getByText("Abrir correo"));
 
     // Wait for async operations to complete
     await vi.waitFor(() => {
@@ -197,7 +197,7 @@ describe("ContactForm", () => {
     });
 
     // Submit form
-    fireEvent.click(screen.getByText("Enviar consulta"));
+    fireEvent.click(screen.getByText("Abrir correo"));
 
     // XSS should be detected and rejected - window.open should not be called
     await vi.waitFor(() => {
@@ -243,7 +243,7 @@ describe("ContactForm", () => {
     });
 
     // Submit form
-    fireEvent.click(screen.getByText("Enviar consulta"));
+    fireEvent.click(screen.getByText("Abrir correo"));
 
     // Should NOT open email (silent block)
     expect(openSpy).not.toHaveBeenCalled();
@@ -277,6 +277,52 @@ describe("ContactForm", () => {
 
     expect(message).toHaveAttribute("aria-live", "polite");
     expect(screen.getByRole("button", { name: "Email no disponible" })).toBeDisabled();
+  });
+
+  it("prefills the message with product context", () => {
+    render(<ContactForm initialContext={{ producto: "Camino Magnolia" }} />);
+
+    expect(screen.getByLabelText(/Mensaje/)).toHaveValue(
+      "Hola, quería consultar por Camino Magnolia.",
+    );
+  });
+
+  it("prefills the message with product and variation context", () => {
+    render(
+      <ContactForm
+        initialContext={{
+          producto: "Camino Magnolia",
+          variante: "140x40 / Natural",
+        }}
+      />,
+    );
+
+    expect(screen.getByLabelText(/Mensaje/)).toHaveValue(
+      "Hola, quería consultar por Camino Magnolia, variante 140x40 / Natural.",
+    );
+  });
+
+  it("keeps the message empty when no product context is provided", () => {
+    render(<ContactForm />);
+
+    expect(screen.getByLabelText(/Mensaje/)).toHaveValue("");
+  });
+
+  it("does not overwrite user text after editing the prefilled message", () => {
+    const { rerender } = render(
+      <ContactForm initialContext={{ producto: "Camino Magnolia" }} />,
+    );
+
+    const message = screen.getByLabelText(/Mensaje/);
+    fireEvent.change(message, {
+      target: { value: "Quiero consultar por otra medida" },
+    });
+
+    rerender(<ContactForm initialContext={{ producto: "Mantel Aurora" }} />);
+
+    expect(screen.getByLabelText(/Mensaje/)).toHaveValue(
+      "Quiero consultar por otra medida",
+    );
   });
 });
 

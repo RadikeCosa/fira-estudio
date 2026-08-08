@@ -22,12 +22,29 @@ import {
   logXSSAttempt,
 } from "@/lib/utils/security-logger";
 
+export interface ContactProductContext {
+  producto: string;
+  variante?: string;
+}
+
+interface ContactFormProps {
+  initialContext?: ContactProductContext;
+}
+
+function buildInitialMessage(context?: ContactProductContext): string | undefined {
+  if (!context) return undefined;
+
+  const variantLabel = context.variante ? `, variante ${context.variante}` : "";
+  return `Hola, quería consultar por ${context.producto}${variantLabel}.`;
+}
+
 // TODO: Reemplazar window.open(mailtoUrl) por llamada a una API interna (server action o route handler)
 // TODO: Manejar loading, éxito y error en el submit según respuesta de la API
 // TODO: Validar y sanitizar datos en el backend antes de enviar el email
 // TODO: (Opcional) Agregar feedback visual de éxito/error al usuario
-export function ContactForm() {
+export function ContactForm({ initialContext }: ContactFormProps) {
   const { form } = CONTACTO_CONTENT;
+  const [initialMessage] = useState(() => buildInitialMessage(initialContext));
   const isEmailContactAvailable = Boolean(
     PUBLIC_CONTACT_CHANNELS.emailAddress && SOCIAL_LINKS.email.href,
   );
@@ -215,7 +232,7 @@ ${data.mensaje}
       return "Email no disponible";
     }
     if (isSubmitting) {
-      return "Abriendo email...";
+      return "Abriendo correo...";
     }
     if (isRateLimited) {
       const seconds = Math.ceil(timeUntilReset / 1000);
@@ -233,6 +250,7 @@ ${data.mensaje}
           form={form}
           errors={errors}
           disabled={isSubmitting || isRateLimited || !isEmailContactAvailable}
+          initialMessage={initialMessage}
           nombreRef={nombreRef}
           emailRef={emailRef}
           telefonoRef={telefonoRef}

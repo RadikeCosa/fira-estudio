@@ -12,6 +12,7 @@ interface ContactFormFieldsProps {
   emailRef: Ref<HTMLInputElement>;
   telefonoRef: Ref<HTMLInputElement>;
   mensajeRef: Ref<HTMLTextAreaElement>;
+  initialMessage?: string;
 }
 
 export function ContactFormFields({
@@ -22,6 +23,7 @@ export function ContactFormFields({
   emailRef,
   telefonoRef,
   mensajeRef,
+  initialMessage,
 }: ContactFormFieldsProps) {
   return (
     <>
@@ -85,6 +87,7 @@ export function ContactFormFields({
         name="mensaje"
         label={form.fields.mensaje.label}
         placeholder={form.fields.mensaje.placeholder}
+        defaultValue={initialMessage}
         rows={5}
         error={errors.mensaje}
         maxLength={VALIDATION_LIMITS.mensaje.max}

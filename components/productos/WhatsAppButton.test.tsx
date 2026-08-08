@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import {
+  buildContactFallbackHref,
   buildProductInquiryMessage,
   WhatsAppButton,
 } from "./WhatsAppButton";
@@ -201,11 +202,33 @@ describe("WhatsAppButton", () => {
       const link = screen.getByRole("link", {
         name: /consultar por este producto/i,
       });
-      expect(link).toHaveAttribute("href", "/contacto");
+      expect(link).toHaveAttribute(
+        "href",
+        "/contacto?producto=Mantel+Floral",
+      );
       expect(screen.getByRole("status")).toHaveTextContent(
         "WhatsApp no está configurado",
       );
       expect(link.getAttribute("href")).not.toContain("wa.me");
+    });
+
+    it("serializes optional variation context in the contact fallback", () => {
+      expect(
+        buildContactFallbackHref(mockProducto, mockVariacionEnStock),
+      ).toBe(
+        "/contacto?producto=Mantel+Floral&variante=150x200cm+%2F+Rojo",
+      );
+    });
+
+    it("does not include price or stock in the contact fallback", () => {
+      const href = buildContactFallbackHref(
+        mockProducto,
+        mockVariacionEnStock,
+      );
+
+      expect(href).not.toContain("15000");
+      expect(href).not.toContain("stock");
+      expect(href).not.toContain("precio");
     });
   });
 

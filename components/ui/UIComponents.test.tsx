@@ -38,19 +38,59 @@ describe("UI Components Phase 2 - Specification Compliance", () => {
       expect(screen.getByText("Este campo es requerido")).toBeInTheDocument();
     });
 
+    it("associates error text with aria-invalid and aria-describedby", () => {
+      render(<Input id="test" label="Test" error="Este campo es requerido" />);
+
+      const input = screen.getByLabelText("Test");
+      const error = screen.getByText("Este campo es requerido");
+
+      expect(input).toHaveAttribute("aria-invalid", "true");
+      expect(error).toHaveAttribute("id", "test-error");
+      expect(input).toHaveAttribute("aria-describedby", "test-error");
+    });
+
+    it("preserves existing aria-describedby references", () => {
+      render(
+        <Input
+          id="test"
+          label="Test"
+          helperText="Texto de ayuda"
+          error="Error"
+          aria-describedby="external-description"
+        />,
+      );
+
+      expect(screen.getByLabelText("Test")).toHaveAttribute(
+        "aria-describedby",
+        "external-description test-helper test-error",
+      );
+    });
+
     it("displays helper text when provided and no error", () => {
       render(<Input id="test" label="Test" helperText="Texto de ayuda" />);
 
       expect(screen.getByText("Texto de ayuda")).toBeInTheDocument();
     });
 
-    it("does not display helper text when error is present", () => {
+    it("keeps helper text associated when error is present", () => {
       render(
         <Input id="test" label="Test" error="Error" helperText="Helper" />,
       );
 
       expect(screen.getByText("Error")).toBeInTheDocument();
-      expect(screen.queryByText("Helper")).not.toBeInTheDocument();
+      expect(screen.getByText("Helper")).toBeInTheDocument();
+      expect(screen.getByLabelText("Test")).toHaveAttribute(
+        "aria-describedby",
+        "test-helper test-error",
+      );
+    });
+
+    it("does not mark the input invalid without an error", () => {
+      render(<Input id="test" label="Test" helperText="Texto de ayuda" />);
+
+      const input = screen.getByLabelText("Test");
+      expect(input).not.toHaveAttribute("aria-invalid");
+      expect(input).toHaveAttribute("aria-describedby", "test-helper");
     });
   });
 
@@ -75,6 +115,23 @@ describe("UI Components Phase 2 - Specification Compliance", () => {
       render(<Textarea id="test" label="Test" />);
       const textarea = screen.getByLabelText(/Test/);
       expect(textarea).toHaveClass("resize-none");
+    });
+
+    it("associates textarea errors with aria-describedby", () => {
+      render(
+        <Textarea
+          id="message"
+          label="Mensaje"
+          error="El mensaje es requerido"
+        />,
+      );
+
+      const textarea = screen.getByLabelText("Mensaje");
+      const error = screen.getByText("El mensaje es requerido");
+
+      expect(textarea).toHaveAttribute("aria-invalid", "true");
+      expect(error).toHaveAttribute("id", "message-error");
+      expect(textarea).toHaveAttribute("aria-describedby", "message-error");
     });
   });
 

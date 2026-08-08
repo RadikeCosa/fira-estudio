@@ -26,7 +26,7 @@ export function ContactFormActions({
         : null);
   const helperMessage = isContactAvailable
     ? submitHelperText
-    : "Activá un email público o definí otro canal de contacto antes del deploy.";
+    : "Por ahora podés escribirnos desde los canales de contacto disponibles.";
 
   return (
     <>

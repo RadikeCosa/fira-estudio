@@ -61,8 +61,8 @@ export const CONTACTO_CONTENT: ContactContent = {
         placeholder: "Contanos sobre tu consulta...",
       },
     },
-    submitButton: "Enviar consulta",
-    submitHelperText: "Al enviar, abriremos tu correo con el mensaje",
+    submitButton: "Abrir correo",
+    submitHelperText: "Al continuar, abriremos tu aplicación de correo con el mensaje preparado",
   },
   info: {
     title: "Información de Contacto",
