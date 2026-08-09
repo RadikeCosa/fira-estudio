@@ -18,8 +18,11 @@ describe("ContactInfo", () => {
 
     render(<ContactInfo />);
 
-    expect(screen.getByRole("heading", { name: "Canales de contacto" }))
-      .toBeInTheDocument();
+    expect(
+      screen.queryByRole("heading", { name: /canales de contacto/i }),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/canal principal/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/canales secundarios/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/nombre/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/^email$/i)).not.toBeInTheDocument();
     expect(screen.queryByLabelText(/teléfono/i)).not.toBeInTheDocument();
@@ -32,7 +35,7 @@ describe("ContactInfo", () => {
 
     render(<ContactInfo />);
 
-    const cta = screen.getByRole("link", { name: /consultar por whatsapp/i });
+    const cta = screen.getByRole("link", { name: /escribir por whatsapp/i });
     expect(cta).toHaveAttribute(
       "href",
       expect.stringMatching(/^https:\/\/wa\.me\/5492999123456\?text=/),
@@ -49,10 +52,10 @@ describe("ContactInfo", () => {
 
     render(<ContactInfo initialContext={{ producto: "Camino Magnolia" }} />);
 
-    expect(screen.getByText(/Consulta por:/)).toBeInTheDocument();
+    expect(screen.getByText(/Sobre:/)).toBeInTheDocument();
     expect(screen.getByText(/Camino Magnolia/)).toBeInTheDocument();
 
-    const cta = screen.getByRole("link", { name: /consultar por whatsapp/i });
+    const cta = screen.getByRole("link", { name: /escribir por whatsapp/i });
     expect(decodeURIComponent(cta.getAttribute("href") ?? "")).toContain(
       "Hola, quería consultar por Camino Magnolia. ¿Está disponible?",
     );
@@ -73,7 +76,7 @@ describe("ContactInfo", () => {
     expect(screen.getByText(/Camino Magnolia · Large \/ Azul/))
       .toBeInTheDocument();
 
-    const cta = screen.getByRole("link", { name: /consultar por whatsapp/i });
+    const cta = screen.getByRole("link", { name: /escribir por whatsapp/i });
     expect(decodeURIComponent(cta.getAttribute("href") ?? "")).toContain(
       "Hola, quería consultar por Camino Magnolia, variante Large / Azul. ¿Está disponible?",
     );
@@ -86,17 +89,42 @@ describe("ContactInfo", () => {
     render(<ContactInfo />);
 
     expect(
-      screen.queryByRole("link", { name: /consultar por whatsapp/i }),
+      screen.queryByRole("link", { name: /escribir por whatsapp/i }),
     ).not.toBeInTheDocument();
   });
 
-  it("renders email only when a contact email is configured", () => {
+  it("does not render example.com email placeholders", () => {
     vi.stubEnv("NEXT_PUBLIC_CONTACT_EMAIL", "contacto@example.com");
 
     render(<ContactInfo />);
 
-    const email = screen.getByRole("link", { name: "contacto@example.com" });
-    expect(email).toHaveAttribute("href", "mailto:contacto@example.com");
+    expect(screen.queryByText("contacto@example.com")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: /email/i }))
+      .not.toBeInTheDocument();
+  });
+
+  it.each(["contacto@example.org", "contacto@example.net"])(
+    "does not render %s email placeholders",
+    (emailAddress) => {
+      vi.stubEnv("NEXT_PUBLIC_CONTACT_EMAIL", emailAddress);
+
+      render(<ContactInfo />);
+
+      expect(screen.queryByText(emailAddress)).not.toBeInTheDocument();
+      expect(screen.queryByRole("link", { name: /email/i }))
+        .not.toBeInTheDocument();
+    },
+  );
+
+  it("renders a real email as the available action when WhatsApp is missing", () => {
+    vi.stubEnv("NEXT_PUBLIC_CONTACT_EMAIL", "hola@firaestudio.com");
+
+    render(<ContactInfo />);
+
+    const email = screen.getByRole("link", {
+      name: "Escribir por email a hola@firaestudio.com",
+    });
+    expect(email).toHaveAttribute("href", "mailto:hola@firaestudio.com");
   });
 
   it("renders Instagram only when an Instagram URL is configured", () => {
@@ -104,7 +132,9 @@ describe("ContactInfo", () => {
 
     render(<ContactInfo />);
 
-    const instagram = screen.getByRole("link", { name: "Ver Instagram" });
+    const instagram = screen.getByRole("link", {
+      name: "Escribir por Instagram",
+    });
     expect(instagram).toHaveAttribute(
       "href",
       "https://instagram.com/firaestudio",
@@ -123,5 +153,23 @@ describe("ContactInfo", () => {
     expect(screen.getByRole("status")).toHaveTextContent(
       "Por ahora no hay un canal de contacto disponible en el sitio.",
     );
+  });
+
+  it("renders secondary channels discreetly when WhatsApp is configured", () => {
+    vi.stubEnv("NEXT_PUBLIC_WHATSAPP_NUMBER", "5492999123456");
+    vi.stubEnv("NEXT_PUBLIC_CONTACT_EMAIL", "hola@firaestudio.com");
+    vi.stubEnv("NEXT_PUBLIC_INSTAGRAM_URL", "https://instagram.com/firaestudio");
+
+    render(<ContactInfo />);
+
+    expect(
+      screen.getByRole("link", { name: /escribir por whatsapp/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Instagram" })).toHaveAttribute(
+      "href",
+      "https://instagram.com/firaestudio",
+    );
+    expect(screen.getByRole("link", { name: "hola@firaestudio.com" }))
+      .toHaveAttribute("href", "mailto:hola@firaestudio.com");
   });
 });

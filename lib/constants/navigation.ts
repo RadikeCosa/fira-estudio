@@ -20,17 +20,50 @@ export interface SocialLink {
   ariaLabel: string;
 }
 
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EXAMPLE_EMAIL_DOMAINS = new Set([
+  "example.com",
+  "example.org",
+  "example.net",
+]);
+
 function getPublicValue(value: string | undefined): string | undefined {
   const trimmed = value?.trim();
   return trimmed ? trimmed : undefined;
 }
 
+export function getPublicContactEmail(
+  value: string | undefined = process.env.NEXT_PUBLIC_CONTACT_EMAIL,
+): string | undefined {
+  const email = getPublicValue(value);
+  if (!email || !EMAIL_PATTERN.test(email)) return undefined;
+
+  const domain = email.split("@").at(1)?.toLowerCase();
+  if (!domain || EXAMPLE_EMAIL_DOMAINS.has(domain)) return undefined;
+
+  return email;
+}
+
+function getPublicHttpUrl(value: string | undefined): string | undefined {
+  const url = getPublicValue(value);
+  if (!url) return undefined;
+
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:"
+      ? url
+      : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
 export const PUBLIC_CONTACT_CHANNELS = {
   get emailAddress() {
-    return getPublicValue(process.env.NEXT_PUBLIC_CONTACT_EMAIL);
+    return getPublicContactEmail();
   },
   get instagramUrl() {
-    return getPublicValue(process.env.NEXT_PUBLIC_INSTAGRAM_URL);
+    return getPublicHttpUrl(process.env.NEXT_PUBLIC_INSTAGRAM_URL);
   },
   get whatsappNumber() {
     return getWhatsappNumber();

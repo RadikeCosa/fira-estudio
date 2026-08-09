@@ -162,7 +162,7 @@ test("real Supabase catalog data renders catalog, filter, detail, gallery, and i
     await expect(page.getByLabel(/mensaje/i)).toHaveCount(0);
 
     const whatsappCta = page.getByRole("link", {
-      name: /consultar por whatsapp/i,
+      name: /escribir por whatsapp/i,
     });
     if (await whatsappCta.isVisible()) {
       const contactHref = await whatsappCta.getAttribute("href");

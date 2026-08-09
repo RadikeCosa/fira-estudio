@@ -1,5 +1,4 @@
 import { Instagram, Mail, MessageCircle } from "lucide-react";
-import { Card } from "@/components/ui/Card";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
 import {
   PUBLIC_CONTACT_CHANNELS,
@@ -21,6 +20,16 @@ interface ContactInfoProps {
   initialContext?: ContactProductContext;
 }
 
+type ContactChannel = "whatsapp" | "email" | "instagram";
+
+interface ContactAction {
+  channel: ContactChannel;
+  href: string;
+  label: string;
+  ariaLabel?: string;
+  external?: boolean;
+}
+
 function buildContactMessage(context?: ContactProductContext): string {
   if (!context) return buildGeneralInquiryMessage();
 
@@ -36,107 +45,123 @@ function formatContext(context: ContactProductContext): string {
 export function ContactInfo({ initialContext }: ContactInfoProps) {
   const { info } = CONTACTO_CONTENT;
   const whatsappUrl = buildWhatsappUrl(buildContactMessage(initialContext));
-  const emailUrl = SOCIAL_LINKS.email.href;
+  const emailAddress = PUBLIC_CONTACT_CHANNELS.emailAddress;
+  const emailUrl = emailAddress ? SOCIAL_LINKS.email.href : undefined;
   const instagramUrl = SOCIAL_LINKS.instagram.href;
-  const hasAnyChannel = Boolean(whatsappUrl || emailUrl || instagramUrl);
+  const actions: ContactAction[] = [
+    ...(whatsappUrl
+      ? [
+          {
+            channel: "whatsapp" as const,
+            href: whatsappUrl,
+            label: info.cta.whatsapp,
+            external: true,
+          },
+        ]
+      : []),
+    ...(emailUrl && emailAddress
+      ? [
+          {
+            channel: "email" as const,
+            href: emailUrl,
+            label: emailAddress,
+          },
+        ]
+      : []),
+    ...(instagramUrl
+      ? [
+          {
+            channel: "instagram" as const,
+            href: instagramUrl,
+            label: info.cta.instagram,
+            external: true,
+          },
+        ]
+      : []),
+  ];
+  const [primaryAction, ...secondaryActions] = actions;
+
+  const renderIcon = (channel: ContactChannel, className = "h-5 w-5") => {
+    switch (channel) {
+      case "email":
+        return <Mail className={className} aria-hidden="true" />;
+      case "instagram":
+        return <Instagram className={className} aria-hidden="true" />;
+      case "whatsapp":
+        return <MessageCircle className={className} aria-hidden="true" />;
+    }
+  };
 
   return (
-    <section aria-labelledby="contact-channels-title">
-      <Card hover={false} className="mx-auto max-w-3xl">
-        <div className="space-y-8">
-          <div className="space-y-3">
-            <h2
-              id="contact-channels-title"
-              className="text-2xl font-bold text-foreground"
+    <section aria-label="Opciones de contacto" className="mx-auto max-w-2xl">
+      <div className="flex flex-col items-center text-center">
+        {initialContext && (
+          <p className="max-w-xl text-sm leading-relaxed text-muted-foreground sm:text-base">
+            <span className="text-foreground">{info.contextLabel}:</span>{" "}
+            {formatContext(initialContext)}
+          </p>
+        )}
+
+        {primaryAction ? (
+          <div
+            className={cn(
+              "flex w-full flex-col items-center",
+              initialContext ? "mt-8" : "mt-2",
+            )}
+          >
+            <a
+              href={primaryAction.href}
+              target={primaryAction.external ? "_blank" : undefined}
+              rel={primaryAction.external ? "noopener noreferrer" : undefined}
+              aria-label={
+                primaryAction.channel === "email"
+                  ? `${info.cta.email} a ${primaryAction.label}`
+                  : primaryAction.ariaLabel
+              }
+              className={cn(
+                "inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl",
+                "bg-foreground px-8 py-4 text-base font-semibold text-background shadow-lg",
+                "transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
+                "focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2",
+                "sm:w-auto",
+              )}
             >
-              {info.title}
-            </h2>
-            <p className="text-base leading-relaxed text-muted-foreground">
-              {info.intro}
-            </p>
+              {renderIcon(primaryAction.channel)}
+              <span>{primaryAction.label}</span>
+            </a>
+
+            {secondaryActions.length > 0 && (
+              <div className="mt-6 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
+                {secondaryActions.map((action, index) => (
+                  <span
+                    key={action.channel}
+                    className="inline-flex items-center gap-x-3"
+                  >
+                    {index > 0 && <span aria-hidden="true">·</span>}
+                    <a
+                      href={action.href}
+                      target={action.external ? "_blank" : undefined}
+                      rel={
+                        action.external ? "noopener noreferrer" : undefined
+                      }
+                      aria-label={action.ariaLabel}
+                      className="rounded-sm underline-offset-4 transition-colors hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-4"
+                    >
+                      {action.channel === "email" && emailAddress
+                        ? emailAddress
+                        : info.items.instagram.label}
+                    </a>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
-
-          {initialContext && (
-            <p className="rounded-xl border border-border bg-muted/30 px-4 py-3 text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">
-                {info.contextLabel}:
-              </span>{" "}
-              {formatContext(initialContext)}
-            </p>
-          )}
-
-          {whatsappUrl && (
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="rounded-full bg-green-50 p-3 text-green-700">
-                  <MessageCircle className="h-6 w-6" aria-hidden="true" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-foreground">
-                    {info.whatsapp.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {info.whatsapp.description}
-                  </p>
-                </div>
-              </div>
-
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(
-                  "inline-flex w-full items-center justify-center gap-3 rounded-xl",
-                  "bg-foreground px-8 py-4 text-base font-semibold text-background shadow-lg",
-                  "transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
-                  "focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2",
-                  "sm:w-auto",
-                )}
-              >
-                <MessageCircle className="h-5 w-5" aria-hidden="true" />
-                <span>{info.whatsapp.cta}</span>
-              </a>
-            </div>
-          )}
-
-          {(emailUrl || instagramUrl) && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-bold text-foreground">
-                {info.secondaryTitle}
-              </h3>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {instagramUrl && (
-                  <a
-                    href={instagramUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 rounded-xl border border-border px-4 py-3 text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2"
-                  >
-                    <Instagram className="h-5 w-5" aria-hidden="true" />
-                    <span>{info.items.instagram.label}</span>
-                  </a>
-                )}
-
-                {emailUrl && PUBLIC_CONTACT_CHANNELS.emailAddress && (
-                  <a
-                    href={emailUrl}
-                    className="flex items-center gap-3 rounded-xl border border-border px-4 py-3 text-muted-foreground transition-colors hover:text-foreground focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2"
-                  >
-                    <Mail className="h-5 w-5" aria-hidden="true" />
-                    <span>{PUBLIC_CONTACT_CHANNELS.emailAddress}</span>
-                  </a>
-                )}
-              </div>
-            </div>
-          )}
-
-          {!hasAnyChannel && (
-            <p role="status" className="text-muted-foreground">
-              {info.emptyState}
-            </p>
-          )}
-        </div>
-      </Card>
+        ) : (
+          <p role="status" className="mt-4 text-muted-foreground">
+            {info.emptyState}
+          </p>
+        )}
+      </div>
     </section>
   );
 }

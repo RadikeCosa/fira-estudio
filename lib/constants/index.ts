@@ -1,4 +1,5 @@
 import { buildWhatsappUrl, getWhatsappNumber } from "@/lib/contact/whatsapp";
+import { getPublicContactEmail } from "@/lib/constants/navigation";
 
 /**
  * Constantes globales del proyecto
@@ -23,7 +24,9 @@ export const SITE_CONFIG = {
   description:
     "Piezas artesanales que encienden tu hogar. Creamos manteles, servilletas, caminos de mesa y accesorios de cocina con dedicación y cuidado artesanal. Lindos. Útiles. Para usar cada día.",
   url: process.env.NEXT_PUBLIC_SITE_URL,
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL,
+  get email() {
+    return getPublicContactEmail();
+  },
   locale: "es_AR",
   keywords: SITE_KEYWORDS, // ← Sin as const aquí
   /** Subtítulo para el footer, configurable */

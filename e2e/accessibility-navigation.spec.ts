@@ -39,9 +39,9 @@ test("contact page exposes direct channels and preserves query context", async (
   await expect(page.getByLabel(/nombre/i)).toHaveCount(0);
 
   const whatsappCta = page.getByRole("link", {
-    name: /consultar por whatsapp/i,
+    name: /escribir por whatsapp/i,
   });
-  const instagramLink = page.getByRole("link", { name: "Ver Instagram" });
+  const instagramLink = page.getByRole("link", { name: /instagram/i });
   const emailLink = page.locator('a[href^="mailto:"]');
   const emptyState = page.getByText(
     /Por ahora no hay un canal de contacto disponible/i,
