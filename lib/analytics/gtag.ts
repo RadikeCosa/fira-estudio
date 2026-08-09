@@ -38,7 +38,7 @@ function canTrack(): boolean {
 export function trackProductInquiry(
   producto: Producto,
   variacion?: Variacion,
-  channel: "whatsapp" | "email" | "contact_form" = "whatsapp",
+  channel: "whatsapp" | "email" = "whatsapp",
 ): void {
   if (!canTrack()) return;
 

@@ -42,7 +42,7 @@ La suite debe priorizar:
 - acciones de consulta manual y fallback cuando no exista WhatsApp;
 - metadata, sitemap, robots y structured data de catalogo;
 - ausencia publica de carrito, checkout y compra online;
-- endpoints publicos vigentes (`/api/rate-limit` y `/api/revalidate`);
+- endpoints publicos vigentes (`/api/revalidate`);
 - queries de Supabase usadas por catalogo, con datos remotos reales `pendiente de confirmar`;
 - estados de error, empty states y compatibilidad con build de Next.js;
 - accesibilidad basica en componentes visibles.
@@ -55,7 +55,7 @@ Playwright cubre integracion publica y comportamiento que depende de navegador r
 - carga de home, listado y contacto;
 - navegacion publica y menu mobile con foco;
 - overflow horizontal en viewports representativos;
-- formulario de contacto con errores accesibles y contexto desde query params;
+- superficie de contacto directo con canales configurables y contexto desde query params;
 - detalle de producto cuando hay datos reales disponibles.
 
 No reemplaza Vitest ni Testing Library. No cubre checkout, pagos, ordenes, webhooks ni datos remotos de Supabase como estado confirmado.

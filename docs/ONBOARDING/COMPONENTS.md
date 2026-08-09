@@ -61,10 +61,7 @@ components/
 │   └── TextureDivider.tsx       # Divisor visual (server)
 │
 ├── contacto/            # Dominio: Contacto
-│   ├── ContactForm.tsx          # Formulario principal (client)
-│   ├── ContactFormFields.tsx    # Campos del form (client)
-│   ├── ContactFormActions.tsx   # Botones/mensajes (client)
-│   └── ContactInfo.tsx          # Info de contacto (server)
+│   └── ContactInfo.tsx          # Canales de contacto directo (server)
 │
 ├── sobre-nosotros/      # Dominio: About
 │   ├── AboutHero.tsx            # Hero de about (server)
@@ -96,14 +93,14 @@ Los componentes se organizan por **dominio de negocio**, no por tipo técnico:
 ```
 productos/ProductCard.tsx
 productos/ProductGrid.tsx
-contacto/ContactForm.tsx
+contacto/ContactInfo.tsx
 ```
 
 ❌ **Incorrecto:**
 
 ```
 cards/ProductCard.tsx
-forms/ContactForm.tsx
+forms/ContactInfo.tsx
 grids/ProductGrid.tsx
 ```
 
@@ -629,60 +626,6 @@ interface VariationSelectorProps {
 
 ### Contacto
 
-#### ContactForm
-
-**Tipo:** Client Component  
-**Ubicación:** `components/contacto/ContactForm.tsx`  
-**Refactorizado:** Fix 4 (290 → 217 líneas)
-
-```typescript
-"use client";
-
-<ContactForm />
-```
-
-**Características:**
-
-- Validación con lib/utils/validation
-- Rate limiting (3 mensajes / 5 min)
-- XSS protection
-- Honeypot anti-bot
-- Sanitización de inputs
-- Abre WhatsApp con mensaje formateado
-
-**Arquitectura (3 componentes):**
-
-1. **ContactForm** - Lógica principal
-   - useState para errores, submitting
-   - useRateLimit hook
-   - Validación y sanitización
-   - Manejo de submit
-
-2. **ContactFormFields** - Renderizado de campos
-
-   ```typescript
-   <ContactFormFields
-     form={form}
-     errors={errors}
-     disabled={isSubmitting || isRateLimited}
-     nombreRef={nombreRef}
-     emailRef={emailRef}
-     telefonoRef={telefonoRef}
-     mensajeRef={mensajeRef}
-   />
-   ```
-
-3. **ContactFormActions** - Botón y mensajes
-   ```typescript
-   <ContactFormActions
-     buttonText={getButtonText()}
-     disabled={isSubmitting || isRateLimited}
-     rateLimitMessage={rateLimitMessage}
-     isRateLimited={isRateLimited}
-     submitHelperText={form.submitHelperText}
-   />
-   ```
-
 #### ContactInfo
 
 **Tipo:** Server Component  
@@ -694,9 +637,10 @@ interface VariationSelectorProps {
 
 **Características:**
 
-- Email, WhatsApp, Instagram
-- Horarios de atención
-- Carrusel de imágenes
+- CTA principal a WhatsApp cuando `NEXT_PUBLIC_WHATSAPP_NUMBER` está configurado
+- Email e Instagram como canales secundarios sólo si están configurados
+- Contexto opcional de `producto` y `variante` desde `/contacto`
+- Estado vacío cuando no hay canales públicos configurados
 
 ### UI Components (Primitivos)
 
@@ -781,10 +725,6 @@ vi.mock("@/lib/analytics/gtag", () => ({
   trackVariationSelect: vi.fn(),
 }));
 
-// Mock server functions
-vi.mock("@/lib/utils/rate-limit-server", () => ({
-  checkServerRateLimit: vi.fn().mockResolvedValue({ allowed: true }),
-}));
 ```
 
 #### Mocking Next.js
@@ -806,7 +746,7 @@ vi.mock("next/image", () => ({
 | Componente         | Tests | Cobertura   |
 | ------------------ | ----- | ----------- |
 | ProductCard        | 10    | ✅ Completa |
-| ContactForm        | 14    | ✅ Completa |
+| ContactInfo        | 8     | ✅ Completa |
 | MobileNav          | 3     | ✅ Z-index  |
 | ProductViewTracker | 3     | ✅ Completa |
 | Header             | 2     | ⚠️ Básica   |
@@ -1016,7 +956,6 @@ export function ProductHighlight({ producto }: { producto: Producto }) {
 
 - `lib/utils/image.ts` - Image URL y alt text helpers
 - `lib/utils/variations.ts` - Lógica de variaciones
-- `lib/utils/validation.ts` - Validación de formularios
 - `lib/design/tokens.ts` - Design system tokens
 - `lib/content/` - Contenido centralizado
 
@@ -1024,7 +963,6 @@ export function ProductHighlight({ producto }: { producto: Producto }) {
 
 - `hooks/useScrollLock.ts` - Bloquea scroll (modales)
 - `hooks/useEscapeKey.ts` - Maneja tecla ESC
-- `hooks/useRateLimit.ts` - Rate limiting client-side
 
 ### Testing
 

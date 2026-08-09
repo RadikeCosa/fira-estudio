@@ -46,7 +46,7 @@ export const HOME_CONTENT = {
   finalCta: {
     title: "¿Tenés alguna consulta?",
     description:
-      "Estamos para ayudarte a encontrar el producto perfecto para tu hogar. Contactanos y te responderemos a la brevedad.",
+      "Escribinos para consultar disponibilidad, variantes o detalles de nuestros productos.",
     ctaText: "Contactanos",
   },
 };

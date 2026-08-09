@@ -602,67 +602,6 @@ export function ProductList() {
 | `UNIQUE violation` | Valor duplicado        | Valida antes de insertar                 |
 | Timeout            | Consulta muy lenta     | Agrega índices o pagina los resultados   |
 
----
-
-## Rate Limiting (Control de Velocidad)
-
-Para evitar que usuarios hagan demasiadas consultas rápido, usamos `localStorage`:
-
-```typescript
-// hooks/useRateLimit.ts
-"use client";
-
-export function useRateLimit(key: string, limit: number, window: number) {
-  const canFetch = () => {
-    const stored = localStorage.getItem(key);
-    const now = Date.now();
-
-    if (!stored) {
-      localStorage.setItem(key, JSON.stringify([now]));
-      return true;
-    }
-
-    const timestamps = JSON.parse(stored) as number[];
-    const recent = timestamps.filter((t) => now - t < window);
-
-    if (recent.length < limit) {
-      recent.push(now);
-      localStorage.setItem(key, JSON.stringify(recent));
-      return true;
-    }
-
-    return false; // Demasiadas solicitudes
-  };
-
-  return { canFetch };
-}
-```
-
-**Uso:**
-
-```typescript
-'use client';
-
-import { useRateLimit } from '@/hooks/useRateLimit';
-
-export function ContactForm() {
-  const { canFetch } = useRateLimit('contact-form', 5, 60000); // 5 por minuto
-
-  const handleSubmit = async (e) => {
-    if (!canFetch()) {
-      alert('Espera un poco antes de enviar otro mensaje');
-      return;
-    }
-
-    // Enviar formulario
-  };
-
-  return <form onSubmit={handleSubmit}>{/* ... */}</form>;
-}
-```
-
----
-
 ## Patrones Avanzados
 
 ### Buscar con Múltiples Filtros

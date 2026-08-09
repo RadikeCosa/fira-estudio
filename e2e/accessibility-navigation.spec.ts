@@ -26,27 +26,47 @@ test("mobile navigation opens, traps focus, closes, and restores focus", async (
   await expect(dialog).toBeHidden();
 });
 
-test("contact form exposes validation errors and preserves query context", async ({
+test("contact page exposes direct channels and preserves query context", async ({
   page,
 }) => {
   await page.goto("/contacto?producto=Camino%20Magnolia&variante=Large%20/%20Azul");
 
-  await expect(page.getByLabel(/mensaje/i)).toHaveValue(
-    /Camino Magnolia, variante Large \/ Azul/,
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Contacto" }),
+  ).toBeVisible();
+  await expect(page.getByText(/Camino Magnolia · Large \/ Azul/)).toBeVisible();
+  await expect(page.getByLabel(/mensaje/i)).toHaveCount(0);
+  await expect(page.getByLabel(/nombre/i)).toHaveCount(0);
+
+  const whatsappCta = page.getByRole("link", {
+    name: /consultar por whatsapp/i,
+  });
+  const instagramLink = page.getByRole("link", { name: "Ver Instagram" });
+  const emailLink = page.locator('a[href^="mailto:"]');
+  const emptyState = page.getByText(
+    /Por ahora no hay un canal de contacto disponible/i,
   );
 
-  const submitButton = page.getByRole("button");
-  if (await page.getByRole("button", { name: /abrir correo/i }).isVisible()) {
-    await page.getByRole("button", { name: /abrir correo/i }).click();
-    await expect(page.getByLabel(/nombre/i)).toBeFocused();
-    await expect(page.getByLabel(/nombre/i)).toHaveAttribute(
-      "aria-invalid",
-      "true",
+  if (await whatsappCta.isVisible()) {
+    const href = await whatsappCta.getAttribute("href");
+    expect(decodeURIComponent(href ?? "")).toContain(
+      "Camino Magnolia, variante Large / Azul",
     );
   } else {
-    await expect(submitButton.filter({ hasText: "Email no disponible" })).toBeDisabled();
-    await expect(
-      page.getByText("El formulario por email no está disponible en este momento."),
-    ).toBeVisible();
+    const hasInstagram = await instagramLink.isVisible();
+    const hasEmail =
+      (await emailLink.count()) > 0 && (await emailLink.first().isVisible());
+    const hasEmptyState = await emptyState.isVisible();
+
+    expect(hasInstagram || hasEmail || hasEmptyState).toBe(true);
+
+    if (hasEmail) {
+      await expect(emailLink.first()).toHaveAttribute("href", /^mailto:/);
+    }
+
+    if (hasEmptyState) {
+      expect(hasInstagram).toBe(false);
+      expect(hasEmail).toBe(false);
+    }
   }
 });

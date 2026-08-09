@@ -5,4 +5,3 @@
 
 export { useScrollLock } from "./useScrollLock";
 export { useEscapeKey } from "./useEscapeKey";
-export { useRateLimit } from "./useRateLimit";

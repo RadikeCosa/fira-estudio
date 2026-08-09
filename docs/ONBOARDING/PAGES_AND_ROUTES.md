@@ -96,8 +96,6 @@ app/
 ├─ /test-errors (Test)
 │  └─ Error Boundary Testing
 │
-└─ /api/rate-limit (API)
-   └─ POST - Check rate limit
 ```
 
 ### Acceso Público
@@ -110,7 +108,6 @@ Todas las rutas son **públicas** (sin autenticación):
 ✅ GET  /productos/[slug]
 ✅ GET  /contacto
 ✅ GET  /sobre-nosotros
-✅ POST /api/rate-limit
 ```
 
 ---
@@ -130,10 +127,6 @@ app/
 ├── favicon.ico                   # Favicon
 ├── robots.ts                     # robots.txt generator
 ├── sitemap.ts                    # sitemap.xml generator
-│
-├── api/
-│   └── rate-limit/
-│       └── route.ts              # POST /api/rate-limit
 │
 ├── contacto/
 │   ├── layout.tsx                # Contacto layout (opcional)
@@ -590,13 +583,7 @@ export const metadata: Metadata = buildMetadata({
 export default function ContactoPage() {
   return (
     <main>
-      <div className="grid md:grid-cols-2 gap-12">
-        {/* Contact form (client, with rate limiting) */}
-        <ContactForm />
-
-        {/* Contact info (server) */}
-        <ContactInfo />
-      </div>
+      <ContactInfo />
     </main>
   );
 }
@@ -728,53 +715,6 @@ if (!producto) {
 ---
 
 ## API Routes
-
-### Rate Limit API
-
-**File:** `app/api/rate-limit/route.ts`  
-**Endpoint:** `POST /api/rate-limit`
-
-```typescript
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { key } = body;
-
-    if (!key) {
-      return NextResponse.json({ error: "Missing key" }, { status: 400 });
-    }
-
-    // Check rate limit
-    const result = await checkServerRateLimit(key);
-
-    return NextResponse.json(
-      {
-        allowed: result.allowed,
-        message: result.message,
-        resetTime: result.resetTime,
-      },
-      { status: result.allowed ? 200 : 429 },
-    );
-  } catch (error) {
-    console.error("Rate limit error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
-  }
-}
-```
-
-**Uso en client:**
-
-```typescript
-const response = await fetch("/api/rate-limit", {
-  method: "POST",
-  body: JSON.stringify({ key: "contact_form_submissions" }),
-});
-
-const { allowed, message } = await response.json();
-```
 
 ### API Route Conventions
 

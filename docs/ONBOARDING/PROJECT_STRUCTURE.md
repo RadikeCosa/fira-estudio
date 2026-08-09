@@ -63,7 +63,7 @@ proyecto/
 │   ├── layout/           # Header, Footer, MobileNav
 │   ├── productos/        # ProductCard, ProductGrid, VariationSelector
 │   ├── home/             # HeroSection, FeaturedProducts, etc.
-│   ├── contacto/         # ContactForm, ContactInfo
+│   ├── contacto/         # ContactInfo
 │   ├── errors/           # ErrorDisplay, NotFoundError
 │   └── ui/               # Primitivos (Button, Card, Input, etc.)
 │
@@ -82,7 +82,6 @@ proyecto/
 │   └── storage/          # Supabase Storage
 │
 ├── hooks/                # Hooks React personalizados
-│   ├── useRateLimit.ts  # Control de tasa de solicitudes
 │   ├── useEscapeKey.ts  # Detectar tecla Escape
 │   └── useScrollLock.ts # Bloquear scroll
 │
@@ -383,7 +382,7 @@ export const SPACING = {
 | **Layout**          | `layout.tsx`            | `app/layout.tsx`          |
 | **Componente**      | `ProductCard.tsx`       | `components/productos/`   |
 | **Query**           | `getProductos()`        | `lib/supabase/queries.ts` |
-| **Hook**            | `useRateLimit.ts`       | `hooks/`                  |
+| **Hook**            | `useScrollLock.ts`      | `hooks/`                  |
 | **Utilidad**        | `formatPrice.ts`        | `lib/utils/`              |
 | **Tipo**            | `Producto`, `Variacion` | `lib/types.ts`            |
 | **Contenido**       | `HOME_CONTENT`          | `lib/content/home.ts`     |

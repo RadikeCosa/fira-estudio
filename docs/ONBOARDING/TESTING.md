@@ -54,12 +54,7 @@ components/
 │   └── VariationSelector.test.tsx ⏳ (pendiente)
 │
 └── contacto/
-    ├── ContactForm.tsx
-    └── ContactForm.test.tsx      ✅
-
-hooks/
-├── useRateLimit.ts
-└── useRateLimit.test.ts          ✅
+    └── ContactInfo.tsx
 
 lib/
 ├── utils/
@@ -386,94 +381,6 @@ describe("ProductCard", () => {
 });
 ```
 
-### ContactForm Test
-
-```typescript
-// components/contacto/ContactForm.test.tsx
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { ContactForm } from "./ContactForm";
-import * as rateLimitServer from "@/lib/utils/rate-limit-server";
-
-vi.mock("@/lib/utils/rate-limit-server");
-
-describe("ContactForm", () => {
-  beforeEach(() => {
-    localStorage.clear();
-    vi.mocked(rateLimitServer.checkServerRateLimit).mockResolvedValue({
-      allowed: true,
-    });
-  });
-
-  it("renders all form fields", () => {
-    render(<ContactForm />);
-    expect(screen.getByLabelText(/Nombre/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Email/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Mensaje/)).toBeInTheDocument();
-  });
-
-  it("requires nombre field", () => {
-    render(<ContactForm />);
-    expect(screen.getByLabelText(/Nombre/)).toHaveAttribute("required");
-  });
-
-  it("shows validation errors on submit", async () => {
-    render(<ContactForm />);
-    fireEvent.click(screen.getByText("Enviar Consulta por WhatsApp"));
-
-    // Await for validation
-    await vi.waitFor(() => {
-      expect(screen.getByText(/Campo requerido/)).toBeInTheDocument();
-    });
-  });
-
-  it("opens WhatsApp with formatted message on valid submit", async () => {
-    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
-
-    render(<ContactForm />);
-
-    // Fill form
-    fireEvent.change(screen.getByLabelText(/Nombre/), {
-      target: { value: "Juan" },
-    });
-    fireEvent.change(screen.getByLabelText(/Email/), {
-      target: { value: "juan@example.com" },
-    });
-    fireEvent.change(screen.getByLabelText(/Mensaje/), {
-      target: { value: "Me interesa un mantel" },
-    });
-
-    // Submit
-    fireEvent.click(screen.getByText("Enviar Consulta por WhatsApp"));
-
-    await vi.waitFor(() => {
-      expect(openSpy).toHaveBeenCalledWith(
-        expect.stringContaining("wa.me"),
-        "_blank"
-      );
-    });
-
-    openSpy.mockRestore();
-  });
-
-  it("enforces rate limiting", async () => {
-    vi.mocked(rateLimitServer.checkServerRateLimit).mockResolvedValue({
-      allowed: false,
-    });
-
-    render(<ContactForm />);
-
-    fireEvent.click(screen.getByText("Enviar Consulta por WhatsApp"));
-
-    await vi.waitFor(() => {
-      expect(screen.getByText(/límite de mensajes/)).toBeInTheDocument();
-    });
-  });
-});
-```
-
----
-
 ## Utility Tests
 
 ### Format Utility Test
@@ -511,75 +418,6 @@ describe("formatDate", () => {
     const date = new Date("2024-01-15");
     const result = formatDate(date);
     assert.match(result, /15.*enero.*2024/);
-  });
-});
-```
-
-### Validation Utility Test
-
-```typescript
-// lib/utils/validation.test.ts
-import { describe, it, expect } from "vitest";
-import { validateContactForm } from "./validation";
-
-describe("validateContactForm", () => {
-  it("validates correct data", () => {
-    const result = validateContactForm({
-      nombre: "Juan Pérez",
-      email: "juan@example.com",
-      telefono: "+54 9 11 1234-5678",
-      mensaje: "Me interesa consultar sobre tus productos",
-    });
-
-    expect(result.isValid).toBe(true);
-    expect(result.errors).toEqual({});
-  });
-
-  it("requires nombre", () => {
-    const result = validateContactForm({
-      nombre: "",
-      email: "juan@example.com",
-      telefono: "+54 9 11 1234-5678",
-      mensaje: "Consulta",
-    });
-
-    expect(result.isValid).toBe(false);
-    expect(result.errors.nombre).toBeDefined();
-  });
-
-  it("validates email format", () => {
-    const result = validateContactForm({
-      nombre: "Juan",
-      email: "invalid-email",
-      telefono: "+54 9 11 1234-5678",
-      mensaje: "Consulta",
-    });
-
-    expect(result.isValid).toBe(false);
-    expect(result.errors.email).toBeDefined();
-  });
-
-  it("requires minimum mensaje length", () => {
-    const result = validateContactForm({
-      nombre: "Juan",
-      email: "juan@example.com",
-      telefono: "+54 9 11 1234-5678",
-      mensaje: "Hi", // Too short
-    });
-
-    expect(result.isValid).toBe(false);
-    expect(result.errors.mensaje).toBeDefined();
-  });
-
-  it("allows optional telefono", () => {
-    const result = validateContactForm({
-      nombre: "Juan",
-      email: "juan@example.com",
-      telefono: undefined,
-      mensaje: "Consulta completa",
-    });
-
-    expect(result.isValid).toBe(true);
   });
 });
 ```
@@ -627,94 +465,6 @@ describe("getProductImageAlt", () => {
   });
 });
 ```
-
----
-
-## Hook Tests
-
-### useRateLimit Hook Test
-
-```typescript
-// hooks/useRateLimit.test.ts
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { renderHook, act } from "@testing-library/react";
-import { useRateLimit } from "./useRateLimit";
-
-describe("useRateLimit", () => {
-  beforeEach(() => {
-    localStorage.clear();
-    vi.useFakeTimers();
-  });
-
-  it("initializes with rate limit not exceeded", () => {
-    const { result } = renderHook(() =>
-      useRateLimit({ maxActions: 3, windowMs: 60000, key: "test" }),
-    );
-
-    expect(result.current.isRateLimited).toBe(false);
-  });
-
-  it("records action and increments counter", () => {
-    const { result } = renderHook(() =>
-      useRateLimit({ maxActions: 3, windowMs: 60000, key: "test" }),
-    );
-
-    act(() => {
-      result.current.recordAction();
-    });
-
-    expect(result.current.isRateLimited).toBe(false);
-  });
-
-  it("enforces rate limit after max actions", () => {
-    const { result } = renderHook(() =>
-      useRateLimit({ maxActions: 2, windowMs: 60000, key: "test" }),
-    );
-
-    act(() => {
-      result.current.recordAction();
-      result.current.recordAction();
-    });
-
-    expect(result.current.isRateLimited).toBe(true);
-  });
-
-  it("resets after time window", () => {
-    const { result } = renderHook(() =>
-      useRateLimit({ maxActions: 1, windowMs: 10000, key: "test" }),
-    );
-
-    act(() => {
-      result.current.recordAction();
-    });
-
-    expect(result.current.isRateLimited).toBe(true);
-
-    act(() => {
-      vi.advanceTimersByTime(10001);
-    });
-
-    expect(result.current.isRateLimited).toBe(false);
-  });
-
-  it("calculates time until reset", () => {
-    const { result } = renderHook(() =>
-      useRateLimit({ maxActions: 1, windowMs: 10000, key: "test" }),
-    );
-
-    act(() => {
-      result.current.recordAction();
-    });
-
-    expect(result.current.timeUntilReset).toBeGreaterThan(0);
-    expect(result.current.timeUntilReset).toBeLessThanOrEqual(10000);
-  });
-
-  vi.useRealTimers();
-});
-```
-
----
 
 ## Mocking
 

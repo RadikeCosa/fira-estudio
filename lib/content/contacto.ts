@@ -6,32 +6,21 @@ export interface ContactContent {
     title: string;
     description: string;
   };
-  form: {
-    title: string;
-    fields: {
-      nombre: { label: string; placeholder: string };
-      email: { label: string; placeholder: string };
-      telefono: { label: string; placeholder: string; helper: string };
-      mensaje: { label: string; placeholder: string };
-    };
-    submitButton: string;
-    submitHelperText: string;
-  };
   info: {
     title: string;
-    items: {
-      whatsapp: { title: string; label: string };
-      email: { title: string; value: string };
-      instagram: { title: string; handle: string };
+    intro: string;
+    contextLabel: string;
+    whatsapp: {
+      title: string;
+      description: string;
+      cta: string;
     };
-  };
-  horarios: {
-    title: string;
-    items: Array<{
-      label: string;
-      hours: string;
-      active: boolean;
-    }>;
+    secondaryTitle: string;
+    emptyState: string;
+    items: {
+      email: { title: string; label: string };
+      instagram: { title: string; label: string };
+    };
   };
 }
 
@@ -39,55 +28,29 @@ export const CONTACTO_CONTENT: ContactContent = {
   page: {
     title: "Contacto",
     description:
-      "¿Tenés alguna consulta? Envianos un mensaje y te responderemos a la brevedad.",
-  },
-  form: {
-    title: "Envianos tu consulta",
-    fields: {
-      nombre: {
-        label: "Nombre",
-        placeholder: "Tu nombre completo",
-      },
-      email: {
-        label: "Email",
-        placeholder: "tu@email.com",
-      },
-      telefono: {
-        label: "Teléfono",
-        placeholder: "+54 9 11 1234-5678",
-        helper: "(opcional)",
-      },
-      mensaje: {
-        label: "Mensaje",
-        placeholder: "Contanos sobre tu consulta...",
-      },
-    },
-    submitButton: "Consultar por WhatsApp",
-    submitHelperText: "Al continuar, abriremos WhatsApp con tu consulta preparada",
+      "¿Querés consultar por alguno de nuestros productos? Escribinos para conocer disponibilidad, variantes o más detalles.",
   },
   info: {
-    title: "Información de Contacto",
+    title: "Canales de contacto",
+    intro:
+      "WhatsApp es el canal principal para consultas sobre productos de Fira Estudio.",
+    contextLabel: "Consulta por",
+    whatsapp: {
+      title: "WhatsApp",
+      description: "Canal principal para consultas",
+      cta: "Consultar por WhatsApp",
+    },
+    secondaryTitle: "Canales secundarios",
+    emptyState: "Por ahora no hay un canal de contacto disponible en el sitio.",
     items: {
-      whatsapp: {
-        title: "WhatsApp",
-        label: "Canal principal de consulta",
-      },
       email: {
         title: "Email",
-        value: "contacto@firaestudio.com",
+        label: "Enviar email",
       },
       instagram: {
         title: "Instagram",
-        handle: "@firaestudio",
+        label: "Ver Instagram",
       },
     },
-  },
-  horarios: {
-    title: "Horarios de Atención",
-    items: [
-      { label: "Lunes a Viernes", hours: "9:00 - 18:00 hs", active: true },
-      { label: "Sábados", hours: "10:00 - 14:00 hs", active: true },
-      { label: "Domingos", hours: "Cerrado", active: false },
-    ],
   },
 } as const;

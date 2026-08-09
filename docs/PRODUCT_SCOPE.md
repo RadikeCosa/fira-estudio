@@ -68,7 +68,7 @@ La informacion de productos puede incluir precio, stock o disponibilidad observa
 
 El contacto manual es la accion principal posterior a la exploracion del catalogo. WhatsApp es el canal principal de consulta de Fira Estudio.
 
-El sitio debe usar `NEXT_PUBLIC_WHATSAPP_NUMBER` como fuente de verdad para construir enlaces `wa.me`. El valor debe tener codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. Email e Instagram pueden mantenerse como canales secundarios cuando esten configurados.
+El sitio debe usar `NEXT_PUBLIC_WHATSAPP_NUMBER` como fuente de verdad para construir enlaces `wa.me`. El valor debe tener codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. Email e Instagram pueden mantenerse como canales secundarios cuando esten configurados. La pagina `/contacto` debe funcionar como acceso directo a esos canales manuales, no como formulario con backend propio.
 
 ## Infraestructura historica
 

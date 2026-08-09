@@ -51,10 +51,7 @@ describe("public API runtime surface", () => {
       path.relative(process.cwd(), filePath),
     );
 
-    expect(routes.sort()).toEqual([
-      "app/api/rate-limit/route.ts",
-      "app/api/revalidate/route.ts",
-    ]);
+    expect(routes.sort()).toEqual(["app/api/revalidate/route.ts"]);
   });
 
   it("does not expose historical commerce API routes", () => {

@@ -154,9 +154,22 @@ test("real Supabase catalog data renders catalog, filter, detail, gallery, and i
 
   if (href?.startsWith("/contacto")) {
     await page.goto(href);
-    await expect(page.getByLabel(/mensaje/i)).toHaveValue(
-      /Camino de Mesa Magnolia, variante 270x140 \/ Crudo con Estampado Chocolate/,
-    );
+    await expect(
+      page.getByText(
+        /Camino de Mesa Magnolia · 270x140 \/ Crudo con Estampado Chocolate/,
+      ),
+    ).toBeVisible();
+    await expect(page.getByLabel(/mensaje/i)).toHaveCount(0);
+
+    const whatsappCta = page.getByRole("link", {
+      name: /consultar por whatsapp/i,
+    });
+    if (await whatsappCta.isVisible()) {
+      const contactHref = await whatsappCta.getAttribute("href");
+      expect(decodeURIComponent(contactHref ?? "")).toContain(
+        "Camino de Mesa Magnolia, variante 270x140 / Crudo con Estampado Chocolate",
+      );
+    }
   } else {
     const decodedHref = decodeURIComponent(href ?? "");
     expect(decodedHref).toContain("Camino de Mesa Magnolia");

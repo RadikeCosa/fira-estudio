@@ -1,10 +1,11 @@
 import { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { ContactForm } from "@/components/contacto/ContactForm";
-import { ContactInfo } from "@/components/contacto/ContactInfo";
+import {
+  ContactInfo,
+  type ContactProductContext,
+} from "@/components/contacto/ContactInfo";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
-import type { ContactProductContext } from "@/components/contacto/ContactForm";
 
 export const metadata: Metadata = buildMetadata({
   title: CONTACTO_CONTENT.page.title,
@@ -12,7 +13,7 @@ export const metadata: Metadata = buildMetadata({
   url: "/contacto",
 });
 
-type ContactSearchParams = Record<string, string | string[] | undefined>;
+export type ContactSearchParams = Record<string, string | string[] | undefined>;
 
 const CONTEXT_MAX_LENGTH = 120;
 
@@ -27,7 +28,7 @@ function sanitizeContextParam(value: string | undefined): string | undefined {
   return trimmed.slice(0, CONTEXT_MAX_LENGTH);
 }
 
-function buildContactContext(
+export function buildContactContext(
   searchParams?: ContactSearchParams,
 ): ContactProductContext | undefined {
   const producto = sanitizeContextParam(getFirstParam(searchParams?.producto));
@@ -52,10 +53,7 @@ export default async function ContactoPage({
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       <PageHeader title={page.title} description={page.description} />
 
-      <div className="grid gap-10 lg:grid-cols-2 lg:gap-12">
-        <ContactForm initialContext={contactContext} />
-        <ContactInfo />
-      </div>
+      <ContactInfo initialContext={contactContext} />
     </div>
   );
 }

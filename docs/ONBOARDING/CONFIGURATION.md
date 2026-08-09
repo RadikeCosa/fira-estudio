@@ -756,7 +756,7 @@ main              # Production
 
 feat: add product view tracking
 fix: resolve MobileNav z-index issue
-refactor: split ContactForm into smaller components
+refactor: simplify contact surface
 docs: add components onboarding guide
 test: add ProductCard tests
 style: format code with prettier
