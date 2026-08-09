@@ -2,7 +2,6 @@
 
 Fira Estudio es una vidriera digital de productos textiles artesanales. Permite explorar productos, categorias, variantes, materiales e imagenes y contactar al emprendimiento para consultar disponibilidad.
 
-El contrato vigente del producto esta en [docs/PRODUCT_SCOPE.md](./docs/PRODUCT_SCOPE.md).
 
 ## Estado actual
 
