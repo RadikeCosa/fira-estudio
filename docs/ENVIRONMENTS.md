@@ -9,8 +9,10 @@ El contrato de producto vigente esta en [`PRODUCT_SCOPE.md`](./PRODUCT_SCOPE.md)
 | Entorno | Uso esperado | Fuente de variables | Estado verificable desde repo |
 | --- | --- | --- | --- |
 | `local` | desarrollo | `.env.local` | parcialmente |
-| `preview` | validacion en Vercel Preview | Vercel | no |
-| `production` | futuro despliegue publico | Vercel | no |
+| `preview` | validacion de ramas antes de integrar a `main` | Vercel | no |
+| `production` | despliegue publico proveniente de `main` estable | Vercel | no |
+
+El flujo de ramas y promocion adoptado por el repositorio esta en [`DEVELOPMENT_WORKFLOW.md`](./DEVELOPMENT_WORKFLOW.md). La configuracion externa efectiva de GitHub y Vercel queda `pendiente de confirmar` hasta verificarse fuera del repo.
 
 ## Local
 
@@ -37,10 +39,12 @@ El catalogo local requiere variables publicas de Supabase para renderizar produc
 
 ## Preview
 
-Preview se usara para validar el catalogo antes de production. Queda `pendiente de confirmar`:
+Preview se usara para validar ramas de trabajo antes de integrarlas a `main`, especialmente para smoke tests, revision visual, responsive, accesibilidad, comportamiento real de navegador y variables/configuracion propias del entorno cuando corresponda.
+
+La politica adoptada es rama de trabajo -> validacion local -> Preview cuando aporte valor -> integracion en `main`. Queda `pendiente de confirmar`:
 
 - proyecto Vercel;
-- estrategia de ramas;
+- generacion automatica de Preview por rama;
 - URL de preview;
 - autenticacion o proteccion del preview;
 - variables efectivamente cargadas;
@@ -49,11 +53,14 @@ Preview se usara para validar el catalogo antes de production. Queda `pendiente 
 
 ## Production
 
-Production sera el despliegue publico del catalogo. Queda `pendiente de confirmar`:
+Production sera el despliegue publico del catalogo y debe provenir de `main` estable, con codigo ya integrado y validado segun el alcance del cambio.
+
+Queda `pendiente de confirmar`:
 
 - URL final;
 - dominio;
 - proyecto Vercel;
+- despliegue automatico o manual desde `main`;
 - variables efectivamente cargadas;
 - configuracion real de Supabase;
 - datos, Storage e imagenes;

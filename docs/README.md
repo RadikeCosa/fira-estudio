@@ -11,6 +11,7 @@ Estos documentos son la entrada principal para entender y operar el proyecto vig
 - [`PRODUCT_SCOPE.md`](./PRODUCT_SCOPE.md): contrato canonico del producto.
 - [`../README.md`](../README.md): entrada tecnica y de portfolio.
 - [`../AGENTS.md`](../AGENTS.md): guia canonica para asistentes y agentes.
+- [`DEVELOPMENT_WORKFLOW.md`](./DEVELOPMENT_WORKFLOW.md): flujo liviano de ramas, validaciones, Preview, PR y Production.
 - [`ENVIRONMENTS.md`](./ENVIRONMENTS.md): criterios de entornos, variables y estados `pendiente de confirmar`.
 - [`DEPLOYMENT.md`](./DEPLOYMENT.md): checklist de deploy y validaciones.
 - [`VERCEL_SETUP.md`](./VERCEL_SETUP.md): configuracion segura de variables para Vercel.

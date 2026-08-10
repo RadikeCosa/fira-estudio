@@ -103,6 +103,18 @@ No documentar ni sugerir scripts inexistentes.
 
 Nunca presentar staging o produccion como hechos confirmados solo por una doc historica.
 
+## Flujo de desarrollo
+
+El flujo canonico esta en `docs/DEVELOPMENT_WORKFLOW.md`.
+
+- `main` debe representar el estado estable y desplegable.
+- No desarrollar features, fixes o saneamientos directamente sobre `main`.
+- Crear cada incremento en una rama aislada desde `main` actualizado.
+- Usar ramas `feature/<descripcion>`, `fix/<descripcion>`, `docs/<descripcion>` o `chore/<descripcion>` con nombres cortos en kebab-case.
+- No crear una rama permanente `develop` ni ramas `release/*` o `hotfix/*` por defecto.
+- Diferenciar la politica adoptada por el repo de la configuracion externa real de GitHub/Vercel, que queda `pendiente de confirmar` hasta verificarse.
+- Codex no debe hacer commit, push, merge ni deploy salvo pedido explicito del usuario.
+
 ## Testing y validacion
 
 - Antes de cerrar cambios, validar como minimo que la documentacion siga alineada con `package.json` y los archivos reales.
