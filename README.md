@@ -184,6 +184,7 @@ No es necesario para ejecutar, compilar o desplegar el catalogo. Una eventual re
 - [docs/PRODUCT_SCOPE.md](./docs/PRODUCT_SCOPE.md): contrato canonico de producto.
 - [AGENTS.md](./AGENTS.md): guia canonica para agentes de codigo.
 - [docs/README.md](./docs/README.md): mapa de documentacion activa e historica.
+- [docs/DEVELOPMENT_WORKFLOW.md](./docs/DEVELOPMENT_WORKFLOW.md): flujo liviano de ramas, validaciones, Preview, PR y Production.
 - [docs/ENVIRONMENTS.md](./docs/ENVIRONMENTS.md): criterios de entornos y variables.
 - [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md): checklist y consideraciones de deploy.
 - [docs/VERCEL_SETUP.md](./docs/VERCEL_SETUP.md): carga segura de variables en Vercel.

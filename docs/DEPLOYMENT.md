@@ -14,12 +14,21 @@ Esto no confirma por si solo el estado del entorno remoto, pero si deja la base 
 
 ## Checklist previo al deploy
 
-Antes de promover cambios que afecten la aplicacion:
+Antes de promover cambios que afecten la aplicacion, validar localmente segun el alcance:
 
 ```bash
 npm run lint
 npm run test
 npm run build
+```
+
+Usar `npm run test:e2e` cuando el cambio dependa de navegador real, navegacion, responsive, foco, accesibilidad interactiva, persistencia del lado cliente o comportamiento visual importante.
+
+Antes de pedir commit o integracion:
+
+```bash
+git diff --check
+git status
 ```
 
 No documentar comandos que no existan en `package.json`.
@@ -34,10 +43,24 @@ Ademas, para la etapa catalogo:
 
 ## Deploy esperado
 
-- `preview`: despliegues de validacion en Vercel Preview.
-- `production`: futuro despliegue principal en Vercel.
+El flujo de promocion adoptado es:
 
-La estrategia exacta de ramas, promociones y dominios publicos queda `pendiente de confirmar` fuera del repositorio.
+```text
+rama de trabajo
+   ->
+validacion local
+   ->
+Vercel Preview cuando corresponda
+   ->
+integracion en main
+   ->
+Production
+```
+
+- `preview`: despliegues de validacion de ramas en Vercel Preview.
+- `production`: despliegue principal en Vercel proveniente de `main` estable.
+
+Esta es la politica de desarrollo del repositorio. La configuracion externa efectiva de Vercel/GitHub, las promociones automaticas, dominios publicos y URLs quedan `pendiente de confirmar` fuera del repositorio.
 
 ## Variables minimas para catalogo
 
@@ -92,10 +115,11 @@ Si cambian variables:
 
 Opciones tipicas:
 
+- abandonar una rama antes del merge si el experimento falla;
 - promover un deployment estable desde Vercel;
 - revertir el cambio en Git y volver a desplegar.
 
-El procedimiento operativo exacto depende de la configuracion real del proyecto en Vercel y queda `pendiente de confirmar`.
+No hacer correcciones improvisadas directamente en Production. El procedimiento operativo exacto depende de la configuracion real del proyecto en Vercel y queda `pendiente de confirmar`.
 
 ## Checklist de verificacion
 
