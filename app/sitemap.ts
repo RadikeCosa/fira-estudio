@@ -5,13 +5,10 @@
 
 import type { MetadataRoute } from "next";
 import { getProductosFresh } from "@/lib/supabase/queries";
+import { getSiteBaseUrl, resolveAbsoluteUrl } from "@/lib/seo/url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_SITE_URL ??
-    (process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "http://localhost:3000");
+  const baseUrl = getSiteBaseUrl();
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
@@ -22,19 +19,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/productos`,
+      url: resolveAbsoluteUrl("/productos"),
       lastModified: new Date(),
       changeFrequency: "daily" as const,
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/sobre-nosotros`,
+      url: resolveAbsoluteUrl("/sobre-nosotros"),
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/contacto`,
+      url: resolveAbsoluteUrl("/contacto"),
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.7,
@@ -57,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
 
     const productUrls: MetadataRoute.Sitemap = productos.map((producto) => ({
-      url: `${baseUrl}/productos/${producto.slug}`,
+      url: resolveAbsoluteUrl(`/productos/${producto.slug}`),
       lastModified: new Date(producto.created_at),
       changeFrequency: "weekly" as const,
       priority: producto.destacado ? 0.8 : 0.6,

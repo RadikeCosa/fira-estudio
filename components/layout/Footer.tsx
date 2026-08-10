@@ -33,12 +33,12 @@ export function Footer() {
         <div className={COMPONENTS.footer.innerWrapper}>
           {/* Logo y subtítulo desde SITE_CONFIG */}
           <div className={COMPONENTS.footer.brandSection}>
-            <h2 className={COMPONENTS.footer.logo}>
+            <p className={COMPONENTS.footer.logo}>
               <span className="font-sugo-display text-[1.2em] sm:text-[1.4em] lg:text-[1.6em]">
                 fira
               </span>{" "}
               <span className="font-open-sans">estudio</span>
-            </h2>
+            </p>
             <p className={COMPONENTS.footer.subtitle}>
               {SITE_CONFIG.footerSubtitle}
             </p>

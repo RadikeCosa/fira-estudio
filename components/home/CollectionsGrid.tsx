@@ -113,7 +113,6 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
           <div
             className="inline-flex items-center gap-2 text-sm font-medium text-white"
             aria-label="Explorar colección"
-            role="button"
           >
             <span>Explorar colección</span>
             <ArrowRight

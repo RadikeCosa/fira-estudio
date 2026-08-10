@@ -1,29 +1,6 @@
 import { SITE_CONFIG } from "@/lib/constants";
+import { resolveAbsoluteUrl } from "@/lib/seo/url";
 import type { Metadata } from "next";
-
-function normalizeSiteUrl(url: string | undefined): string | undefined {
-  const trimmed = url?.trim();
-  if (!trimmed) return undefined;
-  return trimmed.replace(/\/$/, "");
-}
-
-function resolveUrl(
-  value: string | undefined,
-  siteUrl: string | undefined,
-): string | undefined {
-  const trimmed = value?.trim();
-  if (!trimmed) return undefined;
-
-  if (/^https?:\/\//i.test(trimmed)) {
-    return trimmed;
-  }
-
-  if (!siteUrl) {
-    return trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
-  }
-
-  return `${siteUrl}${trimmed.startsWith("/") ? trimmed : `/${trimmed}`}`;
-}
 
 /**
  * Centralized Metadata builder for SEO and social sharing
@@ -35,17 +12,18 @@ export function buildMetadata({
   image,
   url,
   noIndex = false,
+  follow = !noIndex,
 }: {
   title: string;
   description: string;
   image?: string;
   url?: string;
   noIndex?: boolean;
+  follow?: boolean;
 }): Metadata {
-  const siteUrl = normalizeSiteUrl(SITE_CONFIG.url);
-  const resolvedImage = resolveUrl(image ?? "/images/logo.png", siteUrl);
-  const resolvedUrl = resolveUrl(url, siteUrl) ?? siteUrl;
-  const resolvedImages = resolvedImage ? [resolvedImage] : undefined;
+  const resolvedImage = resolveAbsoluteUrl(image ?? "/images/logo.png");
+  const resolvedUrl = url ? resolveAbsoluteUrl(url) : undefined;
+  const resolvedImages = [resolvedImage];
 
   return {
     title,
@@ -57,7 +35,7 @@ export function buildMetadata({
       : undefined,
     robots: {
       index: !noIndex,
-      follow: !noIndex,
+      follow,
     },
     openGraph: {
       title: `${title} | ${SITE_CONFIG.name}`,

@@ -6,6 +6,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { MaintenanceBanner } from "@/components/maintenance-banner";
 import { SITE_CONFIG } from "@/lib/constants";
+import { getSiteBaseUrlObject } from "@/lib/seo/url";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -22,22 +23,8 @@ const inter = Inter({
   display: "swap",
 });
 
-const metadataBase = (() => {
-  const siteUrl = SITE_CONFIG.url?.trim();
-
-  if (siteUrl) {
-    return new URL(siteUrl);
-  }
-
-  if (process.env.VERCEL_URL) {
-    return new URL(`https://${process.env.VERCEL_URL}`);
-  }
-
-  return new URL("http://localhost:3000");
-})();
-
 export const metadata: Metadata = {
-  metadataBase,
+  metadataBase: getSiteBaseUrlObject(),
   title: {
     default: SITE_CONFIG.name,
     template: `%s | ${SITE_CONFIG.name}`,

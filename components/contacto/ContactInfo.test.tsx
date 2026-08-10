@@ -172,4 +172,25 @@ describe("ContactInfo", () => {
     expect(screen.getByRole("link", { name: "hola@firaestudio.com" }))
       .toHaveAttribute("href", "mailto:hola@firaestudio.com");
   });
+
+  it("renders a discreet catalog link when there is no product context", () => {
+    vi.stubEnv("NEXT_PUBLIC_WHATSAPP_NUMBER", "5492999123456");
+
+    render(<ContactInfo />);
+
+    expect(screen.getByRole("link", { name: "Ver catálogo" })).toHaveAttribute(
+      "href",
+      "/productos",
+    );
+  });
+
+  it("does not repeat the catalog link when contact starts from a product", () => {
+    vi.stubEnv("NEXT_PUBLIC_WHATSAPP_NUMBER", "5492999123456");
+
+    render(<ContactInfo initialContext={{ producto: "Camino Magnolia" }} />);
+
+    expect(
+      screen.queryByRole("link", { name: "Ver catálogo" }),
+    ).not.toBeInTheDocument();
+  });
 });

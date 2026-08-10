@@ -8,6 +8,7 @@ import { render, screen } from "@testing-library/react";
 import { AboutSection } from "./AboutSection";
 import { ValuesGrid } from "./ValuesGrid";
 import { Heart, Sparkles } from "lucide-react";
+import { ABOUT_CONTENT } from "@/lib/content/sobre-nosotros";
 
 describe("AboutSection", () => {
   it("renders title with icon", () => {
@@ -41,6 +42,28 @@ describe("AboutSection", () => {
     paragraphs.forEach((paragraph) => {
       expect(screen.getByText(paragraph)).toBeInTheDocument();
     });
+  });
+
+  it("renders contextual catalog links inside paragraph copy", () => {
+    render(
+      <AboutSection
+        title="Proceso"
+        icon={Sparkles}
+        paragraphs={[
+          {
+            before: "Podés ",
+            link: {
+              text: "ver el catálogo",
+              href: "/productos",
+            },
+            after: " para conocer nuestras piezas.",
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole("link", { name: "ver el catálogo" }))
+      .toHaveAttribute("href", "/productos");
   });
 
   it("applies correct heading styles", () => {
@@ -88,6 +111,13 @@ describe("ValuesGrid", () => {
     expect(
       screen.getByText(/Cada cliente es importante para nosotros/),
     ).toBeInTheDocument();
+  });
+
+  it("includes a contextual catalog link in the real process content", () => {
+    render(<AboutSection {...ABOUT_CONTENT.sections.proceso} />);
+
+    expect(screen.getByRole("link", { name: "ver el catálogo" }))
+      .toHaveAttribute("href", "/productos");
   });
 
   it("applies grid layout classes", () => {

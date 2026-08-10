@@ -5,19 +5,30 @@ import { CategoryFilter } from "@/components/productos/CategoryFilter";
 import { Breadcrumbs } from "@/components/ui/Breadcrumbs";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Pagination } from "@/components/productos/Pagination";
-import {
-  generateBreadcrumbSchema,
-  renderJsonLd,
-} from "@/lib/seo/structured-data";
-import { SITE_CONFIG } from "@/lib/constants";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { PRODUCTOS_CONTENT } from "@/lib/content/productos";
 
 interface ProductosPageProps {
-  searchParams: Promise<{
-    categoria?: string;
-    page?: string;
-  }>;
+  searchParams: Promise<ProductosSearchParams>;
+}
+
+type SearchParamValue = string | string[] | undefined;
+
+type ProductosSearchParams = Record<string, SearchParamValue> & {
+  categoria?: SearchParamValue;
+  page?: SearchParamValue;
+};
+
+function getFirstParam(value: SearchParamValue): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+function isValidCategorySlug(value: string | undefined): value is string {
+  return Boolean(value?.match(/^[a-z0-9-]+$/));
+}
+
+function hasSearchParams(params: ProductosSearchParams): boolean {
+  return Object.keys(params).length > 0;
 }
 
 // ISR: Revalidar cada hora
@@ -28,19 +39,23 @@ export async function generateMetadata({
   searchParams,
 }: ProductosPageProps): Promise<Metadata> {
   const params = await searchParams;
-  const categoriaSlug = params.categoria;
+  const rawCategoriaSlug = getFirstParam(params.categoria);
+  const categoriaSlug = isValidCategorySlug(rawCategoriaSlug)
+    ? rawCategoriaSlug
+    : undefined;
+  const hasSeoRelevantQuery = hasSearchParams(params);
 
   // Si hay categoría, fetch para obtener nombre
-  let categoriaName = PRODUCTOS_CONTENT.page.defaultTitle;
-  let categoriaDescription: string = SITE_CONFIG.description;
+  let metadataTitle = PRODUCTOS_CONTENT.page.metadataTitle;
+  let metadataDescription = PRODUCTOS_CONTENT.page.metadataDescription;
 
   if (categoriaSlug) {
     try {
       const categorias = await getCategorias();
       const categoria = categorias.find((c) => c.slug === categoriaSlug);
       if (categoria) {
-        categoriaName = categoria.nombre;
-        categoriaDescription = categoria.descripcion || SITE_CONFIG.description;
+        metadataTitle = categoria.nombre;
+        metadataDescription = categoria.descripcion || metadataDescription;
       }
     } catch (error) {
       console.error("Error fetching category for metadata:", error);
@@ -48,11 +63,11 @@ export async function generateMetadata({
   }
 
   return buildMetadata({
-    title: categoriaName,
-    description: categoriaDescription,
-    url: categoriaSlug
-      ? `/productos?categoria=${categoriaSlug}`
-      : "/productos",
+    title: metadataTitle,
+    description: metadataDescription,
+    url: "/productos",
+    noIndex: hasSeoRelevantQuery,
+    follow: true,
   });
 }
 
@@ -62,12 +77,13 @@ export default async function ProductosPage({
   const params = await searchParams;
 
   // Validar y sanitizar categoriaSlug
-  const rawCategoriaSlug = params.categoria;
-  const categoriaSlug = rawCategoriaSlug?.match(/^[a-z0-9-]+$/)
+  const rawCategoriaSlug = getFirstParam(params.categoria);
+  const categoriaSlug = isValidCategorySlug(rawCategoriaSlug)
     ? rawCategoriaSlug
     : undefined;
 
-  const pageParam = params.page ? Number.parseInt(params.page, 10) : 1;
+  const rawPageParam = getFirstParam(params.page);
+  const pageParam = rawPageParam ? Number.parseInt(rawPageParam, 10) : 1;
   const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
   const pageSize = 12;
 
@@ -97,50 +113,42 @@ export default async function ProductosPage({
       ]
     : [{ name: "Productos", url: "/productos" }];
 
-  // Generate breadcrumb schema
-  const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbItems);
-
   // Get content
   const { page: pageContent } = PRODUCTOS_CONTENT;
 
   return (
-    <>
-      {/* JSON-LD structured data */}
-      <script {...renderJsonLd(breadcrumbSchema)} />
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      {/* Breadcrumbs */}
+      <Breadcrumbs items={breadcrumbItems} />
 
-      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-        {/* Breadcrumbs */}
-        <Breadcrumbs items={breadcrumbItems} />
+      {/* Page Header */}
+      <PageHeader
+        title={
+          activeCategoria ? activeCategoria.nombre : pageContent.defaultTitle
+        }
+        description={
+          activeCategoria
+            ? activeCategoria.descripcion || pageContent.defaultDescription
+            : pageContent.defaultDescription
+        }
+      />
 
-        {/* Page Header */}
-        <PageHeader
-          title={
-            activeCategoria ? activeCategoria.nombre : pageContent.defaultTitle
-          }
-          description={
-            activeCategoria
-              ? activeCategoria.descripcion || pageContent.defaultDescription
-              : pageContent.defaultDescription
-          }
+      {/* Category filter */}
+      <CategoryFilter categorias={categorias} />
+
+      {/* Grid de productos */}
+      <ProductGrid productos={productos} />
+
+      {/* Pagination */}
+      <div className="mt-12 flex justify-center">
+        <Pagination
+          page={pagination.page}
+          totalPages={pagination.totalPages}
+          hasNextPage={pagination.hasNextPage}
+          hasPreviousPage={pagination.hasPreviousPage}
+          categoriaSlug={categoriaSlug}
         />
-
-        {/* Category filter */}
-        <CategoryFilter categorias={categorias} />
-
-        {/* Grid de productos */}
-        <ProductGrid productos={productos} />
-
-        {/* Pagination */}
-        <div className="mt-12 flex justify-center">
-          <Pagination
-            page={pagination.page}
-            totalPages={pagination.totalPages}
-            hasNextPage={pagination.hasNextPage}
-            hasPreviousPage={pagination.hasPreviousPage}
-            categoriaSlug={categoriaSlug}
-          />
-        </div>
       </div>
-    </>
+    </div>
   );
 }

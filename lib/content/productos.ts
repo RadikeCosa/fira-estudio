@@ -3,6 +3,8 @@
 
 export interface ProductosContent {
   page: {
+    metadataTitle: string;
+    metadataDescription: string;
     defaultTitle: string;
     defaultDescription: string;
   };
@@ -14,9 +16,12 @@ export interface ProductosContent {
 
 export const PRODUCTOS_CONTENT: ProductosContent = {
   page: {
-    defaultTitle: "Nuestros Productos",
+    metadataTitle: "Catálogo de textiles artesanales",
+    metadataDescription:
+      "Explorá el catálogo de textiles artesanales de Fira Estudio: piezas para la mesa y el hogar con materiales, variantes e imágenes.",
+    defaultTitle: "Textiles artesanales",
     defaultDescription:
-      "Textiles artesanales hechos a mano con dedicación y cuidado. Cada pieza es única y especial.",
+      "Explorá el catálogo de Fira Estudio: piezas textiles para la mesa y el hogar con materiales, variantes e imágenes. La disponibilidad se confirma por consulta.",
   },
   empty: {
     title: "No hay productos disponibles",

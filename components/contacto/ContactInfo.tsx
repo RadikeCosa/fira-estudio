@@ -1,4 +1,5 @@
 import { Instagram, Mail, MessageCircle } from "lucide-react";
+import Link from "next/link";
 import { CONTACTO_CONTENT } from "@/lib/content/contacto";
 import {
   PUBLIC_CONTACT_CHANNELS,
@@ -80,6 +81,7 @@ export function ContactInfo({ initialContext }: ContactInfoProps) {
       : []),
   ];
   const [primaryAction, ...secondaryActions] = actions;
+  const shouldShowCatalogLink = !initialContext;
 
   const renderIcon = (channel: ContactChannel, className = "h-5 w-5") => {
     switch (channel) {
@@ -155,11 +157,30 @@ export function ContactInfo({ initialContext }: ContactInfoProps) {
                 ))}
               </div>
             )}
+
+            {shouldShowCatalogLink && (
+              <Link
+                href="/productos"
+                className="mt-6 rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-4"
+              >
+                Ver catálogo
+              </Link>
+            )}
           </div>
         ) : (
-          <p role="status" className="mt-4 text-muted-foreground">
-            {info.emptyState}
-          </p>
+          <div className="mt-4 space-y-4">
+            <p role="status" className="text-muted-foreground">
+              {info.emptyState}
+            </p>
+            {shouldShowCatalogLink && (
+              <Link
+                href="/productos"
+                className="inline-flex rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-4"
+              >
+                Ver catálogo
+              </Link>
+            )}
+          </div>
         )}
       </div>
     </section>

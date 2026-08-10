@@ -9,6 +9,17 @@ export interface AboutValue {
   description: string;
 }
 
+export type AboutParagraph =
+  | string
+  | {
+      before: string;
+      link: {
+        text: string;
+        href: string;
+      };
+      after: string;
+    };
+
 export interface AboutContent {
   page: {
     title: string;
@@ -22,12 +33,12 @@ export interface AboutContent {
     historia: {
       title: string;
       icon: LucideIcon;
-      paragraphs: string[];
+      paragraphs: AboutParagraph[];
     };
     proceso: {
       title: string;
       icon: LucideIcon;
-      paragraphs: string[];
+      paragraphs: AboutParagraph[];
     };
     valores: {
       title: string;
@@ -61,7 +72,15 @@ export const ABOUT_CONTENT: AboutContent = {
       icon: Sparkles,
       paragraphs: [
         "Piezas artesanales que encienden tu hogar con calidad y durabilidad.",
-        "Cada pieza que creamos pasa por un meticuloso proceso de elaboración.",
+        {
+          before:
+            "Cada pieza que creamos pasa por un meticuloso proceso de elaboración; podés ",
+          link: {
+            text: "ver el catálogo",
+            href: "/productos",
+          },
+          after: " para conocer el resultado de nuestro trabajo.",
+        },
         "Seleccionamos cuidadosamente materiales premium, priorizando fibras naturales y telas de alta calidad que combinan belleza con funcionalidad óptima.",
         "Prestamos atención rigurosa a cada costura a mano, cada terminación y cada estampa manual mediante serigrafía.",
       ],
@@ -92,7 +111,7 @@ export const ABOUT_CONTENT: AboutContent = {
           icon: Users,
           title: "Atención Personalizada",
           description:
-            "Cada cliente es importante para nosotros. Ofrecemos atención personalizada, asesoramiento en la elección de productos y estamos siempre disponibles para responder consultas y acompañarte en tu compra.",
+            "Cada cliente es importante para nosotros. Ofrecemos atención personalizada, asesoramiento en la elección de productos y estamos siempre disponibles para responder consultas y acompañarte en tu elección.",
         },
       ],
     },

@@ -5,6 +5,7 @@
 
 import type { ProductoCompleto } from "@/lib/types";
 import { SITE_CONFIG } from "@/lib/constants";
+import { resolveAbsoluteUrl } from "@/lib/seo/url";
 
 /**
  * Generate Product structured data
@@ -22,7 +23,8 @@ export function generateProductSchema(producto: ProductoCompleto) {
     "@type": "Product",
     name: producto.nombre,
     description: producto.descripcion,
-    image: mainImage ? `${SITE_CONFIG.url}${mainImage}` : undefined,
+    url: resolveAbsoluteUrl(`/productos/${producto.slug}`),
+    image: mainImage ? resolveAbsoluteUrl(mainImage) : undefined,
     brand: {
       "@type": "Brand",
       name: SITE_CONFIG.name,
@@ -63,7 +65,7 @@ export function generateBreadcrumbSchema(
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `${SITE_CONFIG.url}${item.url}`,
+      item: resolveAbsoluteUrl(item.url),
     })),
   };
 
@@ -80,8 +82,8 @@ export function generateOrganizationSchema() {
     "@type": "Organization",
     name: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
-    url: SITE_CONFIG.url,
-    logo: `${SITE_CONFIG.url}/images/logo.png`,
+    url: resolveAbsoluteUrl("/"),
+    logo: resolveAbsoluteUrl("/images/logo.png"),
     sameAs: [
       process.env.NEXT_PUBLIC_INSTAGRAM_URL,
       // Add more social media URLs here
