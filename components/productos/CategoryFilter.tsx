@@ -57,7 +57,7 @@ export function CategoryFilter({ categorias }: CategoryFilterProps) {
           onClick={() => handleCategoryClick("all", "Todos")}
           className={cn(
             COMPONENTS.categoryFilter.button,
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
             !activeCategory
               ? COMPONENTS.categoryFilter.buttonActive
               : COMPONENTS.categoryFilter.buttonInactive
@@ -82,7 +82,7 @@ export function CategoryFilter({ categorias }: CategoryFilterProps) {
               }
               className={cn(
                 COMPONENTS.categoryFilter.button,
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
                 isActive
                   ? COMPONENTS.categoryFilter.buttonActive
                   : COMPONENTS.categoryFilter.buttonInactive

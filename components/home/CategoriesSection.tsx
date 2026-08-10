@@ -15,7 +15,7 @@ function CategoryCard({ title, description, href }: CategoryCardProps) {
     <Link
       href={href}
       className={cn(
-        "group shine-effect overflow-hidden rounded-2xl border border-border/50 bg-white shadow-card transition-all duration-300 hover:shadow-card-hover hover:border-foreground/10 hover:-translate-y-2",
+        "group shine-effect overflow-hidden rounded-2xl border border-border/50 bg-surface shadow-card transition-all duration-300 hover:shadow-card-hover hover:border-foreground/10 hover:-translate-y-2",
       )}
     >
       <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted/50 to-muted relative">

@@ -34,7 +34,7 @@ export function ProductCard({
         overflow-hidden
         rounded-2xl
         border border-border/50
-        bg-white
+        bg-surface
         shadow-sm
         transition-all
         duration-300

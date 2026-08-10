@@ -218,7 +218,8 @@ describe("CategoryFilter", () => {
       // Check that focus-visible classes are present
       expect(todosLink).toHaveClass("focus-visible:outline-none");
       expect(todosLink).toHaveClass("focus-visible:ring-2");
-      expect(todosLink).toHaveClass("focus-visible:ring-foreground");
+      expect(todosLink).toHaveClass("focus-visible:ring-focus-ring");
+      expect(todosLink).toHaveClass("focus-visible:ring-offset-background");
     });
   });
 });

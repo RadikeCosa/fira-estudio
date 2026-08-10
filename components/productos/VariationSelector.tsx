@@ -104,15 +104,15 @@ export function VariationSelector({
           className="
             w-full px-4 py-3.5 rounded-xl
             border-2 border-border
-            bg-white text-foreground
+            bg-surface text-foreground
             font-medium
             shadow-sm
             transition-all
             duration-300
             focus:outline-none
             focus:ring-2
-            focus:ring-foreground
-            focus:border-foreground
+            focus:ring-focus-ring
+            focus:border-focus-ring
             disabled:opacity-50
             disabled:cursor-not-allowed
             hover:border-foreground/30
@@ -145,15 +145,15 @@ export function VariationSelector({
           className="
             w-full px-4 py-3.5 rounded-xl
             border-2 border-border
-            bg-white text-foreground
+            bg-surface text-foreground
             font-medium
             shadow-sm
             transition-all
             duration-300
             focus:outline-none
             focus:ring-2
-            focus:ring-foreground
-            focus:border-foreground
+            focus:ring-focus-ring
+            focus:border-focus-ring
             disabled:opacity-50
             disabled:cursor-not-allowed
             hover:border-foreground/30

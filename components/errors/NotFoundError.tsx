@@ -78,14 +78,15 @@ export function NotFoundError({
             px-6
             py-3
             font-medium
-            text-white
+            text-accent-foreground
             transition-all
             hover:bg-accent/90
             hover:shadow-md
             focus:outline-none
             focus:ring-2
-            focus:ring-accent
+            focus:ring-focus-ring
             focus:ring-offset-2
+            focus:ring-offset-background
           "
         >
           Ver todos los productos

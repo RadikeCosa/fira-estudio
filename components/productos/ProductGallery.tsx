@@ -146,9 +146,10 @@ export function ProductGallery({ imagenes, productName }: ProductGalleryProps) {
                 focus:ring-2
                 focus:ring-foreground
                 focus:ring-offset-2
+                focus:ring-offset-background
               "
             >
-              <ChevronLeft className="h-6 w-6 text-foreground" />
+              <ChevronLeft className="h-6 w-6 text-neutral-900" />
             </button>
 
             {/* Botón Siguiente */}
@@ -175,9 +176,10 @@ export function ProductGallery({ imagenes, productName }: ProductGalleryProps) {
                 focus:ring-2
                 focus:ring-foreground
                 focus:ring-offset-2
+                focus:ring-offset-background
               "
             >
-              <ChevronRight className="h-6 w-6 text-foreground" />
+              <ChevronRight className="h-6 w-6 text-neutral-900" />
             </button>
 
             {/* Contador de imágenes */}
@@ -239,9 +241,10 @@ export function ProductGallery({ imagenes, productName }: ProductGalleryProps) {
                 focus:ring-2
                 focus:ring-foreground
                 focus:ring-offset-2
+                focus:ring-offset-background
                 ${
                   index === currentIndex
-                    ? "border-foreground ring-2 ring-foreground ring-offset-2"
+                    ? "border-foreground ring-2 ring-foreground ring-offset-2 ring-offset-background"
                     : "border-transparent hover:border-border"
                 }
               `}

@@ -54,7 +54,7 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
             "group inline-flex w-full items-center justify-center gap-3",
             "rounded-xl bg-foreground px-8 py-4 text-base font-semibold text-background shadow-lg",
             "transition-all duration-300 hover:shadow-xl",
-            "focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2",
+            "focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2 focus:ring-offset-background",
           )}
         >
           <MessageCircle className="h-5 w-5" aria-hidden="true" />
@@ -77,7 +77,7 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
         "group inline-flex items-center justify-center gap-3 w-full",
         "px-8 py-4 rounded-xl font-semibold text-base shadow-lg",
         "transition-all duration-300",
-        "focus:outline-none focus:ring-2 focus:ring-offset-2",
+        "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background",
         "bg-linear-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white hover:shadow-xl hover:scale-[1.02] focus:ring-green-500",
       )}
     >

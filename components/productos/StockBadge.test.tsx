@@ -23,12 +23,13 @@ describe("StockBadge", () => {
       expect(screen.getByText("10 disponibles")).toBeInTheDocument();
     });
 
-    it("applies green color classes", () => {
+    it("applies success color classes", () => {
       const variacion = { ...baseVariacion, stock: 5 };
       const { container } = render(<StockBadge variacion={variacion} />);
 
-      const badge = container.querySelector(".bg-green-100");
+      const badge = container.querySelector(".bg-success\\/15");
       expect(badge).toBeInTheDocument();
+      expect(badge).toHaveClass("text-success");
     });
   });
 
@@ -47,12 +48,13 @@ describe("StockBadge", () => {
       expect(screen.getByText("¡Solo quedan 3!")).toBeInTheDocument();
     });
 
-    it("applies orange color classes", () => {
+    it("applies warning color classes", () => {
       const variacion = { ...baseVariacion, stock: 2 };
       const { container } = render(<StockBadge variacion={variacion} />);
 
-      const badge = container.querySelector(".bg-orange-100");
+      const badge = container.querySelector(".bg-warning\\/15");
       expect(badge).toBeInTheDocument();
+      expect(badge).toHaveClass("text-warning");
     });
   });
 
@@ -64,12 +66,13 @@ describe("StockBadge", () => {
       expect(screen.getByText("A pedido")).toBeInTheDocument();
     });
 
-    it("applies yellow color classes", () => {
+    it("applies info color classes", () => {
       const variacion = { ...baseVariacion, stock: 0 };
       const { container } = render(<StockBadge variacion={variacion} />);
 
-      const badge = container.querySelector(".bg-yellow-100");
+      const badge = container.querySelector(".bg-info\\/15");
       expect(badge).toBeInTheDocument();
+      expect(badge).toHaveClass("text-info");
     });
   });
 
@@ -81,12 +84,13 @@ describe("StockBadge", () => {
       expect(screen.getByText("No disponible")).toBeInTheDocument();
     });
 
-    it("applies red color classes", () => {
+    it("applies destructive color classes", () => {
       const variacion = { ...baseVariacion, activo: false };
       const { container } = render(<StockBadge variacion={variacion} />);
 
-      const badge = container.querySelector(".bg-red-100");
+      const badge = container.querySelector(".bg-destructive\\/15");
       expect(badge).toBeInTheDocument();
+      expect(badge).toHaveClass("text-destructive");
     });
 
     it("shows 'No disponible' even when stock > 0", () => {

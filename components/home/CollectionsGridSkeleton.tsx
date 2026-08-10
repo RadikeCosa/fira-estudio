@@ -10,7 +10,7 @@ function SkeletonCard({ featured = false }: { featured?: boolean }) {
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-2xl border border-border/50 bg-white shadow-card",
+        "overflow-hidden rounded-2xl border border-border/50 bg-surface shadow-card",
         featured ? "border-accent/30 ring-1 ring-accent/10" : "",
       )}
     >

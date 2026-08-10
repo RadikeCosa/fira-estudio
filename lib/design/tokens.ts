@@ -3,8 +3,8 @@ export const BUTTONS = {
   primary:
     "bg-primary text-primary-foreground px-4 py-3 rounded-lg hover:bg-primary/90 transition text-center font-medium",
   secondary:
-    "border border-border px-4 py-3 rounded-lg hover:bg-muted transition",
-  danger: "text-sm text-red-600 hover:text-red-700 disabled:opacity-50",
+    "border border-border bg-surface px-4 py-3 rounded-lg hover:bg-muted transition",
+  danger: "text-sm text-destructive hover:text-destructive/80 disabled:opacity-50",
   disabled: "disabled:opacity-50 disabled:cursor-not-allowed",
   inline: "inline-block px-6 py-2 rounded-lg",
   underline: "text-sm underline hover:no-underline",
@@ -30,7 +30,7 @@ export const CART = {
 export const CART_LAYOUT = {
   container: "space-y-6",
   items: "space-y-4",
-  item: "flex gap-4 p-4 bg-white border border-border rounded-lg",
+  item: "flex gap-4 p-4 bg-surface border border-border rounded-lg",
   imageBox: "relative w-24 h-24 shrink-0",
   image: "object-cover rounded-lg",
   itemInfo: "flex-1 min-w-0",
@@ -63,6 +63,9 @@ export const BLOBS = {
 export const COLORS = {
   foreground: "text-foreground",
   background: "bg-background",
+  surface: "bg-surface",
+  surfaceElevated: "bg-surface-elevated",
+  surfaceSubtle: "bg-surface-subtle",
   muted: "text-muted bg-muted",
   border: "border-border",
   accent: "text-accent bg-accent",
@@ -104,22 +107,22 @@ export const SPACING = {
 // COMPONENTES comunes
 export const COMPONENTS = {
   input: {
-    base: "w-full rounded-xl border-2 border-border bg-white px-4 py-3.5 text-foreground transition-all duration-300",
+    base: "w-full rounded-xl border-2 border-border bg-surface px-4 py-3.5 text-foreground transition-all duration-300",
     placeholder: "placeholder:text-muted-foreground",
     focus:
-      "focus:border-foreground focus:outline-none focus:ring-2 focus:ring-foreground/10",
+      "focus:border-focus-ring focus:outline-none focus:ring-2 focus:ring-focus-ring/20",
     hover: "hover:border-foreground/30",
   },
   error: {
-    text: "text-red-600",
-    border: "border-red-600",
-    ring: "focus:ring-red-600/10",
-    focus: "focus:border-red-600",
-    label: "text-red-600",
-    message: "text-red-600",
+    text: "text-destructive",
+    border: "border-destructive",
+    ring: "focus:ring-destructive/20",
+    focus: "focus:border-destructive",
+    label: "text-destructive",
+    message: "text-destructive",
   },
   card: {
-    base: "rounded-2xl border-2 border-border/50 bg-white shadow-lg",
+    base: "rounded-2xl border-2 border-border/50 bg-surface shadow-lg",
     paddingSm: "p-6",
     paddingMd: "p-8 sm:p-10",
     paddingLg: "p-10 sm:p-12",
@@ -189,21 +192,21 @@ export const COMPONENTS = {
     title: "text-2xl font-semibold text-foreground",
     message: "text-sm text-muted-foreground",
     button:
-      "rounded-lg bg-accent px-6 py-3 font-medium text-white transition-all hover:bg-accent/90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2",
+      "rounded-lg bg-accent px-6 py-3 font-medium text-accent-foreground transition-all hover:bg-accent/90 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2 focus:ring-offset-background",
   },
 
   // Badge Styles
   badge: {
     base: "inline-flex items-center gap-2 px-4 py-2 rounded-full border text-sm font-medium",
-    success: "bg-green-100 text-green-700 border-green-700/20",
-    warning: "bg-orange-100 text-orange-700 border-orange-700/20",
-    info: "bg-yellow-100 text-yellow-700 border-yellow-700/20",
-    error: "bg-red-100 text-red-700 border-red-700/20",
+    success: "bg-success/15 text-success border-success/25",
+    warning: "bg-warning/15 text-warning border-warning/25",
+    info: "bg-info/15 text-info border-info/25",
+    error: "bg-destructive/15 text-destructive border-destructive/25",
     dot: "h-2 w-2 rounded-full",
-    dotSuccess: "bg-green-500",
-    dotWarning: "bg-orange-500",
-    dotInfo: "bg-yellow-500",
-    dotError: "bg-red-500",
+    dotSuccess: "bg-success",
+    dotWarning: "bg-warning",
+    dotInfo: "bg-info",
+    dotError: "bg-destructive",
   },
 
   // Pagination
@@ -220,7 +223,7 @@ export const COMPONENTS = {
   // Filter Components
   filter: {
     sidebar:
-      "w-full sm:w-64 p-6 bg-white rounded-2xl border-2 border-border/50 shadow-lg space-y-6",
+      "w-full sm:w-64 p-6 bg-surface rounded-2xl border-2 border-border/50 shadow-lg space-y-6",
     sectionTitle: "font-bold text-lg mb-4 text-foreground",
     checkbox:
       "w-4 h-4 rounded border-2 border-border text-foreground focus:ring-2 focus:ring-foreground/20 transition-colors",
@@ -241,7 +244,7 @@ export const COMPONENTS = {
 
   // Hero Badge
   heroBadge: {
-    base: "mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-white/80 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-accent shadow-sm transition-all duration-300 hover:shadow-md hover:border-border",
+    base: "mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/80 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-accent shadow-sm transition-all duration-300 hover:shadow-md hover:border-border",
   },
 
   // Category Filter

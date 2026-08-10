@@ -46,7 +46,7 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
         "group shine-effect overflow-hidden rounded-2xl border transition-all duration-300 hover:shadow-card-hover hover:-translate-y-2",
         featured
           ? "border-accent/50 shadow-card ring-2 ring-accent/20 hover:ring-accent/40 hover:scale-105"
-          : "border-border/50 bg-white shadow-card hover:border-foreground/10",
+          : "border-border/50 bg-surface shadow-card hover:border-foreground/10",
       )}
       aria-label={`Explorar colección ${collection.nombre}`}
     >
@@ -161,7 +161,7 @@ export async function CollectionsGrid() {
           <h2 id="collections-section-title" className="sr-only">
             {HOME_CONTENT.categories.title}
           </h2>
-          <div className="rounded-lg border border-destructive/20 bg-destructive/5 p-4 text-center">
+          <div className="rounded-lg border border-destructive/25 bg-destructive/10 p-4 text-center">
             <p className="text-sm text-destructive">
               No pudimos cargar las colecciones. Intenta recargar la página.
             </p>
