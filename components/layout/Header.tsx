@@ -3,6 +3,7 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { NAV_LINKS } from "@/lib/constants/navigation";
 import { COMPONENTS, COLORS } from "@/lib/design/tokens";
 import { cn } from "@/lib/utils";
+import { ThemeToggle } from "@/components/theme";
 import { ActiveNavLinks } from "./ActiveNavLinks";
 import { MobileNav } from "./MobileNav";
 
@@ -34,17 +35,17 @@ export function Header() {
           {/* Desktop Navigation */}
           <div className={COMPONENTS.header.nav}>
             <ActiveNavLinks links={NAV_LINKS} />
+            <ThemeToggle />
           </div>
 
           {/* Mobile Navigation */}
-          <div className="flex items-center gap-2">
-            <div className="md:hidden">
-              <MobileNav
-                links={NAV_LINKS}
-                logo={SITE_CONFIG.name}
-                decorativeText="Creaciones Textiles"
-              />
-            </div>
+          <div className="flex items-center gap-2 md:hidden">
+            <ThemeToggle />
+            <MobileNav
+              links={NAV_LINKS}
+              logo={SITE_CONFIG.name}
+              decorativeText="Creaciones Textiles"
+            />
           </div>
         </div>
       </nav>

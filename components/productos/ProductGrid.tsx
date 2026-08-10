@@ -32,7 +32,7 @@ export function ProductGrid({ productos }: ProductGridProps) {
         </p>
         <Link
           href="/productos"
-          className="inline-flex min-h-11 items-center rounded-lg border border-border px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2"
+          className="inline-flex min-h-11 items-center rounded-lg border border-border px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2 focus:ring-offset-background"
         >
           Ver todos los productos
         </Link>

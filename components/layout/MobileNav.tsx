@@ -149,7 +149,7 @@ export function MobileNav({
             id="mobile-nav-menu"
             className={cn(
               COMPONENTS.mobileNav.mobileMenuAlt,
-              "fixed top-[57px] left-0 right-0 z-[50] h-[calc(100vh-57px)] flex flex-col bg-white/95 shadow-xl translate-x-0 transition-transform duration-300 ease-out motion-reduce:transition-none",
+              "fixed top-[57px] left-0 right-0 z-[50] h-[calc(100vh-57px)] flex flex-col bg-surface/95 shadow-xl translate-x-0 transition-transform duration-300 ease-out motion-reduce:transition-none",
               "will-change-transform",
             )}
             role="dialog"
@@ -178,13 +178,13 @@ export function MobileNav({
                 })}
               </ul>
               {/* Decorative text solo si hay espacio suficiente */}
-              {decorativeText && (
+              {decorativeText ? (
                 <div className="px-6 pb-6 pt-2">
                   <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center">
                     {decorativeText}
                   </p>
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
         </>

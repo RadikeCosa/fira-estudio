@@ -24,7 +24,7 @@ export default function TestErrorsPageClient() {
             onClick={() => setSelectedError("network")}
             className={`rounded-lg px-4 py-2 font-medium transition-colors ${
               selectedError === "network"
-                ? "bg-accent text-white"
+                ? "bg-accent text-accent-foreground"
                 : "bg-muted text-foreground hover:bg-muted/80"
             }`}
           >
@@ -34,7 +34,7 @@ export default function TestErrorsPageClient() {
             onClick={() => setSelectedError("database")}
             className={`rounded-lg px-4 py-2 font-medium transition-colors ${
               selectedError === "database"
-                ? "bg-accent text-white"
+                ? "bg-accent text-accent-foreground"
                 : "bg-muted text-foreground hover:bg-muted/80"
             }`}
           >
@@ -44,7 +44,7 @@ export default function TestErrorsPageClient() {
             onClick={() => setSelectedError("notfound")}
             className={`rounded-lg px-4 py-2 font-medium transition-colors ${
               selectedError === "notfound"
-                ? "bg-accent text-white"
+                ? "bg-accent text-accent-foreground"
                 : "bg-muted text-foreground hover:bg-muted/80"
             }`}
           >
@@ -54,7 +54,7 @@ export default function TestErrorsPageClient() {
             onClick={() => setSelectedError("generic")}
             className={`rounded-lg px-4 py-2 font-medium transition-colors ${
               selectedError === "generic"
-                ? "bg-accent text-white"
+                ? "bg-accent text-accent-foreground"
                 : "bg-muted text-foreground hover:bg-muted/80"
             }`}
           >

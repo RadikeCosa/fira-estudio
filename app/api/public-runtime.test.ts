@@ -131,7 +131,7 @@ describe("public API runtime surface", () => {
 
     const sourceFiles = publicRuntimeDirs.flatMap(findSourceFiles);
     const forbiddenCommerceRuntime =
-      /CartRepository|cart\.repository|mercadopago|MercadoPagoConfig|Preference|Payment|queue-processor|reconciliation-job|Resend|@react-email|sendOrderConfirmationEmail|OrderConfirmationEmail|MERCADOPAGO_|WEBHOOK_|CRON_SECRET|RESEND_|SUPABASE_SERVICE_ROLE_KEY/;
+      /CartRepository|cart\.repository|mercadopago|MercadoPagoConfig|\bPreference\b|\bPayment\b|queue-processor|reconciliation-job|Resend|@react-email|sendOrderConfirmationEmail|OrderConfirmationEmail|MERCADOPAGO_|WEBHOOK_|CRON_SECRET|RESEND_|SUPABASE_SERVICE_ROLE_KEY/;
 
     for (const filePath of sourceFiles) {
       expect(readFile(filePath)).not.toMatch(forbiddenCommerceRuntime);

@@ -152,7 +152,7 @@ export function ProductActions({ producto }: ProductActionsProps) {
                   htmlFor={id}
                   className={
                     (isSelected ? BUTTONS.primary : BUTTONS.secondary) +
-                    " inline-flex cursor-pointer items-center gap-2 focus-within:ring-2 focus-within:ring-foreground focus-within:ring-offset-2" +
+                    " inline-flex cursor-pointer items-center gap-2 focus-within:ring-2 focus-within:ring-focus-ring focus-within:ring-offset-2 focus-within:ring-offset-background" +
                     (isDisabled
                       ? " cursor-not-allowed opacity-50"
                       : " hover:border-foreground/60")
@@ -202,7 +202,7 @@ export function ProductActions({ producto }: ProductActionsProps) {
                   htmlFor={id}
                   className={
                     (isSelected ? BUTTONS.primary : BUTTONS.secondary) +
-                    " inline-flex cursor-pointer items-center gap-2 focus-within:ring-2 focus-within:ring-foreground focus-within:ring-offset-2" +
+                    " inline-flex cursor-pointer items-center gap-2 focus-within:ring-2 focus-within:ring-focus-ring focus-within:ring-offset-2 focus-within:ring-offset-background" +
                     (isDisabled
                       ? " cursor-not-allowed opacity-50"
                       : " hover:border-foreground/60")
@@ -233,7 +233,7 @@ export function ProductActions({ producto }: ProductActionsProps) {
         </fieldset>
       )}
 
-      <div className="space-y-2 rounded-lg border border-border/70 bg-white/80 p-4">
+      <div className="space-y-2 rounded-lg border border-border/70 bg-surface/80 p-4">
         <p className="text-sm font-semibold text-foreground">Disponibilidad</p>
         <p className="text-sm text-muted-foreground">{availabilityLabel}</p>
         <p className="text-sm text-muted-foreground">

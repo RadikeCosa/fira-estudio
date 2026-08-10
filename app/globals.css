@@ -4,24 +4,38 @@
 /* Import Google Fonts */
 /* @import url("https://fonts.googleapis.com/css2?family=Sugo+Display:wght@700&family=Open+Sans:wght@700&display=swap"); */
 
-:root {
-  /* Paleta mejorada con más contraste */
+:root,
+html[data-theme="light"] {
+  /* Paleta base */
   --background: #ffffff;
   --foreground: #1a1a1a;
+  --surface: #ffffff;
+  --surface-elevated: #ffffff;
+  --surface-subtle: #fafafa;
   --muted: #f5f5f5;
   --muted-foreground: #737373;
   --border: #e5e5e5;
   --accent: #171717;
+  --accent-foreground: #ffffff;
   --accent-hover: #404040;
-  --card-bg: #ffffff;
+  --primary-foreground: #1a1a1a;
+  --focus-ring: #1a1a1a;
+  --destructive: #dc2626;
+  --success: #15803d;
+  --warning: #c2410c;
+  --info: #a16207;
 
   /* Shadows mejorados */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md:
+  --shadow-sm-value: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md-value:
     0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg:
+  --shadow-lg-value:
     0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl:
+  --shadow-xl-value:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-card-value:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover-value:
     0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
   /* Nuevos colores de acento para textiles */
@@ -35,28 +49,95 @@
   color-scheme: light;
 }
 
+html[data-theme="dark"] {
+  --background: #171411;
+  --foreground: #f4eee7;
+  --surface: #201c18;
+  --surface-elevated: #29231e;
+  --surface-subtle: #1b1714;
+  --muted: #27221d;
+  --muted-foreground: #baafa3;
+  --border: #3b342d;
+  --accent: #eadbcc;
+  --accent-foreground: #171411;
+  --accent-hover: #d9c4ad;
+  --primary-foreground: #171411;
+  --focus-ring: #d8ad7f;
+  --destructive: #f87171;
+  --success: #86efac;
+  --warning: #fdba74;
+  --info: #fde68a;
+
+  --shadow-sm-value: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
+  --shadow-md-value:
+    0 8px 18px -10px rgba(0, 0, 0, 0.7), 0 2px 6px -3px rgba(0, 0, 0, 0.55);
+  --shadow-lg-value:
+    0 18px 34px -18px rgba(0, 0, 0, 0.75), 0 8px 16px -12px rgba(0, 0, 0, 0.65);
+  --shadow-xl-value:
+    0 26px 52px -28px rgba(0, 0, 0, 0.85), 0 10px 20px -16px rgba(0, 0, 0, 0.7);
+  --shadow-card-value:
+    0 14px 30px -22px rgba(0, 0, 0, 0.8), 0 4px 12px -8px rgba(0, 0, 0, 0.65);
+  --shadow-card-hover-value:
+    0 28px 56px -32px rgba(0, 0, 0, 0.9), 0 12px 28px -20px rgba(0, 0, 0, 0.75);
+
+  --textile-warm: #d8ad7f;
+  --textile-earth: #bea17d;
+  --textile-neutral: #9f968d;
+
+  color-scheme: dark;
+}
+
+.theme-toggle-icon {
+  opacity: 0;
+  transform: scale(0.75) rotate(-45deg);
+  transition:
+    opacity 150ms ease,
+    transform 150ms ease;
+}
+
+html[data-theme="light"] .theme-toggle-icon--moon {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
+html[data-theme="dark"] .theme-toggle-icon--sun {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-surface-subtle: var(--surface-subtle);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
   --color-accent-hover: var(--accent-hover);
-  --color-card-bg: var(--card-bg);
   --color-textile-warm: var(--textile-warm);
   --color-textile-earth: var(--textile-earth);
   --color-textile-neutral: var(--textile-neutral);
   --color-primary: var(--textile-warm);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-focus-ring: var(--focus-ring);
+  --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-info: var(--info);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-display: var(--font-display);
 
   /* Custom shadows */
-  --shadow-card:
-    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-card-hover:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-sm: var(--shadow-sm-value);
+  --shadow-md: var(--shadow-md-value);
+  --shadow-lg: var(--shadow-lg-value);
+  --shadow-xl: var(--shadow-xl-value);
+  --shadow-card: var(--shadow-card-value);
+  --shadow-card-hover: var(--shadow-card-hover-value);
 
   /* Custom animations */
   --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -110,7 +191,7 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid var(--foreground);
+  outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
 }
 

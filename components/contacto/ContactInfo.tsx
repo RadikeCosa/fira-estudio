@@ -124,7 +124,7 @@ export function ContactInfo({ initialContext }: ContactInfoProps) {
                 "inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl",
                 "bg-foreground px-8 py-4 text-base font-semibold text-background shadow-lg",
                 "transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
-                "focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2",
+                "focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2 focus:ring-offset-background",
                 "sm:w-auto",
               )}
             >
@@ -147,7 +147,7 @@ export function ContactInfo({ initialContext }: ContactInfoProps) {
                         action.external ? "noopener noreferrer" : undefined
                       }
                       aria-label={action.ariaLabel}
-                      className="rounded-sm underline-offset-4 transition-colors hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-4"
+                      className="rounded-sm underline-offset-4 transition-colors hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-4 focus:ring-offset-background"
                     >
                       {action.channel === "email" && emailAddress
                         ? emailAddress
@@ -161,7 +161,7 @@ export function ContactInfo({ initialContext }: ContactInfoProps) {
             {shouldShowCatalogLink && (
               <Link
                 href="/productos"
-                className="mt-6 rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-4"
+                className="mt-6 rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-4 focus:ring-offset-background"
               >
                 Ver catálogo
               </Link>
@@ -175,7 +175,7 @@ export function ContactInfo({ initialContext }: ContactInfoProps) {
             {shouldShowCatalogLink && (
               <Link
                 href="/productos"
-                className="inline-flex rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-4"
+                className="inline-flex rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-4 focus:ring-offset-background"
               >
                 Ver catálogo
               </Link>
