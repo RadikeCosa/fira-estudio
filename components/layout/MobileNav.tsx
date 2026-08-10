@@ -178,13 +178,13 @@ export function MobileNav({
                 })}
               </ul>
               {/* Decorative text solo si hay espacio suficiente */}
-              {decorativeText && (
+              {decorativeText ? (
                 <div className="px-6 pb-6 pt-2">
                   <p className="text-xs text-muted-foreground uppercase tracking-[0.2em] text-center">
                     {decorativeText}
                   </p>
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
         </>

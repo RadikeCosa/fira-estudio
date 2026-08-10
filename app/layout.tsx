@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -46,7 +47,6 @@ export default function RootLayout({
 
   return (
     <html lang="es" suppressHydrationWarning>
-      <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       <body
         className={`${playfair.variable} ${inter.variable} antialiased flex flex-col min-h-screen pt-[52px]`}
       >
@@ -58,6 +58,11 @@ export default function RootLayout({
         </ThemeProvider>
         <SpeedInsights />
         {gaId ? <GoogleAnalytics gaId={gaId} /> : null}
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: themeInitScript }}
+        />
       </body>
     </html>
   );

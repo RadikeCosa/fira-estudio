@@ -1,4 +1,5 @@
 export { ThemeProvider, useTheme } from "./ThemeProvider";
+export { ThemeToggle } from "./ThemeToggle";
 export {
   DEFAULT_RESOLVED_THEME,
   DEFAULT_THEME,

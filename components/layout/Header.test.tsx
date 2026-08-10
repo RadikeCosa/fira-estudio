@@ -24,6 +24,14 @@ vi.mock("next/navigation", () => ({
   usePathname: vi.fn(),
 }));
 
+vi.mock("@/components/theme", () => ({
+  ThemeToggle: () => (
+    <button type="button" aria-label="Cambiar a modo oscuro">
+      Theme toggle
+    </button>
+  ),
+}));
+
 // Mock Supabase client
 vi.mock("@/lib/supabase/client", () => ({
   supabase: {
