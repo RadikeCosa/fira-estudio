@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("next/font/google", () => ({
+  Gloock: () => ({ variable: "--font-brand" }),
   Inter: () => ({ variable: "--font-sans" }),
-  Playfair_Display: () => ({ variable: "--font-display" }),
 }));
 
 vi.mock("@next/third-parties/google", () => ({

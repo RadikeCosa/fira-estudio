@@ -168,7 +168,7 @@ app/
 
 ```typescript
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Gloock, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Header } from "@/components/layout/Header";
@@ -177,10 +177,10 @@ import { SITE_CONFIG } from "@/lib/constants";
 import "./globals.css";
 
 // Fonts
-const playfair = Playfair_Display({
+const gloock = Gloock({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-display",    // CSS var para headings
+  weight: "400",
+  variable: "--font-brand",      // CSS var para wordmark
   display: "swap",               // Mostrar texto mientras carga
 });
 
@@ -208,7 +208,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es">
-      <body className={`${playfair.variable} ${inter.variable} antialiased flex flex-col min-h-screen`}>
+      <body className={`${gloock.variable} ${inter.variable} antialiased flex flex-col min-h-screen`}>
         {/* Header persistente */}
         <Header />
 
@@ -231,7 +231,7 @@ export default function RootLayout({
 
 #### Fonts Optimization
 
-- **Playfair Display**: Headings (display)
+- **Gloock**: Wordmark de marca
 - **Inter**: Body text (sans-serif)
 - CSS variables para usar en Tailwind
 - `display="swap"`: Muestra fallback mientras carga

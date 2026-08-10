@@ -23,12 +23,19 @@ export function Header() {
       <nav aria-label="Navegación principal">
         <div className={COMPONENTS.header.container}>
           {/* Logo */}
-          <Link href="/" className="hover:opacity-70 transition-opacity">
+          <Link
+            href="/"
+            className="inline-flex min-h-11 items-center hover:opacity-70 transition-opacity"
+          >
             <span className={COMPONENTS.header.logo}>
-              <span className="font-sugo-display text-[1.2em] sm:text-[1.4em] lg:text-[1.6em]">
-                fira
-              </span>{" "}
-              <span className="font-open-sans">estudio</span>
+              <span className="brand-wordmark brand-wordmark--stacked-mobile">
+                <span className="font-brand-wordmark text-[1.1em] sm:text-[1.22em] lg:text-[1.35em]">
+                  fira
+                </span>{" "}
+                <span className="font-brand-secondary text-[0.86em] md:text-[1.02em]">
+                  estudio
+                </span>
+              </span>
             </span>
           </Link>
 

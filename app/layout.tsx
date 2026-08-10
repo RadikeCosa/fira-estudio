@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Playfair_Display, Inter } from "next/font/google";
+import { Gloock, Inter } from "next/font/google";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -12,10 +12,10 @@ import { SITE_CONFIG } from "@/lib/constants";
 import { getSiteBaseUrlObject } from "@/lib/seo/url";
 import "./globals.css";
 
-const playfair = Playfair_Display({
+const gloock = Gloock({
   subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-display",
+  weight: "400",
+  variable: "--font-brand",
   display: "swap",
 });
 
@@ -48,7 +48,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body
-        className={`${playfair.variable} ${inter.variable} antialiased flex flex-col min-h-screen pt-[52px]`}
+        className={`${gloock.variable} ${inter.variable} antialiased flex flex-col min-h-screen pt-[52px]`}
       >
         <ThemeProvider>
           <MaintenanceBanner />

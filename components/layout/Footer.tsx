@@ -34,10 +34,12 @@ export function Footer() {
           {/* Logo y subtítulo desde SITE_CONFIG */}
           <div className={COMPONENTS.footer.brandSection}>
             <p className={COMPONENTS.footer.logo}>
-              <span className="font-sugo-display text-[1.2em] sm:text-[1.4em] lg:text-[1.6em]">
-                fira
-              </span>{" "}
-              <span className="font-open-sans">estudio</span>
+              <span className="brand-wordmark">
+                <span className="font-brand-wordmark text-[1.15em] sm:text-[1.25em] lg:text-[1.35em]">
+                  fira
+                </span>{" "}
+                <span className="font-brand-secondary text-[1.02em]">estudio</span>
+              </span>
             </p>
             <p className={COMPONENTS.footer.subtitle}>
               {SITE_CONFIG.footerSubtitle}

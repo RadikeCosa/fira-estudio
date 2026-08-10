@@ -1,8 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Sugo+Display:wght@900&family=Open+Sans:wght@300&display=swap");
 @import "tailwindcss";
-
-/* Import Google Fonts */
-/* @import url("https://fonts.googleapis.com/css2?family=Sugo+Display:wght@700&family=Open+Sans:wght@700&display=swap"); */
 
 :root,
 html[data-theme="light"] {
@@ -42,9 +38,6 @@ html[data-theme="light"] {
   --textile-warm: #d4a574;
   --textile-earth: #8b7355;
   --textile-neutral: #9ca3af;
-
-  --font-sugo-display: "Sugo Display", serif;
-  --font-open-sans: "Open Sans", sans-serif;
 
   color-scheme: light;
 }
@@ -127,10 +120,6 @@ html[data-theme="dark"] .theme-toggle-icon--sun {
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-info: var(--info);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --font-display: var(--font-display);
-
   /* Custom shadows */
   --shadow-sm: var(--shadow-sm-value);
   --shadow-md: var(--shadow-md-value);
@@ -172,7 +161,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family:
-    var(--font-geist-sans),
+    var(--font-sans),
     -apple-system,
     system-ui,
     sans-serif;
@@ -219,14 +208,36 @@ select:focus-visible {
   transform: translateX(100%);
 }
 
-.font-sugo-display {
-  font-family: var(--font-sugo-display);
-  font-weight: 900;
+.font-brand-wordmark {
+  font-family: var(--font-brand);
+  font-weight: 400;
+  line-height: 0.9;
   text-transform: lowercase;
 }
 
-.font-open-sans {
-  font-family: var(--font-open-sans);
+.font-brand-secondary {
+  font-family: var(--font-sans);
   font-weight: 300;
+  line-height: 0.95;
   text-transform: lowercase;
+}
+
+.brand-wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.2em;
+}
+
+.brand-wordmark--stacked-mobile {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 0;
+}
+
+@media (min-width: 768px) {
+  .brand-wordmark--stacked-mobile {
+    align-items: baseline;
+    flex-direction: row;
+    gap: 0.2em;
+  }
 }

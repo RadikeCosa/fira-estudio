@@ -41,13 +41,13 @@ export const CART_LAYOUT = {
 };
 // Tipografías personalizadas para títulos
 export const FONTS = {
-  sugoDisplay: "'Sugo Display', serif",
-  openSans: "'Open Sans', sans-serif",
+  brand: "var(--font-brand)",
+  sans: "var(--font-sans)",
 };
 
 export const FONT_CLASSES = {
-  sugoDisplay: "font-sugo-display",
-  openSans: "font-open-sans",
+  brand: "font-brand-wordmark",
+  sans: "font-brand-secondary",
 };
 // BLOBS decorativos para HeroSection y reutilización
 export const BLOBS = {
@@ -140,7 +140,7 @@ export const COMPONENTS = {
     base: "fixed top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b transition-colors",
     container:
       "px-6 py-4 flex justify-between items-center max-w-lg mx-auto md:max-w-7xl",
-    logo: "font-display text-xl tracking-widest uppercase font-bold",
+    logo: "text-xl tracking-normal",
     menuButton: "p-2 hover:bg-muted rounded transition-colors md:hidden",
     nav: "hidden md:flex md:items-center md:gap-8",
     navLink:
@@ -154,7 +154,7 @@ export const COMPONENTS = {
     innerWrapper:
       "flex flex-col items-center lg:flex-row lg:justify-between lg:items-start",
     brandSection: "text-center lg:text-left mb-10 lg:mb-0",
-    logo: "font-display text-2xl tracking-widest uppercase mb-2",
+    logo: "text-2xl tracking-normal mb-2",
     subtitle: "text-muted-foreground text-xs tracking-[0.2em] uppercase",
     navSection: "mb-10 lg:mb-0 flex flex-col items-center lg:items-start",
     nav: "flex flex-wrap justify-center lg:justify-start gap-6 lg:gap-8",
