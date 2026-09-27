@@ -26,7 +26,7 @@ describe("ProductGallery", () => {
   it("uses product name as informative fallback alt", () => {
     render(<ProductGallery imagenes={[]} productName="Camino Magnolia" />);
 
-    expect(screen.getByAltText("Camino Magnolia")).toBeInTheDocument();
+    expect(screen.getByAltText("Camino Magnolia, vista principal")).toBeInTheDocument();
   });
 
   it("does not react to global arrow key events", () => {
@@ -34,8 +34,8 @@ describe("ProductGallery", () => {
 
     fireEvent.keyDown(window, { key: "ArrowRight" });
 
-    expect(screen.getByAltText("Camino Magnolia")).toBeInTheDocument();
-    expect(screen.queryByAltText("Camino Magnolia, imagen 2")).not.toBeInTheDocument();
+    expect(screen.getByAltText("Camino Magnolia, vista principal")).toBeInTheDocument();
+    expect(screen.queryByAltText("Camino Magnolia, detalle 2")).not.toBeInTheDocument();
   });
 
   it("reacts to arrow keys when focus is inside the gallery", () => {
@@ -45,7 +45,7 @@ describe("ProductGallery", () => {
       key: "ArrowRight",
     });
 
-    expect(screen.getByAltText("Camino Magnolia, imagen 2")).toBeInTheDocument();
+    expect(screen.getByAltText("Camino Magnolia, detalle")).toBeInTheDocument();
   });
 
   it("keeps thumbnail navigation working", () => {
@@ -53,10 +53,29 @@ describe("ProductGallery", () => {
 
     fireEvent.click(screen.getByRole("tab", { name: "Ver imagen 2" }));
 
-    expect(screen.getByAltText("Camino Magnolia, imagen 2")).toBeInTheDocument();
+    expect(screen.getByAltText("Camino Magnolia, detalle")).toBeInTheDocument();
     expect(screen.getByRole("tab", { name: "Ver imagen 2" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
+  });
+
+  it("uses view-specific descriptive fallback text for gallery images", () => {
+    const views: ImagenProducto[] = ["principal", "detalle", "estampa", "terminacion"].map(
+      (view, index) => ({
+        id: `img-${index}`,
+        producto_id: "prod-1",
+        url: `/images/${view}.webp`,
+        alt_text: null,
+        orden: index,
+        es_principal: index === 0,
+      }),
+    );
+    render(<ProductGallery imagenes={views} productName="Mantel Picnic" />);
+
+    for (const [index, label] of ["vista principal", "detalle", "estampa", "terminación"].entries()) {
+      if (index > 0) fireEvent.click(screen.getByRole("tab", { name: `Ver imagen ${index + 1}` }));
+      expect(screen.getByAltText(`Mantel Picnic, ${label}`)).toBeInTheDocument();
+    }
   });
 });

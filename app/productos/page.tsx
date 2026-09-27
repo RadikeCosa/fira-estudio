@@ -1,4 +1,5 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { getProductos, getCategorias } from "@/lib/supabase/queries";
 import { ProductGrid } from "@/components/productos/ProductGrid";
 import { CategoryFilter } from "@/components/productos/CategoryFilter";
@@ -23,10 +24,6 @@ function getFirstParam(value: SearchParamValue): string | undefined {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function isValidCategorySlug(value: string | undefined): value is string {
-  return Boolean(value?.match(/^[a-z0-9-]+$/));
-}
-
 function hasSearchParams(params: ProductosSearchParams): boolean {
   return Object.keys(params).length > 0;
 }
@@ -39,32 +36,11 @@ export async function generateMetadata({
   searchParams,
 }: ProductosPageProps): Promise<Metadata> {
   const params = await searchParams;
-  const rawCategoriaSlug = getFirstParam(params.categoria);
-  const categoriaSlug = isValidCategorySlug(rawCategoriaSlug)
-    ? rawCategoriaSlug
-    : undefined;
   const hasSeoRelevantQuery = hasSearchParams(params);
 
-  // Si hay categoría, fetch para obtener nombre
-  let metadataTitle = PRODUCTOS_CONTENT.page.metadataTitle;
-  let metadataDescription = PRODUCTOS_CONTENT.page.metadataDescription;
-
-  if (categoriaSlug) {
-    try {
-      const categorias = await getCategorias();
-      const categoria = categorias.find((c) => c.slug === categoriaSlug);
-      if (categoria) {
-        metadataTitle = categoria.nombre;
-        metadataDescription = categoria.descripcion || metadataDescription;
-      }
-    } catch (error) {
-      console.error("Error fetching category for metadata:", error);
-    }
-  }
-
   return buildMetadata({
-    title: metadataTitle,
-    description: metadataDescription,
+    title: PRODUCTOS_CONTENT.page.metadataTitle,
+    description: PRODUCTOS_CONTENT.page.metadataDescription,
     url: "/productos",
     noIndex: hasSeoRelevantQuery,
     follow: true,
@@ -76,12 +52,6 @@ export default async function ProductosPage({
 }: ProductosPageProps) {
   const params = await searchParams;
 
-  // Validar y sanitizar categoriaSlug
-  const rawCategoriaSlug = getFirstParam(params.categoria);
-  const categoriaSlug = isValidCategorySlug(rawCategoriaSlug)
-    ? rawCategoriaSlug
-    : undefined;
-
   const rawPageParam = getFirstParam(params.page);
   const pageParam = rawPageParam ? Number.parseInt(rawPageParam, 10) : 1;
   const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
@@ -90,7 +60,6 @@ export default async function ProductosPage({
   // Paralelizar fetches para mejor performance
   const [productosResult, categorias] = await Promise.all([
     getProductos({
-      categoriaSlug,
       page,
       pageSize,
     }),
@@ -99,19 +68,7 @@ export default async function ProductosPage({
 
   const { items: productos, pagination } = productosResult;
 
-  // Find active category name for display
-  const activeCategoria = categorias.find((c) => c.slug === categoriaSlug);
-
-  // Build breadcrumb items
-  const breadcrumbItems = activeCategoria
-    ? [
-        { name: "Productos", url: "/productos" },
-        {
-          name: activeCategoria.nombre,
-          url: `/productos?categoria=${activeCategoria.slug}`,
-        },
-      ]
-    : [{ name: "Productos", url: "/productos" }];
+  if (page > 1 && page > pagination.totalPages) notFound();
 
   // Get content
   const { page: pageContent } = PRODUCTOS_CONTENT;
@@ -119,18 +76,12 @@ export default async function ProductosPage({
   return (
     <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
       {/* Breadcrumbs */}
-      <Breadcrumbs items={breadcrumbItems} />
+      <Breadcrumbs items={[{ name: "Productos", url: "/productos" }]} />
 
       {/* Page Header */}
       <PageHeader
-        title={
-          activeCategoria ? activeCategoria.nombre : pageContent.defaultTitle
-        }
-        description={
-          activeCategoria
-            ? activeCategoria.descripcion || pageContent.defaultDescription
-            : pageContent.defaultDescription
-        }
+        title={pageContent.defaultTitle}
+        description={pageContent.defaultDescription}
       />
 
       {/* Category filter */}
@@ -146,7 +97,7 @@ export default async function ProductosPage({
           totalPages={pagination.totalPages}
           hasNextPage={pagination.hasNextPage}
           hasPreviousPage={pagination.hasPreviousPage}
-          categoriaSlug={categoriaSlug}
+          basePath="/productos"
         />
       </div>
     </div>

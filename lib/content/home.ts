@@ -3,25 +3,24 @@
 
 export const HOME_CONTENT = {
   hero: {
-    badge: "Textiles Artesanales Únicos",
-    title: "Fira Estudio", // Este valor puede ser reemplazado dinámicamente si es necesario
-    subtitle: "Textiles Artesanales Únicos",
+    eyebrow: "Textiles artesanales",
+    title: "Piezas textiles para usar y disfrutar todos los días",
     description:
-      "Creamos manteles, servilletas, caminos de mesa y accesorios de cocina con dedicación y cuidado artesanal. Lindos. Útiles. Para usar cada día.",
+      "Diseñamos y confeccionamos manteles, caminos, servilletas y accesorios que combinan oficio, belleza y uso cotidiano.",
     cta: {
-      primary: "Ver Productos",
-      secondary: "Sobre Nosotros",
+      primary: "Explorar el catálogo",
+      secondary: "Conocer el taller",
     },
   },
   featuredProducts: {
-    title: "Productos Destacados",
+    title: "Piezas para todos los días",
     description:
-      "Nuestras piezas más especiales, creadas con dedicación y amor por el detalle",
-    viewAllCta: "Ver todos los productos",
+      "Textiles de mesa y hogar confeccionados con atención a cada terminación.",
+    viewAllCta: "Ver todo el catálogo",
   },
   categories: {
-    title: "Nuestras Colecciones",
-    description: "Explora nuestra colección de textiles artesanales",
+    title: "Nuestras colecciones",
+    description: "Explorá las categorías de textiles para la mesa y el hogar.",
     items: [
       {
         id: "manteles",
@@ -44,9 +43,9 @@ export const HOME_CONTENT = {
     ],
   },
   finalCta: {
-    title: "¿Tenés alguna consulta?",
+    title: "¿Querés consultar por una pieza?",
     description:
-      "Escribinos para consultar disponibilidad, variantes o detalles de nuestros productos.",
-    ctaText: "Contactanos",
+      "Escribinos por WhatsApp para consultar disponibilidad, variantes o tiempos de confección.",
+    ctaText: "Consultar por WhatsApp",
   },
 };

@@ -171,14 +171,15 @@ describe("ProductActions", () => {
     ).toBeInTheDocument();
   });
 
-  it("keeps a safe contact CTA when WhatsApp is not configured", () => {
+  it("shows an informational state when WhatsApp is not configured", () => {
     delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
 
     render(<ProductActions producto={producto} />);
 
     expect(
-      screen.getByRole("link", { name: /consultar por este producto/i }),
-    ).toHaveAttribute("href", "/contacto?producto=Camino+Magnolia");
+      screen.queryByRole("link", { name: /consultar por este producto/i }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(/WhatsApp no está disponible/);
     expect(screen.queryByText(/agregar al carrito/i)).not.toBeInTheDocument();
   });
 });

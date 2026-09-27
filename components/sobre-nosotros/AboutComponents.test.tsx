@@ -81,20 +81,19 @@ describe("ValuesGrid", () => {
   it("renders section header with title and description", () => {
     render(<ValuesGrid />);
 
-    expect(screen.getByText("Nuestros Valores")).toBeInTheDocument();
+    expect(screen.getByText("Lo que cuidamos")).toBeInTheDocument();
     expect(
-      screen.getByText("Los pilares que guían nuestro trabajo diario"),
+      screen.getByText("Decisiones concretas detrás de cada pieza"),
     ).toBeInTheDocument();
   });
 
-  it("renders all four value cards", () => {
+  it("renders all three value cards", () => {
     render(<ValuesGrid />);
 
     // Check all four values from ABOUT_CONTENT
-    expect(screen.getByText("Calidad Artesanal")).toBeInTheDocument();
-    expect(screen.getByText("Diseño Consciente")).toBeInTheDocument();
-    expect(screen.getByText("Producción Responsable")).toBeInTheDocument();
-    expect(screen.getByText("Atención Personalizada")).toBeInTheDocument();
+    expect(screen.getByText("Diseño para lo cotidiano")).toBeInTheDocument();
+    expect(screen.getByText("Oficio textil")).toBeInTheDocument();
+    expect(screen.getByText("Producción cuidada")).toBeInTheDocument();
   });
 
   it("renders value descriptions", () => {
@@ -102,14 +101,11 @@ describe("ValuesGrid", () => {
 
     // Check for descriptions - these are complete texts from ABOUT_CONTENT
     expect(
-      screen.getByText(/Nos comprometemos con la excelencia en cada pieza/),
+      screen.getByText(/Diseñamos textiles que se integran al uso diario/),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Diseñamos con propósito/)).toBeInTheDocument();
+    expect(screen.getByText(/La confección y la serigrafía manual/)).toBeInTheDocument();
     expect(
-      screen.getByText(/Trabajamos de manera consciente y responsable/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/Cada cliente es importante para nosotros/),
+      screen.getByText(/Revisamos costuras, estampas y terminaciones/),
     ).toBeInTheDocument();
   });
 

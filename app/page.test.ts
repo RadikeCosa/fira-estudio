@@ -8,7 +8,7 @@ describe("home metadata", () => {
 
   it("describes the catalog and consultation intent", () => {
     expect(homeMetadata.description).toBe(
-      "Textiles artesanales para la mesa y el hogar: manteles, servilletas, caminos de mesa y otras piezas. Explorá el catálogo y consultá disponibilidad.",
+      "Diseñamos y confeccionamos manteles, caminos, servilletas y accesorios textiles para usar cada día. Explorá el catálogo y consultá disponibilidad por WhatsApp.",
     );
   });
 });

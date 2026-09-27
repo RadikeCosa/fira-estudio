@@ -1,12 +1,17 @@
 import { HOME_CONTENT } from "@/lib/content/home";
 import { SPACING } from "@/lib/design/tokens";
 
-import { Button } from "@/components/ui/Button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Instagram, Mail } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { buildGeneralInquiryMessage } from "@/lib/contact/whatsapp";
+import { WHATSAPP } from "@/lib/constants";
+import { PUBLIC_CONTACT_CHANNELS, SOCIAL_LINKS } from "@/lib/constants/navigation";
 
 export function FinalCTASection() {
   const { title, description, ctaText } = HOME_CONTENT.finalCta;
+  const whatsappUrl = WHATSAPP.getUrl(buildGeneralInquiryMessage());
+  const email = PUBLIC_CONTACT_CHANNELS.emailAddress;
+  const instagram = SOCIAL_LINKS.instagram.href;
 
   return (
     <section
@@ -18,10 +23,37 @@ export function FinalCTASection() {
       <p className="mb-10 text-base leading-relaxed text-muted-foreground sm:text-lg">
         {description}
       </p>
-      <Button href="/contacto" variant="primary" size="md" className="group">
-        {ctaText}
-        <ArrowRight className="h-5 w-5 transition-all group-hover:translate-x-1 group-hover:scale-110" />
-      </Button>
+      {whatsappUrl ? (
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex min-h-12 items-center gap-2 rounded-md bg-accent px-6 py-3 font-semibold text-accent-foreground transition-colors duration-200 hover:bg-accent-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring"
+        >
+          {ctaText}
+          <ArrowRight className="h-5 w-5" aria-hidden="true" />
+        </a>
+      ) : (
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground" role="status">
+            Las consultas por WhatsApp no están disponibles ahora.
+          </p>
+          <div className="flex flex-wrap justify-center gap-5 text-sm font-medium">
+            {email && (
+              <a className="inline-flex min-h-11 items-center gap-2 text-accent hover:underline" href={`mailto:${email}`}>
+                <Mail className="h-4 w-4" aria-hidden="true" />
+                Consultar por email
+              </a>
+            )}
+            {instagram && (
+              <a className="inline-flex min-h-11 items-center gap-2 text-accent hover:underline" href={instagram} target="_blank" rel="noopener noreferrer">
+                <Instagram className="h-4 w-4" aria-hidden="true" />
+                Consultar por Instagram
+              </a>
+            )}
+          </div>
+        </div>
+      )}
     </section>
   );
 }

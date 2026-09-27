@@ -1,12 +1,13 @@
 /**
  * Category filter component
- * Horizontal scrolling tabs for filtering products by category
+ * Navigation links for browsing catalog categories
  */
 
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import type { Categoria } from "@/lib/types";
 import { trackCategoryFilter } from "@/lib/analytics/gtag";
 import { COMPONENTS } from "@/lib/design/tokens";
@@ -14,15 +15,19 @@ import { cn } from "@/lib/utils";
 
 interface CategoryFilterProps {
   categorias: Categoria[];
+  activeCategorySlug?: string;
 }
 
 /**
  * Category filter with horizontal scrolling
  * Client component to handle active state and tracking
  */
-export function CategoryFilter({ categorias }: CategoryFilterProps) {
-  const searchParams = useSearchParams();
-  const activeCategory = searchParams.get("categoria");
+export function CategoryFilter({
+  categorias,
+  activeCategorySlug,
+}: CategoryFilterProps) {
+  const router = useRouter();
+  const [announcement, setAnnouncement] = useState("");
 
   // TODO: Performance optimization - Implement useCallback in future global optimization
   // This will prevent unnecessary re-renders by memoizing the handler function
@@ -30,8 +35,13 @@ export function CategoryFilter({ categorias }: CategoryFilterProps) {
   //   trackCategoryFilter(slug, nombre);
   // }, []);
   const handleCategoryClick = (slug: string, nombre: string): void => {
-    // Track category filter usage
     trackCategoryFilter(slug, nombre);
+  };
+
+  const navigateToCategory = (slug: string, nombre: string): void => {
+    setAnnouncement(`Abriendo categoría ${nombre}`);
+    handleCategoryClick(slug || "all", nombre);
+    router.push(slug ? `/productos/categoria/${slug}` : "/productos");
   };
 
   // Early return if no categories to display
@@ -40,25 +50,44 @@ export function CategoryFilter({ categorias }: CategoryFilterProps) {
   }
 
   return (
-    <nav
-      className={COMPONENTS.categoryFilter.container}
-      aria-label="Filtrar productos por categoría"
-    >
-      <div
-        className={COMPONENTS.categoryFilter.buttonList}
-        role="tablist"
+    <nav className="mb-10" aria-label="Categorías del catálogo">
+      <p className="mb-3 text-sm font-medium text-muted-foreground md:hidden">
+        Explorar por categoría
+      </p>
+      <label className="sr-only" htmlFor="catalog-category-mobile">
+        Elegí una categoría
+      </label>
+      <select
+        id="catalog-category-mobile"
+        value={activeCategorySlug ?? ""}
+        onChange={(event) => {
+          const category = categorias.find(
+            (item) => item.slug === event.currentTarget.value,
+          );
+          navigateToCategory(category?.slug ?? "", category?.nombre ?? "Todos");
+        }}
+        className="min-h-12 w-full rounded-lg border border-border bg-surface px-4 text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring md:hidden"
       >
-        {/* "Todos" button */}
+        <option value="">Todos los productos</option>
+        {categorias.map((categoria) => (
+          <option key={categoria.id} value={categoria.slug}>
+            {categoria.nombre}
+          </option>
+        ))}
+      </select>
+
+      <div className="hidden flex-wrap gap-2 md:flex">
         <Link
           href="/productos"
-          role="tab"
-          aria-selected={!activeCategory}
-          aria-current={!activeCategory ? "page" : undefined}
-          onClick={() => handleCategoryClick("all", "Todos")}
+          aria-current={!activeCategorySlug ? "page" : undefined}
+          onClick={(event) => {
+            event.preventDefault();
+            navigateToCategory("", "Todos");
+          }}
           className={cn(
             COMPONENTS.categoryFilter.button,
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-            !activeCategory
+            !activeCategorySlug
               ? COMPONENTS.categoryFilter.buttonActive
               : COMPONENTS.categoryFilter.buttonInactive
           )}
@@ -68,18 +97,17 @@ export function CategoryFilter({ categorias }: CategoryFilterProps) {
 
         {/* Category buttons */}
         {categorias.map((categoria) => {
-          const isActive = activeCategory === categoria.slug;
+          const isActive = activeCategorySlug === categoria.slug;
 
           return (
             <Link
               key={categoria.id}
-              href={`/productos?categoria=${categoria.slug}`}
-              role="tab"
-              aria-selected={isActive}
+              href={`/productos/categoria/${categoria.slug}`}
               aria-current={isActive ? "page" : undefined}
-              onClick={() =>
-                handleCategoryClick(categoria.slug, categoria.nombre)
-              }
+              onClick={(event) => {
+                event.preventDefault();
+                navigateToCategory(categoria.slug, categoria.nombre);
+              }}
               className={cn(
                 COMPONENTS.categoryFilter.button,
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-focus-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
@@ -93,6 +121,9 @@ export function CategoryFilter({ categorias }: CategoryFilterProps) {
           );
         })}
       </div>
+      <span className="sr-only" aria-live="polite" aria-atomic="true">
+        {announcement}
+      </span>
     </nav>
   );
 }

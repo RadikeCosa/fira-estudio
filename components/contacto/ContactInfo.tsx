@@ -123,7 +123,7 @@ export function ContactInfo({ initialContext }: ContactInfoProps) {
               className={cn(
                 "inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl",
                 "bg-foreground px-8 py-4 text-base font-semibold text-background shadow-lg",
-                "transition-all duration-300 hover:scale-[1.02] hover:shadow-xl",
+                "transition-all duration-200 hover:shadow-md",
                 "focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2 focus:ring-offset-background",
                 "sm:w-auto",
               )}

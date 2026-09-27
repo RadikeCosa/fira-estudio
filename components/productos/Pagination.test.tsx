@@ -10,6 +10,7 @@ describe("Pagination", () => {
         totalPages={1}
         hasNextPage={false}
         hasPreviousPage={false}
+        basePath="/productos"
       />,
     );
 
@@ -23,6 +24,7 @@ describe("Pagination", () => {
         totalPages={3}
         hasNextPage
         hasPreviousPage={false}
+        basePath="/productos"
       />,
     );
 
@@ -37,6 +39,7 @@ describe("Pagination", () => {
         totalPages={3}
         hasNextPage={false}
         hasPreviousPage
+        basePath="/productos"
       />,
     );
 
@@ -51,6 +54,7 @@ describe("Pagination", () => {
         totalPages={3}
         hasNextPage
         hasPreviousPage
+        basePath="/productos"
       />,
     );
 
@@ -67,15 +71,15 @@ describe("Pagination", () => {
         totalPages={3}
         hasNextPage
         hasPreviousPage
-        categoriaSlug="manteles"
+        basePath="/productos/categoria/manteles"
       />,
     );
 
     expect(
       screen.getByRole("link", { name: "Ir a la página anterior" }),
-    ).toHaveAttribute("href", "/productos?categoria=manteles");
+    ).toHaveAttribute("href", "/productos/categoria/manteles");
     expect(
       screen.getByRole("link", { name: "Ir a la página siguiente" }),
-    ).toHaveAttribute("href", "/productos?categoria=manteles&page=3");
+    ).toHaveAttribute("href", "/productos/categoria/manteles?page=3");
   });
 });

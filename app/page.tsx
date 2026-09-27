@@ -1,16 +1,17 @@
 import { Suspense } from "react";
 import { HeroSection } from "@/components/home/HeroSection";
-import { TextureDivider } from "@/components/home/TextureDivider";
 import { FeaturedProducts } from "@/components/home/FeaturedProducts";
 import { CollectionsGrid } from "@/components/home/CollectionsGrid";
 import { CollectionsGridSkeleton } from "@/components/home/CollectionsGridSkeleton";
 import { FinalCTASection } from "@/components/home/FinalCTASection";
 import { ProgressBar } from "@/components/layout/ProgressBar";
+import { CraftProcessSection } from "@/components/home/CraftProcessSection";
 import type { Metadata } from "next";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { generateOrganizationSchema, renderJsonLd } from "@/lib/seo/structured-data";
 
 const HOME_META_DESCRIPTION =
-  "Textiles artesanales para la mesa y el hogar: manteles, servilletas, caminos de mesa y otras piezas. Explorá el catálogo y consultá disponibilidad.";
+  "Diseñamos y confeccionamos manteles, caminos, servilletas y accesorios textiles para usar cada día. Explorá el catálogo y consultá disponibilidad por WhatsApp.";
 
 /**
  * Home Page - Fira Estudio
@@ -33,11 +34,9 @@ export const metadata: Metadata = buildMetadata({
 export default function HomePage() {
   return (
     <>
+      <script {...renderJsonLd(generateOrganizationSchema())} />
       {/* Hero Section */}
       <HeroSection />
-
-      {/* Texture Divider */}
-      <TextureDivider />
 
       {/* Featured Products */}
       <FeaturedProducts />
@@ -46,6 +45,8 @@ export default function HomePage() {
       <Suspense fallback={<CollectionsGridSkeleton />}>
         <CollectionsGrid />
       </Suspense>
+
+      <CraftProcessSection />
 
       {/* Final CTA Section */}
       <FinalCTASection />

@@ -4,7 +4,7 @@
  */
 
 import type { MetadataRoute } from "next";
-import { getProductosFresh } from "@/lib/supabase/queries";
+import { getCategoriasFresh, getProductosFresh } from "@/lib/supabase/queries";
 import { getSiteBaseUrl, resolveAbsoluteUrl } from "@/lib/seo/url";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -48,10 +48,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     // Fetch all active products only when catalog env is available.
-    const { items: productos } = await getProductosFresh({
-      page: 1,
-      pageSize: 500,
-    });
+    const [{ items: productos }, categorias] = await Promise.all([
+      getProductosFresh({ page: 1, pageSize: 500 }),
+      getCategoriasFresh(),
+    ]);
 
     const productUrls: MetadataRoute.Sitemap = productos.map((producto) => ({
       url: resolveAbsoluteUrl(`/productos/${producto.slug}`),
@@ -60,7 +60,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: producto.destacado ? 0.8 : 0.6,
     }));
 
-    return [...staticPages, ...productUrls];
+    const categoryUrls: MetadataRoute.Sitemap = categorias.map((categoria) => ({
+      url: resolveAbsoluteUrl(`/productos/categoria/${categoria.slug}`),
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    }));
+
+    return [...staticPages, ...categoryUrls, ...productUrls];
   } catch (error) {
     console.warn("[sitemap] Falling back to static pages only:", error);
   }

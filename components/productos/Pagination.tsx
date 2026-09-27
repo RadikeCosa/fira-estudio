@@ -10,7 +10,7 @@ interface PaginationProps {
   totalPages: number;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
-  categoriaSlug?: string;
+  basePath: string;
 }
 
 export function Pagination({
@@ -18,25 +18,14 @@ export function Pagination({
   totalPages,
   hasNextPage,
   hasPreviousPage,
-  categoriaSlug,
+  basePath,
 }: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const displayTotalPages = totalPages === 0 ? 1 : totalPages;
 
   const buildHref = (targetPage: number): string => {
-    const params = new URLSearchParams();
-
-    if (categoriaSlug) {
-      params.set("categoria", categoriaSlug);
-    }
-
-    if (targetPage > 1) {
-      params.set("page", targetPage.toString());
-    }
-
-    const queryString = params.toString();
-    return queryString ? `/productos?${queryString}` : "/productos";
+    return targetPage > 1 ? `${basePath}?page=${targetPage}` : basePath;
   };
 
   const previousHref = buildHref(Math.max(1, page - 1));

@@ -75,10 +75,7 @@ test("catalog listing and optional product detail are navigable", async ({
   await expect(page.getByRole("main")).toBeVisible();
   await expectNoHorizontalOverflow(page);
 
-  const categoryFilter = page.getByRole("tablist", { name: /categor/i });
-  if (await categoryFilter.isVisible().catch(() => false)) {
-    await expect(categoryFilter.getByRole("tab").first()).toBeVisible();
-  }
+  await expect(page.getByRole("navigation", { name: "Categorías del catálogo" })).toBeVisible();
 
   const firstProduct = await getFirstProductLink(page);
   await expect(firstProduct).toBeVisible();
@@ -111,11 +108,13 @@ test("real Supabase catalog data renders catalog, filter, detail, gallery, and i
   );
   await expect(page.getByText("Camino de Mesa Magnolia")).toBeVisible();
 
-  await page.getByRole("tab", { name: "Caminos de Mesa" }).click();
-  await expect(page).toHaveURL(/categoria=caminos-de-mesa/);
-  await expect(page.getByRole("tab", { name: "Caminos de Mesa" })).toHaveAttribute(
-    "aria-selected",
-    "true",
+  await page.getByRole("navigation", { name: "Categorías del catálogo" })
+    .getByRole("link", { name: "Caminos de Mesa" }).click();
+  await expect(page).toHaveURL(/\/productos\/categoria\/caminos-de-mesa$/);
+  await expect(page.getByRole("navigation", { name: "Categorías del catálogo" })
+    .getByRole("link", { name: "Caminos de Mesa" })).toHaveAttribute(
+    "aria-current",
+    "page",
   );
   await expect(page.locator("main a").filter({ hasText: "Ver detalle" })).toHaveCount(
     1,

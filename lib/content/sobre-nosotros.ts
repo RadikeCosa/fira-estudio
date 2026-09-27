@@ -1,7 +1,7 @@
 // Centraliza el contenido textual de la página sobre nosotros
 // Español argentino
 
-import { Heart, Sparkles, Leaf, Users, type LucideIcon } from "lucide-react";
+import { Heart, Sparkles, Leaf, type LucideIcon } from "lucide-react";
 
 export interface AboutValue {
   icon: LucideIcon;
@@ -50,68 +50,61 @@ export interface AboutContent {
 
 export const ABOUT_CONTENT: AboutContent = {
   page: {
-    title: "Sobre Nosotros",
-    subtitle: "Creamos textiles únicos con dedicación y amor por el detalle",
+    title: "Sobre el taller",
+    subtitle: "Diseñamos y confeccionamos textiles para la mesa y el hogar",
   },
   image: {
     src: "/images/about.webp",
-    alt: "Taller de fira Estudio",
+    alt: "Manos marcando una tela junto a una máquina de coser",
   },
   sections: {
     historia: {
-      title: "Nuestra Historia",
+      title: "Nuestra historia",
       icon: Heart,
       paragraphs: [
-        "Fira Estudio nace de la idea de que un hogar puede encenderse con belleza simple y auténtica.",
-        "Cada pieza es única porque lleva nuestra esencia: lindas, para que enamoren a primera vista; útiles, para que se integren naturalmente a tu rutina; y pensadas para usar cada día, porque creemos en la simpleza de lo cotidiano, en las mesas compartidas, en los momentos genuinos.",
-        "Cada producto es el resultado de un dedicado proceso artesanal. En Fira Estudio seleccionamos textiles premium, diseñamos cada objeto, lo cosemos y lo estampamos manualmente mediante serigrafía, buscando siempre la excelencia en cada detalle.",
+        "Fira Estudio crea textiles para acompañar la vida cotidiana en la mesa y el hogar.",
+        "Diseñamos cada pieza, seleccionamos las telas y trabajamos la confección y la serigrafía manual en el taller.",
+        "Cuidamos las terminaciones para que cada textil combine belleza, utilidad y uso diario.",
       ],
     },
     proceso: {
-      title: "Proceso Artesanal",
+      title: "Un proceso de taller",
       icon: Sparkles,
       paragraphs: [
-        "Piezas artesanales que encienden tu hogar con calidad y durabilidad.",
         {
           before:
-            "Cada pieza que creamos pasa por un meticuloso proceso de elaboración; podés ",
+            "Cada pieza atraviesa distintas etapas de confección. Podés ",
           link: {
             text: "ver el catálogo",
             href: "/productos",
           },
-          after: " para conocer el resultado de nuestro trabajo.",
+            after: " para conocer los textiles terminados.",
         },
-        "Seleccionamos cuidadosamente materiales premium, priorizando fibras naturales y telas de alta calidad que combinan belleza con funcionalidad óptima.",
-        "Prestamos atención rigurosa a cada costura a mano, cada terminación y cada estampa manual mediante serigrafía.",
+        "Elegimos telas según el uso de cada pieza y definimos el diseño antes de pasar a la confección.",
+        "La serigrafía manual y la revisión de las terminaciones completan el trabajo en el taller.",
       ],
     },
     valores: {
-      title: "Nuestros Valores",
-      description: "Los pilares que guían nuestro trabajo diario",
+      title: "Lo que cuidamos",
+      description: "Decisiones concretas detrás de cada pieza",
       items: [
         {
           icon: Sparkles,
-          title: "Calidad Artesanal",
+          title: "Diseño para lo cotidiano",
           description:
-            "Nos comprometemos con la excelencia en cada pieza que creamos. Cada producto es elaborado con dedicación y cuidado, asegurando que cumpla con los más altos estándares de calidad.",
+            "Diseñamos textiles que se integran al uso diario de la mesa y el hogar.",
         },
         {
           icon: Heart,
-          title: "Diseño Consciente",
+          title: "Oficio textil",
           description:
-            "Diseñamos con propósito. Cada uno de nuestros productos está pensado para ser funcional, bello y duradero apostando por lo atemporal.",
+            "La confección y la serigrafía manual forman parte del proceso de producción en el taller.",
         },
         {
           icon: Leaf,
-          title: "Producción Responsable",
+          title: "Producción cuidada",
           description:
-            "Trabajamos de manera consciente y responsable, optimizando recursos y minimizando desperdicios. Valoramos el trabajo artesanal y el tiempo que requiere crear productos de calidad.",
-        },
-        {
-          icon: Users,
-          title: "Atención Personalizada",
-          description:
-            "Cada cliente es importante para nosotros. Ofrecemos atención personalizada, asesoramiento en la elección de productos y estamos siempre disponibles para responder consultas y acompañarte en tu elección.",
+            "Revisamos costuras, estampas y terminaciones antes de presentar cada pieza.",
         },
       ],
     },

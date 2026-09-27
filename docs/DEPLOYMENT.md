@@ -81,7 +81,7 @@ NEXT_PUBLIC_MAINTENANCE_MODE
 NEXT_PUBLIC_MAINTENANCE_MESSAGE
 ```
 
-Para una experiencia publica completa del modo catalogo, cargar `NEXT_PUBLIC_WHATSAPP_NUMBER` en Vercel Preview y Production. El formato esperado es codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. La carga efectiva en Vercel queda `pendiente de realizar manualmente`.
+`NEXT_PUBLIC_WHATSAPP_NUMBER` es obligatorio para builds de Vercel Preview y Production. El `prebuild` valida entre 10 y 15 dígitos, sin `+`, espacios ni guiones, y falla sin imprimir el valor configurado. En local (sin `VERCEL_ENV` o con `development`) el build continúa y la interfaz presenta un estado seguro si falta el canal. La variable debe configurarse en cada entorno de Vercel antes de construir; su estado remoto queda `pendiente de confirmar`.
 
 `NEXT_PUBLIC_CONTACT_EMAIL` y `NEXT_PUBLIC_INSTAGRAM_URL` siguen siendo canales secundarios opcionales.
 Search Console se prepara/configura en deploy. GA4 queda opcional y puede postergarse si todavia no hay un objetivo claro de medicion.

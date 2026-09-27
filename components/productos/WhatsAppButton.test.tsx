@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { buildContactFallbackHref, WhatsAppButton } from "./WhatsAppButton";
+import { WhatsAppButton } from "./WhatsAppButton";
 import { buildProductInquiryMessage } from "@/lib/contact/whatsapp";
 import type { Producto, Variacion } from "@/lib/types";
 import { trackProductInquiry } from "@/lib/analytics/gtag";
@@ -193,26 +193,19 @@ describe("WhatsAppButton", () => {
       const { container } = render(<WhatsAppButton producto={mockProducto} />);
       const link = container.querySelector("a");
 
-      expect(link).toHaveClass("from-green-600");
-      expect(link).toHaveClass("to-green-500");
+      expect(link).toHaveClass("bg-accent");
     });
 
-    it("uses a safe contact fallback when WhatsApp number is missing", () => {
+    it("shows a non-interactive safe state when WhatsApp number is missing", () => {
       delete process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
 
       render(<WhatsAppButton producto={mockProducto} />);
 
-      const link = screen.getByRole("link", {
-        name: /consultar por este producto/i,
-      });
-      expect(link).toHaveAttribute(
-        "href",
-        "/contacto?producto=Mantel+Floral",
-      );
+      expect(screen.queryByRole("link", { name: /consultar por este producto/i })).not.toBeInTheDocument();
       expect(screen.getByRole("status")).toHaveTextContent(
-        "WhatsApp no está configurado",
+        "WhatsApp no está disponible",
       );
-      expect(link.getAttribute("href")).not.toContain("wa.me");
+      expect(screen.queryByRole("link", { name: /consultar por email/i })).not.toBeInTheDocument();
     });
 
     it.each([
@@ -220,38 +213,13 @@ describe("WhatsAppButton", () => {
       ["plus sign", "+5492999123456"],
       ["spaces", "549 299 9123456"],
       ["hyphens", "549-299-9123456"],
-    ])("uses a safe contact fallback when WhatsApp number has %s", (_, value) => {
+    ])("does not render an interactive inquiry when WhatsApp number has %s", (_, value) => {
       process.env.NEXT_PUBLIC_WHATSAPP_NUMBER = value;
 
       render(<WhatsAppButton producto={mockProducto} />);
 
-      const link = screen.getByRole("link", {
-        name: /consultar por este producto/i,
-      });
-      expect(link).toHaveAttribute(
-        "href",
-        "/contacto?producto=Mantel+Floral",
-      );
-      expect(link.getAttribute("href")).not.toContain("wa.me");
-    });
-
-    it("serializes optional variation context in the contact fallback", () => {
-      expect(
-        buildContactFallbackHref(mockProducto, mockVariacionEnStock),
-      ).toBe(
-        "/contacto?producto=Mantel+Floral&variante=150x200cm+%2F+Rojo",
-      );
-    });
-
-    it("does not include price or stock in the contact fallback", () => {
-      const href = buildContactFallbackHref(
-        mockProducto,
-        mockVariacionEnStock,
-      );
-
-      expect(href).not.toContain("15000");
-      expect(href).not.toContain("stock");
-      expect(href).not.toContain("precio");
+      expect(screen.queryByRole("link", { name: /consultar por este producto/i })).not.toBeInTheDocument();
+      expect(screen.getByRole("status")).toBeInTheDocument();
     });
   });
 

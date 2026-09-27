@@ -67,11 +67,12 @@ export function Footer() {
           {/* Redes sociales y copyright */}
           <div className={COMPONENTS.footer.socialSection}>
             {/* Íconos y enlaces sociales desde SOCIAL_LINKS */}
-            <div
-              className={COMPONENTS.footer.socialLinks}
-              aria-label="Redes sociales"
-            >
-              {activeSocialLinks.map(([key, social]) => (
+            {activeSocialLinks.length > 0 && (
+              <nav
+                className={COMPONENTS.footer.socialLinks}
+                aria-label="Redes sociales"
+              >
+                {activeSocialLinks.map(([key, social]) => (
                 <a
                   key={key}
                   href={social.href}
@@ -90,8 +91,9 @@ export function Footer() {
                 >
                   {getIcon(key)}
                 </a>
-              ))}
-            </div>
+                ))}
+              </nav>
+            )}
 
             {/* Copyright dinámico y sin hardcodeo */}
             <p className={COMPONENTS.footer.copyright}>

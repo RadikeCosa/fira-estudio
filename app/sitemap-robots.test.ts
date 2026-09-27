@@ -1,9 +1,11 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import sitemap from "./sitemap";
 import robots from "./robots";
+import { getCategoriasFresh, getProductosFresh } from "@/lib/supabase/queries";
 
 vi.mock("@/lib/supabase/queries", () => ({
   getProductosFresh: vi.fn(),
+  getCategoriasFresh: vi.fn(),
 }));
 
 const blockedPublicRoutes = [
@@ -54,6 +56,37 @@ describe("public route indexation", () => {
         "/checkout/",
         "/test-errors",
       ]),
+    );
+  });
+
+  it("lists category landing pages when the catalog data source is configured", async () => {
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "https://fira.supabase.co");
+    vi.stubEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY", "public-test-key");
+    vi.mocked(getCategoriasFresh).mockResolvedValue([
+      {
+        id: "cat-1",
+        nombre: "Manteles",
+        slug: "manteles",
+        descripcion: "Manteles artesanales",
+        orden: 1,
+      },
+    ]);
+    vi.mocked(getProductosFresh).mockResolvedValue({
+      items: [],
+      pagination: {
+        total: 0,
+        page: 1,
+        pageSize: 500,
+        totalPages: 0,
+        hasNextPage: false,
+        hasPreviousPage: false,
+      },
+    });
+
+    const entries = await sitemap();
+
+    expect(entries.map((entry) => entry.url)).toContain(
+      "https://fira.example/productos/categoria/manteles",
     );
   });
 });

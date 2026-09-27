@@ -108,7 +108,7 @@ export function VariationSelector({
             font-medium
             shadow-sm
             transition-all
-            duration-300
+            duration-200
             focus:outline-none
             focus:ring-2
             focus:ring-focus-ring
@@ -149,7 +149,7 @@ export function VariationSelector({
             font-medium
             shadow-sm
             transition-all
-            duration-300
+            duration-200
             focus:outline-none
             focus:ring-2
             focus:ring-focus-ring

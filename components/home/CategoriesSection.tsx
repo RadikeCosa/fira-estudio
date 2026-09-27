@@ -15,15 +15,15 @@ function CategoryCard({ title, description, href }: CategoryCardProps) {
     <Link
       href={href}
       className={cn(
-        "group shine-effect overflow-hidden rounded-2xl border border-border/50 bg-surface shadow-card transition-all duration-300 hover:shadow-card-hover hover:border-foreground/10 hover:-translate-y-2",
+        "group shine-effect overflow-hidden rounded-2xl border border-border/50 bg-surface shadow-card transition-all duration-200 hover:shadow-card-hover hover:border-foreground/10 hover:-translate-y-2",
       )}
     >
       <div className="aspect-[4/3] overflow-hidden bg-gradient-to-br from-muted/50 to-muted relative">
         {/* Imagen o ícono decorativo opcional aquí */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 transition-opacity duration-200 group-hover:opacity-100" />
       </div>
       <div className="p-6">
-        <h3 className="mb-2 text-xl font-bold text-foreground transition-colors duration-300 group-hover:text-foreground/90">
+        <h3 className="mb-2 text-xl font-bold text-foreground transition-colors duration-200 group-hover:text-foreground/90">
           {title}
         </h3>
         <p className="text-sm leading-relaxed text-muted-foreground">

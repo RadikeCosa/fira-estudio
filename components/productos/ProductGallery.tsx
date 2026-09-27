@@ -45,9 +45,15 @@ export function ProductGallery({ imagenes, productName }: ProductGalleryProps) {
   const imagenActual = imagenesAMostrar[currentIndex];
   const totalImagenes = imagenesAMostrar.length;
   const hayMultiplesImagenes = totalImagenes > 1;
+  const fallbackView = [
+    "vista principal",
+    "detalle",
+    "estampa",
+    "terminación",
+  ][currentIndex] ?? `vista ${currentIndex + 1}`;
   const mainImageAlt = getImageAlt(
     imagenActual.alt_text,
-    currentIndex === 0 ? productName : `${productName}, imagen ${currentIndex + 1}`,
+    `${productName}, ${fallbackView}`,
   );
 
   /**
@@ -98,11 +104,9 @@ export function ProductGallery({ imagenes, productName }: ProductGalleryProps) {
           relative
           w-full
           aspect-square
-          rounded-2xl
-          border border-border/50
+          rounded-sm
           overflow-hidden
-          bg-gradient-to-br from-muted/30 to-muted
-          shadow-lg
+          bg-muted
         "
       >
         <Image

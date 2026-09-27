@@ -25,7 +25,7 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
 ```
 
-## Variables opcionales
+## Variables de contacto
 
 Contacto:
 
@@ -35,7 +35,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
 NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/firaestudio
 ```
 
-WhatsApp es el canal principal de consulta manual. Cargar `NEXT_PUBLIC_WHATSAPP_NUMBER` en Preview y Production con codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. La configuracion efectiva queda `pendiente de realizar manualmente`.
+WhatsApp es el canal principal de consulta manual y es requisito para builds de Preview y Production. `prebuild` valida automáticamente que el número tenga entre 10 y 15 dígitos, sin `+`, espacios ni guiones. Si falta o es inválido, el build falla sin imprimir su valor. En local el build puede continuar sin el número y la UI muestra un estado informativo seguro. La configuración efectiva en Vercel queda `pendiente de confirmar`.
 
 Email e Instagram son canales secundarios opcionales.
 
@@ -81,7 +81,7 @@ Cuando cambian variables `NEXT_PUBLIC_*`:
 
 - Variables minimas de catalogo cargadas.
 - `NEXT_PUBLIC_SITE_URL` apunta a la URL esperada del preview o a la URL publica que se quiera validar.
-- Contacto visible con WhatsApp como canal principal si `NEXT_PUBLIC_WHATSAPP_NUMBER` fue cargada.
+- `NEXT_PUBLIC_WHATSAPP_NUMBER` cargada con formato válido; `prebuild` la exige automáticamente.
 - Home, `/productos`, un detalle de producto y `/contacto` renderizan.
 - No se presenta carrito, checkout ni pagos como parte del producto publico.
 - Mercado Pago, Resend, service role comercial y tokens de webhook no son necesarios para validar el catalogo.
@@ -92,7 +92,7 @@ Cuando cambian variables `NEXT_PUBLIC_*`:
 - Proyecto Vercel y entorno production confirmados.
 - Variables minimas cargadas sin valores reales en documentacion.
 - Supabase remoto, datos, Storage e imagenes confirmados fuera del repo.
-- `NEXT_PUBLIC_WHATSAPP_NUMBER` cargada y validada manualmente como canal principal.
+- `NEXT_PUBLIC_WHATSAPP_NUMBER` cargada; `prebuild` valida formato antes de compilar.
 - Analytics activo o postergado con decision explicita.
 - Smoke tests publicos completados.
 - Cualquier credencial historica versionada tratada como `requiere rotacion manual`.

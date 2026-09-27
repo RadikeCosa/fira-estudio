@@ -15,7 +15,7 @@ export function PageHeader({
   className 
 }: PageHeaderProps) {
   return (
-    <div className={cn("mb-12 text-center", className)}>
+    <div className={cn("mb-12 text-left", className)}>
       
       <h1 className={cn(TYPOGRAPHY.heading.page, "mb-5 text-foreground")}>
         {title}

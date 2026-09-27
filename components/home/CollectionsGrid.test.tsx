@@ -34,7 +34,7 @@ describe("CollectionsGrid", () => {
 
     expect(
       screen.getByRole("link", { name: /explorar colección manteles/i }),
-    ).toHaveAttribute("href", "/productos?categoria=manteles");
+    ).toHaveAttribute("href", "/productos/categoria/manteles");
     expect(screen.queryByRole("button", { name: /explorar colección/i }))
       .not.toBeInTheDocument();
   });

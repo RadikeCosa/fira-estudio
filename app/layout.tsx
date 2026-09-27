@@ -52,8 +52,13 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <MaintenanceBanner />
+          <a className="skip-link" href="#main-content">
+            Saltar al contenido
+          </a>
           <Header />
-          <main className="grow pt-16">{children}</main>
+          <main id="main-content" tabIndex={-1} className="grow pt-16">
+            {children}
+          </main>
           <Footer />
         </ThemeProvider>
         <SpeedInsights />

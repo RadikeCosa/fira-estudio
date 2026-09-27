@@ -2,7 +2,7 @@
  * Image utilities for product assets
  */
 
-import { SITE_CONFIG, STORAGE, SUPABASE_STORAGE } from "@/lib/constants";
+import { STORAGE, SUPABASE_STORAGE } from "@/lib/constants";
 import type { ImagenProducto } from "@/lib/types";
 
 /**
@@ -70,6 +70,6 @@ export function getProductImageAlt(
 ): string {
   return getImageAlt(
     altText,
-    `${productoNombre} - Textil artesanal de ${SITE_CONFIG.name}`,
+    `${productoNombre}, vista principal`,
   );
 }

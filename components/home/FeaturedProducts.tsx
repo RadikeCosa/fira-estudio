@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { ArrowRight } from "lucide-react";
 import { cn, getPrincipalImage } from "@/lib/utils";
 import { getProductos } from "@/lib/supabase/queries";
+import { HOME_CONTENT } from "@/lib/content/home";
 
 /**
  * FeaturedProducts - Grid de productos destacados con layout offset
@@ -58,8 +59,8 @@ export async function FeaturedProducts({ limit = 4 }: FeaturedProductsProps) {
       <div className={LAYOUT.container.maxW7xl}>
         {/* Section Header */}
         <SectionHeader
-          title="Productos Destacados"
-          description="Nuestras piezas más especiales, creadas con dedicación y amor por el detalle"
+          title={HOME_CONTENT.featuredProducts.title}
+          description={HOME_CONTENT.featuredProducts.description}
         />
 
         {/* Products Grid with Offset Layout */}
@@ -71,13 +72,7 @@ export async function FeaturedProducts({ limit = 4 }: FeaturedProductsProps) {
             const isOffset = index % 2 === 1;
 
             return (
-              <div
-                key={producto.id}
-                className={cn(
-                  "shine-effect rounded-2xl transition-all duration-300",
-                  isOffset && "sm:mt-12", // Offset on medium+ screens
-                )}
-              >
+            <div key={producto.id} className={cn(isOffset && "sm:mt-8")}>
                 <ProductCard
                   producto={producto}
                   imagenPrincipal={imagenPrincipal?.url}
@@ -91,7 +86,7 @@ export async function FeaturedProducts({ limit = 4 }: FeaturedProductsProps) {
         {/* View All CTA */}
         <div className="mt-16 text-center">
           <Button href="/productos" variant="ghost" className="group">
-            Ver todos los productos
+            {HOME_CONTENT.featuredProducts.viewAllCta}
             <ArrowRight className="h-5 w-5 transition-all group-hover:translate-x-1 group-hover:scale-110" />
           </Button>
         </div>

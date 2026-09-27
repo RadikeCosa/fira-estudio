@@ -41,13 +41,8 @@ interface CollectionCardProps {
 function CollectionCard({ collection, featured = false }: CollectionCardProps) {
   return (
     <Link
-      href={`/productos?categoria=${collection.slug}`}
-      className={cn(
-        "group shine-effect overflow-hidden rounded-2xl border transition-all duration-300 hover:shadow-card-hover hover:-translate-y-2",
-        featured
-          ? "border-accent/50 shadow-card ring-2 ring-accent/20 hover:ring-accent/40 hover:scale-105"
-          : "border-border/50 bg-surface shadow-card hover:border-foreground/10",
-      )}
+      href={`/productos/categoria/${collection.slug}`}
+      className="group block overflow-hidden rounded-sm bg-surface transition-shadow duration-200 hover:shadow-md"
       aria-label={`Explorar colección ${collection.nombre}`}
     >
       {/* Image Container */}
@@ -56,35 +51,31 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
           <Image
             src={collection.imagen}
             alt={
-              collection.nombre
-                ? `Imagen de la colección ${collection.nombre}`
-                : "Imagen de colección"
+              `Textiles de ${collection.nombre.toLowerCase()} en un ambiente de hogar`
             }
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+            className="object-cover transition-transform duration-200 group-hover:scale-[1.03]"
             sizes={
               featured
                 ? "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 45vw"
                 : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw"
             }
-            priority={featured}
           />
         ) : (
           <Image
             src={PLACEHOLDER_IMAGE}
             alt={
-              collection.nombre
-                ? `Imagen de la colección ${collection.nombre}`
-                : "Imagen de colección"
+              ""
             }
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
+            className="object-cover transition-transform duration-200 group-hover:scale-[1.03]"
             sizes={
               featured
                 ? "(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 45vw"
                 : "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 30vw"
             }
-            priority={featured}
             placeholder="blur"
             blurDataURL={PLACEHOLDER_BLUR}
           />
@@ -99,7 +90,7 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
         <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8">
           <h3
             className={cn(
-              "mb-2 font-bold text-white transition-all duration-300 group-hover:-translate-y-1",
+              "mb-2 font-bold text-white transition-all duration-200 group-hover:-translate-y-1",
               featured ? "text-3xl sm:text-4xl" : "text-2xl sm:text-3xl",
             )}
             id={`collection-title-${collection.slug}`}
@@ -112,7 +103,6 @@ function CollectionCard({ collection, featured = false }: CollectionCardProps) {
           {/* Arrow Icon */}
           <div
             className="inline-flex items-center gap-2 text-sm font-medium text-white"
-            aria-label="Explorar colección"
           >
             <span>Explorar colección</span>
             <ArrowRight
@@ -185,12 +175,10 @@ export async function CollectionsGrid() {
         {/* Section Header */}
 
         {/* Heading oculto para aria-labelledby */}
-        <h2 id="collections-section-title" className="sr-only">
-          {HOME_CONTENT.categories.title}
-        </h2>
         <SectionHeader
           title={HOME_CONTENT.categories.title}
           description={HOME_CONTENT.categories.description}
+          titleId="collections-section-title"
         />
 
         {/* Collections Grid - 3 columns desktop for 6 items (2 rows) */}

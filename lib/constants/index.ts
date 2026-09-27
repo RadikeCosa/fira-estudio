@@ -20,9 +20,9 @@ const SITE_KEYWORDS = [
 /** Configuración del sitio */
 export const SITE_CONFIG = {
   name: "Fira Estudio",
-  tagline: "Creaciones Textiles y Digitales",
+  tagline: "Textiles artesanales para usar cada día.",
   description:
-    "Piezas artesanales que encienden tu hogar. Creamos manteles, servilletas, caminos de mesa y accesorios de cocina con dedicación y cuidado artesanal. Lindos. Útiles. Para usar cada día.",
+    "Diseñamos y confeccionamos textiles artesanales para la mesa y el hogar. Piezas cuidadas para usar cada día.",
   url: process.env.NEXT_PUBLIC_SITE_URL,
   get email() {
     return getPublicContactEmail();
@@ -30,7 +30,7 @@ export const SITE_CONFIG = {
   locale: "es_AR",
   keywords: SITE_KEYWORDS, // ← Sin as const aquí
   /** Subtítulo para el footer, configurable */
-  footerSubtitle: "Creaciones Textiles y Digitales",
+  footerSubtitle: "Textiles artesanales para usar cada día.",
 } as const;
 
 /** Configuración de WhatsApp */

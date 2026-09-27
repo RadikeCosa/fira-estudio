@@ -51,7 +51,7 @@ export function Header() {
             <MobileNav
               links={NAV_LINKS}
               logo={SITE_CONFIG.name}
-              decorativeText="Creaciones Textiles"
+              decorativeText={SITE_CONFIG.footerSubtitle}
             />
           </div>
         </div>

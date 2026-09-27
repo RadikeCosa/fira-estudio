@@ -83,7 +83,7 @@ export function generateOrganizationSchema() {
     name: SITE_CONFIG.name,
     description: SITE_CONFIG.description,
     url: resolveAbsoluteUrl("/"),
-    logo: resolveAbsoluteUrl("/images/logo.png"),
+    logo: resolveAbsoluteUrl("/icon.svg"),
     sameAs: [
       process.env.NEXT_PUBLIC_INSTAGRAM_URL,
       // Add more social media URLs here

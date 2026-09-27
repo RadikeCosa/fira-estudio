@@ -107,7 +107,7 @@ export const SPACING = {
 // COMPONENTES comunes
 export const COMPONENTS = {
   input: {
-    base: "w-full rounded-xl border-2 border-border bg-surface px-4 py-3.5 text-foreground transition-all duration-300",
+    base: "w-full rounded-xl border-2 border-border bg-surface px-4 py-3.5 text-foreground transition-all duration-200",
     placeholder: "placeholder:text-muted-foreground",
     focus:
       "focus:border-focus-ring focus:outline-none focus:ring-2 focus:ring-focus-ring/20",
@@ -127,12 +127,12 @@ export const COMPONENTS = {
     paddingMd: "p-8 sm:p-10",
     paddingLg: "p-10 sm:p-12",
     hover:
-      "transition-all duration-300 hover:shadow-2xl hover:border-foreground/10 hover:-translate-y-2",
+      "transition-all duration-200 hover:shadow-2xl hover:border-foreground/10 hover:-translate-y-2",
   },
   iconContainer: {
     base: "flex items-center justify-center rounded-2xl bg-gradient-to-br from-muted/50 to-muted text-foreground shadow-md",
     hover:
-      "transition-all duration-300 group-hover:scale-110 group-hover:shadow-lg",
+      "transition-all duration-200 group-hover:scale-110 group-hover:shadow-lg",
   },
 
   // Header/Navigation
@@ -172,10 +172,10 @@ export const COMPONENTS = {
     hamburger:
       "flex flex-col gap-1.5 p-1 hover:bg-muted rounded-lg transition-colors duration-200",
     hamburgerLine:
-      "block h-0.5 w-6 bg-foreground transition-transform duration-300",
+      "block h-0.5 w-6 bg-foreground transition-transform duration-200",
     overlay:
       "fixed inset-0 bg-black/50 z-40 backdrop-blur-sm animate-in fade-in duration-200",
-    menu: "fixed top-0 right-0 h-full w-64 bg-background z-50 shadow-2xl transform transition-transform duration-300 ease-in-out",
+    menu: "fixed top-0 right-0 h-full w-64 bg-background z-50 shadow-2xl transform transition-transform duration-200 ease-in-out",
     menuLink:
       "block px-4 py-3 text-foreground hover:bg-muted border-b border-border last:border-b-0 transition-colors duration-200",
     mobileMenuAlt:
@@ -236,7 +236,7 @@ export const COMPONENTS = {
   colorSwatch: {
     container: "flex flex-wrap gap-3 justify-start items-center",
     button:
-      "w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-foreground/60 shadow",
+      "w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-foreground/60 shadow",
     buttonSelected: "ring-2 ring-foreground border-4",
     buttonDisabled: "opacity-40 cursor-not-allowed",
     buttonHover: "hover:scale-110 hover:border-foreground/80 cursor-pointer",
@@ -244,7 +244,7 @@ export const COMPONENTS = {
 
   // Hero Badge
   heroBadge: {
-    base: "mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/80 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-accent shadow-sm transition-all duration-300 hover:shadow-md hover:border-border",
+    base: "mb-8 inline-flex items-center gap-2 rounded-full border border-border/50 bg-surface/80 backdrop-blur-sm px-5 py-2.5 text-sm font-medium text-accent shadow-sm transition-all duration-200 hover:shadow-md hover:border-border",
   },
 
   // Category Filter
@@ -276,8 +276,8 @@ export const LAYOUT = {
 
 // ANIMACIONES
 export const ANIMATIONS = {
-  fadeIn: "animate-in fade-in duration-700",
-  fadeInDelayed: "animate-in fade-in duration-700 delay-150",
+  fadeIn: "animate-in fade-in duration-200",
+  fadeInDelayed: "animate-in fade-in duration-200 delay-150",
   shimmer: "shine-effect",
   hoverCard:
     "hover:shadow-card-hover hover:border-foreground/10 hover:-translate-y-2",

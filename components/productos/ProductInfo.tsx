@@ -25,7 +25,7 @@ export function ProductInfo({ producto }: ProductInfoProps) {
             text-foreground/80
             text-sm font-semibold
             transition-all
-            duration-300
+            duration-200
             hover:bg-muted
           "
           >

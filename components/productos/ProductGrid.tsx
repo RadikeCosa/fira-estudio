@@ -6,13 +6,24 @@ import { ProductCard } from "./ProductCard";
 
 interface ProductGridProps {
   productos: ProductoCompleto[];
+  emptyTitle?: string;
+  emptyDescription?: string;
+  emptyHref?: string;
+  emptyLinkText?: string;
 }
 
-export function ProductGrid({ productos }: ProductGridProps) {
+export function ProductGrid({
+  productos,
+  emptyTitle = ERROR_MESSAGES.noProducts,
+  emptyDescription,
+  emptyHref = "/productos",
+  emptyLinkText = "Ver todos los productos",
+}: ProductGridProps) {
   // Manejo de estado vacío
   if (productos.length === 0) {
     return (
       <div
+        role="status"
         className="
           flex
           min-h-[400px]
@@ -27,14 +38,17 @@ export function ProductGrid({ productos }: ProductGridProps) {
           text-center
         "
       >
-        <p className="text-lg text-muted-foreground">
-          {ERROR_MESSAGES.noProducts}
-        </p>
+        <div className="space-y-2">
+          <h2 className="text-2xl text-foreground">{emptyTitle}</h2>
+          {emptyDescription && (
+            <p className="text-muted-foreground">{emptyDescription}</p>
+          )}
+        </div>
         <Link
-          href="/productos"
+          href={emptyHref}
           className="inline-flex min-h-11 items-center rounded-lg border border-border px-5 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2 focus:ring-offset-background"
         >
-          Ver todos los productos
+          {emptyLinkText}
         </Link>
       </div>
     );

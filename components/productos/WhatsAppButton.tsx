@@ -1,9 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { MessageCircle } from "lucide-react";
+import { Instagram, Mail, MessageCircle } from "lucide-react";
 import type { Producto, Variacion } from "@/lib/types";
 import { WHATSAPP } from "@/lib/constants";
+import { PUBLIC_CONTACT_CHANNELS, SOCIAL_LINKS } from "@/lib/constants/navigation";
 import { buildProductInquiryMessage } from "@/lib/contact/whatsapp";
 import { trackProductInquiry } from "@/lib/analytics/gtag";
 import { cn } from "@/lib/utils";
@@ -11,19 +11,6 @@ import { cn } from "@/lib/utils";
 interface WhatsAppButtonProps {
   producto: Producto;
   variacion?: Variacion;
-}
-
-export function buildContactFallbackHref(
-  producto: Producto,
-  variacion?: Variacion,
-): string {
-  const params = new URLSearchParams({ producto: producto.nombre });
-
-  if (variacion) {
-    params.set("variante", `${variacion.tamanio} / ${variacion.color}`);
-  }
-
-  return `/contacto?${params.toString()}`;
 }
 
 /**
@@ -46,23 +33,39 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
   };
 
   if (!whatsappUrl) {
+    const email = PUBLIC_CONTACT_CHANNELS.emailAddress;
+    const instagram = SOCIAL_LINKS.instagram.href;
+
     return (
-      <div className="space-y-2">
-        <Link
-          href={buildContactFallbackHref(producto, variacion)}
-          className={cn(
-            "group inline-flex w-full items-center justify-center gap-3",
-            "rounded-xl bg-foreground px-8 py-4 text-base font-semibold text-background shadow-lg",
-            "transition-all duration-300 hover:shadow-xl",
-            "focus:outline-none focus:ring-2 focus:ring-focus-ring focus:ring-offset-2 focus:ring-offset-background",
-          )}
-        >
-          <MessageCircle className="h-5 w-5" aria-hidden="true" />
-          <span>Consultar por este producto</span>
-        </Link>
-        <p className="text-center text-sm text-muted-foreground" role="status">
-          WhatsApp no está configurado. Podés consultar desde contacto.
+      <div className="space-y-4 rounded-md border border-border bg-surface p-5">
+        <p className="text-sm leading-relaxed text-muted-foreground" role="status">
+          WhatsApp no está disponible para consultar por {producto.nombre}
+          {variacion ? ` · ${variacion.tamanio} / ${variacion.color}` : ""}.
         </p>
+        {(email || instagram) && (
+          <div className="flex flex-wrap gap-x-5 gap-y-3 text-sm font-medium">
+            {email && (
+              <a
+                href={`mailto:${email}`}
+                className="inline-flex min-h-11 items-center gap-2 text-accent underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus-ring"
+              >
+                <Mail className="h-4 w-4" aria-hidden="true" />
+                Consultar por email
+              </a>
+            )}
+            {instagram && (
+              <a
+                href={instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-11 items-center gap-2 text-accent underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-focus-ring"
+              >
+                <Instagram className="h-4 w-4" aria-hidden="true" />
+                Consultar por Instagram
+              </a>
+            )}
+          </div>
+        )}
       </div>
     );
   }
@@ -75,10 +78,10 @@ export function WhatsAppButton({ producto, variacion }: WhatsAppButtonProps) {
       onClick={handleClick}
       className={cn(
         "group inline-flex items-center justify-center gap-3 w-full",
-        "px-8 py-4 rounded-xl font-semibold text-base shadow-lg",
-        "transition-all duration-300",
+        "min-h-12 px-6 py-3 rounded-md font-semibold text-base",
+        "transition-colors duration-200",
         "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background",
-        "bg-linear-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white hover:shadow-xl hover:scale-[1.02] focus:ring-green-500",
+        "bg-accent text-accent-foreground hover:bg-accent-hover focus:ring-focus-ring",
       )}
     >
       <MessageCircle

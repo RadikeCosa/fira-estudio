@@ -21,7 +21,7 @@ export function buildMetadata({
   noIndex?: boolean;
   follow?: boolean;
 }): Metadata {
-  const resolvedImage = resolveAbsoluteUrl(image ?? "/images/logo.png");
+  const resolvedImage = resolveAbsoluteUrl(image ?? "/images/og-fira.webp");
   const resolvedUrl = url ? resolveAbsoluteUrl(url) : undefined;
   const resolvedImages = [resolvedImage];
 

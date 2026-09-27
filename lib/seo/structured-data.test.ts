@@ -153,7 +153,7 @@ describe("generateBreadcrumbSchema", () => {
 
     const schema = generateBreadcrumbSchema([
       { name: "Productos", url: "/productos" },
-      { name: "Manteles", url: "productos?categoria=manteles" },
+      { name: "Manteles", url: "productos/categoria/manteles" },
     ]);
 
     expect(schema.itemListElement).toEqual([
@@ -167,7 +167,7 @@ describe("generateBreadcrumbSchema", () => {
         "@type": "ListItem",
         position: 2,
         name: "Manteles",
-        item: "https://fira.example/productos?categoria=manteles",
+        item: "https://fira.example/productos/categoria/manteles",
       },
     ]);
   });
@@ -188,7 +188,7 @@ describe("generateOrganizationSchema", () => {
     expect(serialized).not.toContain("undefined");
     expect(schema).toMatchObject({
       url: "http://localhost:3000/",
-      logo: "http://localhost:3000/images/logo.png",
+      logo: "http://localhost:3000/icon.svg",
     });
   });
 });

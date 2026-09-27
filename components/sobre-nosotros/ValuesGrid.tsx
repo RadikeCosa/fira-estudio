@@ -16,7 +16,7 @@ export function ValuesGrid() {
     <section>
       <SectionHeader title={valores.title} description={valores.description} />
 
-      <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:gap-10">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8">
         {valores.items.map((value, index) => (
           <Card key={index} hover className="group">
             <Icon icon={value.icon} size="md" animated className="mb-6" />

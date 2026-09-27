@@ -93,7 +93,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         "
           >
             {/* Columna izquierda: Galería de imágenes */}
-            <div className="w-full">
+            <div className="w-full md:sticky md:top-24 md:self-start">
               <ProductGallery
                 imagenes={producto.imagenes}
                 productName={producto.nombre}

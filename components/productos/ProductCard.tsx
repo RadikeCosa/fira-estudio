@@ -32,15 +32,11 @@ export function ProductCard({
         relative
         block
         overflow-hidden
-        rounded-2xl
-        border border-border/50
+        rounded-sm
         bg-surface
-        shadow-sm
-        transition-all
-        duration-300
-        hover:shadow-xl
-        hover:border-foreground/10
-        hover:-translate-y-1
+        transition-shadow
+        duration-200
+        hover:shadow-md
       "
     >
       {/* Badge Destacado */}
@@ -51,7 +47,7 @@ export function ProductCard({
             top-4
             right-4
             z-10
-            rounded-full
+            rounded-sm
             bg-foreground
             px-4
             py-1.5
@@ -75,9 +71,9 @@ export function ProductCard({
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           className="
             object-cover
-            transition-all
-            duration-500
-            group-hover:scale-110
+            transition-transform
+            duration-200
+            group-hover:scale-[1.03]
           "
           loading="lazy"
         />
@@ -88,7 +84,7 @@ export function ProductCard({
             bg-gradient-to-t from-black/10 via-transparent to-transparent
             opacity-0
             transition-opacity
-            duration-300
+            duration-200
             group-hover:opacity-100
           "
         />
@@ -103,7 +99,7 @@ export function ProductCard({
             font-bold
             text-foreground
             transition-colors
-            duration-300
+            duration-200
             group-hover:text-foreground/90
           "
         >

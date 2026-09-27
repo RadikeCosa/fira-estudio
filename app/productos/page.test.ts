@@ -13,6 +13,7 @@ vi.mock("@/lib/supabase/queries", () => ({
 
 vi.mock("next/navigation", () => ({
   useSearchParams: () => new URLSearchParams(),
+  useRouter: () => ({ push: vi.fn() }),
 }));
 
 const categorias = [
@@ -55,18 +56,7 @@ describe("productos metadata indexation", () => {
     expect(getCategorias).not.toHaveBeenCalled();
   });
 
-  it("marks a valid category filter as noindex follow with /productos canonical", async () => {
-    const metadata = await generateMetadata({
-      searchParams: Promise.resolve({ categoria: "manteles" }),
-    });
-
-    expect(metadata.title).toBe("Manteles");
-    expect(metadata.description).toBe("Manteles artesanales");
-    expect(metadata.robots).toMatchObject({ index: false, follow: true });
-    expect(getCanonical(metadata)).toBe("https://fira.example/productos");
-  });
-
-  it("marks an unknown category filter as noindex with /productos canonical", async () => {
+  it("keeps legacy category query URLs out of the index until their redirect", async () => {
     const metadata = await generateMetadata({
       searchParams: Promise.resolve({ categoria: "no-existe" }),
     });
@@ -76,32 +66,11 @@ describe("productos metadata indexation", () => {
     expect(getCanonical(metadata)).toBe("https://fira.example/productos");
   });
 
-  it("does not use invalid category params as category metadata", async () => {
-    const metadata = await generateMetadata({
-      searchParams: Promise.resolve({ categoria: "../manteles" }),
-    });
-
-    expect(metadata.title).toBe("Catálogo de textiles artesanales");
-    expect(metadata.robots).toMatchObject({ index: false, follow: true });
-    expect(getCanonical(metadata)).toBe("https://fira.example/productos");
-    expect(getCategorias).not.toHaveBeenCalled();
-  });
-
   it("marks paginated catalog URLs as noindex with /productos canonical", async () => {
     const metadata = await generateMetadata({
       searchParams: Promise.resolve({ page: "2" }),
     });
 
-    expect(metadata.robots).toMatchObject({ index: false, follow: true });
-    expect(getCanonical(metadata)).toBe("https://fira.example/productos");
-  });
-
-  it("marks category pagination as noindex with /productos canonical", async () => {
-    const metadata = await generateMetadata({
-      searchParams: Promise.resolve({ categoria: "manteles", page: "2" }),
-    });
-
-    expect(metadata.title).toBe("Manteles");
     expect(metadata.robots).toMatchObject({ index: false, follow: true });
     expect(getCanonical(metadata)).toBe("https://fira.example/productos");
   });
@@ -166,6 +135,6 @@ describe("about content", () => {
     const serialized = JSON.stringify(ABOUT_CONTENT);
 
     expect(serialized).not.toContain("acompañarte en tu compra");
-    expect(serialized).toContain("acompañarte en tu elección");
+    expect(serialized).toContain("serigrafía manual");
   });
 });
