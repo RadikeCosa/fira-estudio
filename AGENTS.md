@@ -6,7 +6,7 @@
 
 Permite explorar productos, categorias, variantes, materiales e imagenes y contactar al emprendimiento para consultar disponibilidad. No ofrece carrito, checkout, pagos ni creacion de pedidos online.
 
-El contrato vigente del producto esta en `docs/PRODUCT_SCOPE.md`.
+El contrato vigente del producto esta en `docs/PRODUCT.md`.
 
 La infraestructura historica de e-commerce fue retirada del arbol ejecutable principal. Git conserva esa implementacion anterior; no debe tratarse como parte del producto publico vigente.
 
@@ -20,7 +20,7 @@ Este archivo es la guia canonica para agentes de codigo en este repositorio. Si 
 - No introducir carrito, checkout, ordenes, pagos, webhooks o emails transaccionales sin aprobacion explicita del usuario.
 - No usar maintenance mode como catalog mode.
 - No hacer que el build o runtime del catalogo dependan de Mercado Pago, Resend, service role para carrito/ordenes ni tokens de webhook.
-- Si cambia el contrato del producto, actualizar `docs/PRODUCT_SCOPE.md`.
+- Si cambia el contrato del producto, actualizar `docs/PRODUCT.md`.
 
 ## Stack principal
 
@@ -105,7 +105,7 @@ Nunca presentar staging o produccion como hechos confirmados solo por una doc hi
 
 ## Flujo de desarrollo
 
-El flujo canonico esta en `docs/DEVELOPMENT_WORKFLOW.md`.
+El flujo canonico esta en `docs/WORKFLOW.md`.
 
 - `main` debe representar el estado estable y desplegable.
 - No desarrollar features, fixes o saneamientos directamente sobre `main`.
@@ -144,5 +144,5 @@ El flujo canonico esta en `docs/DEVELOPMENT_WORKFLOW.md`.
 - Preferir cambios pequenos, auditables y faciles de revertir.
 - No mezclar saneamiento documental con cambios funcionales.
 - Si una decision tecnica cambia el contrato del proyecto, actualizar la doc relevante en el mismo patch.
-- Si una decision de producto cambia el alcance publico, actualizar `docs/PRODUCT_SCOPE.md`.
+- Si una decision de producto cambia el alcance publico, actualizar `docs/PRODUCT.md`.
 - Cuando algo no pueda confirmarse desde el repo, escribir `pendiente de confirmar`.

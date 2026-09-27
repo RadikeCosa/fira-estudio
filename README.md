@@ -1,193 +1,34 @@
 # Fira Estudio
 
-Fira Estudio es una vidriera digital de productos textiles artesanales. Permite explorar productos, categorias, variantes, materiales e imagenes y contactar al emprendimiento para consultar disponibilidad.
+Fira Estudio es una vidriera digital de productos textiles artesanales.
 
+Su objetivo actual es mostrar el catalogo y facilitar consultas sobre
+productos y disponibilidad, principalmente mediante WhatsApp.
 
-## Estado actual
+El proyecto tambien funciona como pieza de portfolio tecnico, con foco en:
 
-El producto publico vigente es un catalogo o vidriera digital. No ofrece carrito, checkout, pagos ni creacion de pedidos online.
+- UX/UI
+- accesibilidad
+- rendimiento
+- SEO
+- buenas practicas de desarrollo
+- mantenimiento y evolucion controlada
 
-La infraestructura historica de e-commerce fue retirada del arbol ejecutable principal. El historial Git conserva esa implementacion anterior; no debe tratarse como parte del producto vigente ni como requisito para desplegar el catalogo.
+No es actualmente un e-commerce transaccional.
 
-Estado local confirmado en la auditoria actual:
+## Fuera de alcance actual
 
-- `npm run lint` pasa;
-- `npm run test` pasa;
-- `npm run build` pasa;
-- `git diff --check` pasa.
+- carrito
+- checkout
+- Mercado Pago
+- pagos online
+- pedidos online
 
-Estos resultados no confirman por si solos el estado de Supabase remoto, Vercel, dominio, analytics ni variables reales.
+Existe infraestructura historica relacionada con e-commerce en el
+repositorio, pero no define el producto vigente.
 
-## Capacidades publicas vigentes
+## Sources
 
-- Home publica de presentacion.
-- Catalogo de productos y categorias.
-- Detalle de producto con imagenes, descripcion, variantes, materiales, cuidados y tiempos.
-- Disponibilidad o stock como referencia sujeta a consulta.
-- Pagina de contacto.
-- Consulta principal por WhatsApp cuando `NEXT_PUBLIC_WHATSAPP_NUMBER` esta configurado.
-- Metadata, sitemap, robots y estructura SEO basica.
-- Diseno responsive con App Router.
-
-## Fuera de alcance
-
-No son funcionalidades publicas vigentes:
-
-- carrito;
-- checkout;
-- pagos;
-- creacion o actualizacion de pedidos online;
-- paginas publicas de resultado de pago;
-- webhooks como parte del flujo publico;
-- emails transaccionales de confirmacion de pedido.
-
-No presentar el sitio como e-commerce en mantenimiento ni como integracion de Mercado Pago pendiente.
-
-## Objetivos tecnicos
-
-El proyecto busca funcionar tambien como portfolio tecnico:
-
-- diseno responsive;
-- accesibilidad;
-- rendimiento;
-- SEO;
-- arquitectura mantenible;
-- uso responsable de Supabase;
-- compatibilidad con Vercel;
-- documentacion verificable y sin promesas externas.
-
-## Stack vigente del catalogo
-
-Dependencias principales instaladas:
-
-- Next.js 16 + React 19;
-- TypeScript;
-- Tailwind CSS 4;
-- Supabase;
-- Vercel Speed Insights;
-- Google Analytics 4 opcional;
-- Vitest + `node:test`;
-- Playwright para validaciones e2e del catalogo publico.
-
-Para ejecutar el catalogo no son necesarias integraciones historicas como Mercado Pago, Resend, service role para carrito/ordenes ni tokens de webhook.
-
-## Arquitectura breve
-
-- `app/`: rutas App Router, paginas publicas y endpoints API existentes.
-- `components/`: UI por dominio (`productos`, `contacto`, `layout` y `ui`).
-- `lib/supabase/`: clientes y queries del catalogo.
-- `lib/repositories/`: acceso a datos y operaciones de dominio.
-- `lib/seo/`: metadata y datos estructurados.
-- `lib/analytics/`: eventos de medicion.
-- `docs/`: documentacion activa, auditorias y material historico.
-
-## Setup local
-
-```bash
-npm install
-cp .env.local.example .env.local
-npm run dev
-```
-
-Abrir `http://localhost:3000`.
-
-## Variables necesarias y opcionales
-
-Usar [.env.local.example](./.env.local.example) como referencia. No commitear valores reales.
-
-### Requeridas para catalogo
-
-```bash
-NEXT_PUBLIC_SITE_URL=http://localhost:3000
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-public-anon-key
-```
-
-### Opcionales para contacto
-
-```bash
-NEXT_PUBLIC_CONTACT_EMAIL=contacto@example.com
-NEXT_PUBLIC_WHATSAPP_NUMBER=549XXXXXXXXXX
-NEXT_PUBLIC_INSTAGRAM_URL=https://instagram.com/firaestudio
-```
-
-WhatsApp es el canal principal de consulta manual. `NEXT_PUBLIC_WHATSAPP_NUMBER` debe usar codigo de pais + numero, solo digitos, sin `+`, espacios ni guiones. Email e Instagram son canales secundarios cuando esten configurados.
-
-### Opcionales para analytics y mantenimiento
-
-```bash
-NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-NEXT_PUBLIC_MAINTENANCE_MODE=false
-NEXT_PUBLIC_MAINTENANCE_MESSAGE=Mensaje opcional
-```
-
-## Scripts
-
-Scripts existentes en `package.json`:
-
-```bash
-npm run dev
-npm run build
-npm run start
-npm run lint
-npm run test
-npm run test:e2e
-npm run test:node
-npm run test:unit
-npm run test:watch
-npm run test:coverage
-```
-
-## Calidad y validaciones
-
-Validaciones recomendadas antes de cerrar cambios:
-
-```bash
-git diff --check
-npm run lint
-npm run test
-npm run build
-```
-
-Para revisar navegacion real, responsive, foco y overflow del catalogo publico:
-
-```bash
-npm run test:e2e
-```
-
-Si un cambio futuro reintroduce checkout, webhooks, carrito, ordenes o emails, requiere validacion especifica adicional y aprobacion explicita.
-
-## Estado de despliegue
-
-- `local`: desarrollo con `.env.local`.
-- `preview`: despliegues de validacion en Vercel, `pendiente de confirmar`.
-- `production`: futuro despliegue publico, `pendiente de confirmar`.
-
-Queda `pendiente de confirmar` fuera del repo:
-
-- proyecto Vercel real;
-- dominio publico;
-- URL final;
-- variables efectivamente cargadas;
-- Supabase remoto, datos, Storage e imagenes;
-- analytics activo;
-- variables de contacto efectivamente cargadas en Vercel Preview y Production.
-
-## Infraestructura historica retirada
-
-El codigo ejecutable de carrito, checkout, Mercado Pago, ordenes, webhooks, reconciliacion y emails transaccionales fue retirado del arbol principal durante el saneamiento historico.
-
-No es necesario para ejecutar, compilar o desplegar el catalogo. Una eventual reactivacion comercial requerira una nueva decision explicita, auditoria especifica y actualizacion documental.
-
-## Documentacion
-
-- [docs/PRODUCT_SCOPE.md](./docs/PRODUCT_SCOPE.md): contrato canonico de producto.
-- [AGENTS.md](./AGENTS.md): guia canonica para agentes de codigo.
-- [docs/README.md](./docs/README.md): mapa de documentacion activa e historica.
-- [docs/DEVELOPMENT_WORKFLOW.md](./docs/DEVELOPMENT_WORKFLOW.md): flujo liviano de ramas, validaciones, Preview, PR y Production.
-- [docs/ENVIRONMENTS.md](./docs/ENVIRONMENTS.md): criterios de entornos y variables.
-- [docs/DEPLOYMENT.md](./docs/DEPLOYMENT.md): checklist y consideraciones de deploy.
-- [docs/VERCEL_SETUP.md](./docs/VERCEL_SETUP.md): carga segura de variables en Vercel.
-- [docs/MAINTENANCE_MODE.md](./docs/MAINTENANCE_MODE.md): alcance real del maintenance mode.
-- [docs/archive/ecommerce/README.md](./docs/archive/ecommerce/README.md): material historico de e-commerce, no operativo.
-- [docs/audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md](./docs/audits/auditoria-reinicio-catalogo-fira-estudio-2026-06-25.md): auditoria base del reinicio.
+- [docs/PRODUCT.md](./docs/PRODUCT.md) - reglas y alcance del producto
+- [docs/WORKFLOW.md](./docs/WORKFLOW.md) - forma de trabajar sobre el repositorio
+- [docs/TECHNICAL_CONTEXT.md](./docs/TECHNICAL_CONTEXT.md) - arquitectura y contexto tecnico relevante
